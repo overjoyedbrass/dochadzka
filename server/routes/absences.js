@@ -1,18 +1,11 @@
-var express = require('express');
+const express = require('express');
+const router = express.Router();
 const absences = require('../database/absences.js');
-var router = express.Router();
 
 router.get('/', async (req, res) => {
     const [month, year, userid] = [req.query.month, req.query.year, req.query.userid]
-    if(!month && !year && !userid){
-        const data = await absences.getAbsences()
-        res.send(data)
-        return
-    }
-    console.log("query: ", req.query)
-
     if(!month || !year){
-        res.send("Missing argument Month or Year")
+        res.status(400).end()
         return
     }
     let data;

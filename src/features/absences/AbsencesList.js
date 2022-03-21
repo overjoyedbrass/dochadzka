@@ -7,29 +7,45 @@ import { useGetAbsencesQuery } from '../api/apiSlice'
 import { AbsenceAuthor } from './AbsenceAuthor.js'
 
 import { sub, add } from 'date-fns'
-import { formatFromTo, myDateFormat, displaySelectedMonth, absenceTypes } from '../../helpers/helpers'
-import { selectCurrentUser } from '../users/userSlice'
+import { formatFromTo, myDateFormat, absenceTypes } from '../../helpers/helpers'
+import { UserList } from '../users/UserList.js'
+import { DateController } from '../../components/DateController'
+import { selectLoggedUser } from '../auth/authSlice.js'
 
 import { 
     Button,
     TableBody, TableCell, TableContainer, Table, TableRow, Paper
 } from '@mui/material'
 
+import './AbsenceList.css'
 
-const GroupedAbsenceRow = ({absence, firstInRow, userSpecified, numberOfRows}) => {
+export const AbsencesList = () => {
+    const loggedUser = useSelector(selectLoggedUser)
+    const [viewDate, setViewDate] = useState(new Date())
+    const [userId, setUserId] = useState(loggedUser?.id ?? "")
+
     return (
-    <TableRow>
-        {firstInRow ? (<TableCell sx={{verticalAlign: "top"}} rowSpan={numberOfRows}>{myDateFormat(new Date(absence.date_time))}</TableCell>) : null}
-        {userSpecified ? null : (<TableCell><b><AbsenceAuthor userId={absence.user_id}/></b></TableCell>)}
-        <TableCell>{absenceTypes[absence.type]}</TableCell>
-        <TableCell>{formatFromTo(absence.from_time, absence.to_time)}</TableCell>
-        <TableCell>{absence.description}</TableCell>
-    </TableRow>
+        <div className="absence-list">
+            <UserList selected={userId} onSelect={setUserId}/>
+            <div className="list-wrapper">
+                <div style={{display: "flex"}}>
+                    <DateController viewDate={viewDate} onChange={(date) => setViewDate(date)} />
+                    {loggedUser && userId !== loggedUser.id ? 
+                    <Button 
+                        variant="outlined"
+                        onClick={() => setUserId(loggedUser.id)}
+                        sx={{marginRight: "0.2em"}}
+                    >
+                        Zobraziť moje
+                    </Button> : null}
+                </div>
+                <AbsencesDisplayer date={viewDate} userId={userId} />
+            </div>
+        </div>
     )
 }
 
-const AbsencesListFiltered = ({date, userId}) => {
-    console.log("USERID", userId)
+const AbsencesDisplayer = ({date, userId}) => {
     const {
         data: absences=[],
         isLoading,
@@ -40,13 +56,13 @@ const AbsencesListFiltered = ({date, userId}) => {
         isFetching
     } = useGetAbsencesQuery({year: date.getFullYear(), month: date.getMonth(), userid: userId})
 
-    const groupedAbsences = {}
+    const absGroupedByDay = {}
     for(let i = 1; i <= 31; i++){
-        groupedAbsences[i] = []
+        absGroupedByDay[i] = []
     }
     absences.forEach(absence => {
         const datum = new Date(absence.date_time);
-        groupedAbsences[datum.getDate()].push(absence);
+        absGroupedByDay[datum.getDate()].push(absence);
     });
 
     let content
@@ -58,7 +74,7 @@ const AbsencesListFiltered = ({date, userId}) => {
         }
         else{
             const rows = []
-            for(const [day, gAbsences] of Object.entries(groupedAbsences)){
+            for(const [day, gAbsences] of Object.entries(absGroupedByDay)){
                 if(gAbsences.length === 0)
                     continue;
                 for(let i = 0; i < gAbsences.length; i++){
@@ -77,38 +93,24 @@ const AbsencesListFiltered = ({date, userId}) => {
             ) : (<p>{"Žiadne záznamy"}</p>)
         }
     } else if(isError){
-        console.log('Chyba', error)
+        // console.log('Chyba', error)
         content = <div> Chyba: {error.status}</div>
     }
     
     return (
-        <div>
-            <Button onClick={refetch}>Refetch</Button>
+        <div className="list">
             {content}
         </div>
     )
 }
 
-
-export const AbsencesList = () => {
-    const userId = useSelector(selectCurrentUser)
-
-    const [viewDate, setViewDate] = useState(new Date())
-    const subMonth = () => {
-        setViewDate(sub(viewDate, {months: 1}))
-    }
-    const addMonth = () => {
-        setViewDate(add(viewDate, {months: 1}))
-    }
-    
-
+const GroupedAbsenceRow = ({absence, firstInRow, userSpecified, numberOfRows}) => {
     return (
-        <section className="absence-list">
-            <Button variant="outlined" onClick={() => setViewDate(new Date())}>Dnes</Button>
-            <Button onClick={subMonth}>{"<"}</Button>
-            <Button onClick={addMonth}>{">"}</Button>
-            <b>{displaySelectedMonth(viewDate)}</b>
-            <AbsencesListFiltered date={viewDate} userId={userId ? userId : 0}/>
-        </section>
+    <TableRow>
+        {firstInRow ? (<TableCell sx={{verticalAlign: "top"}} rowSpan={numberOfRows}>{myDateFormat(new Date(absence.date_time))}</TableCell>) : null}
+        {userSpecified ? null : (<TableCell><b><AbsenceAuthor userId={absence.user_id}/></b></TableCell>)}
+        <TableCell>{absenceTypes[absence.type]}</TableCell>
+        <TableCell>{formatFromTo(absence.from_time, absence.to_time)}</TableCell>
+    </TableRow>
     )
 }

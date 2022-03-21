@@ -6,8 +6,7 @@ import store from './app/store'
 import { Provider } from 'react-redux'
 
 import { extendedApiSlice } from './features/users/usersSlice'
-
-store.dispatch( extendedApiSlice.endpoints.getUsers.initiate() )
+store.dispatch(extendedApiSlice.endpoints.getUsers.initiate())
 
 ReactDOM.render(
     <Provider store={store}>

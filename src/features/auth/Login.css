@@ -1,0 +1,14 @@
+.loginBar {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-right: 1em;
+    height: inherit;
+}
+.loginBar input {
+    margin: 0 0.5em 0 0.5em;
+}
+.user-displayer {
+    padding: 0 1em 0 1em;
+    font-weight: bold;
+}

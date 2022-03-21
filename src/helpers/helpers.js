@@ -42,3 +42,11 @@ export function disableSelection() {
         document.selection.empty();
     }
 }
+
+export function datesSameMonth(d1, d2){
+    return d1.getYear() === d2.getYear() && d1.getMonth() === d2.getMonth()
+}
+
+export function datesAreSame(d1, d2){
+    return d1.getYear() === d2.getYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate()
+}

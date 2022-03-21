@@ -1,0 +1,66 @@
+:root {
+    --max-width: 1200px;
+    --header-height: 5em;
+}
+
+header {
+    min-height: var(--header-height);
+    border: 1px solid black;
+    flex: 0 0 auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+nav {
+    display: flex;
+    width: 100%;
+    background: gray;
+    justify-content: center;
+    height: 2em;
+    background: black;
+}
+
+.navLinks {
+    max-width: var(--max-width);
+    width: 100%;
+    display: flex;
+    vertical-align: center;
+}
+.navLinks a {
+    padding: 0 0.5em 0 0.5em;
+    display: flex;
+    align-items: center;
+    margin-left: 1em;
+    background: black;
+    color: white;
+    text-decoration: none;
+}
+
+header .content {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 10px;
+    align-items: center;
+}
+header h1 {
+    width: 100%;
+    margin: 0.1em;
+    max-width: var(--max-width);
+    text-transform: uppercase;
+}
+header h3 {
+    width: 100%;
+    margin: 0.1em;
+    max-width: var(--max-width);
+    text-transform: uppercase;
+}
+
+header .wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 0.2em 0 0.2em 0;
+    width: 100%;
+}

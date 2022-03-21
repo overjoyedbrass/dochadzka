@@ -8,5 +8,9 @@ module.exports = {
     getUserById: (id) => {
         const SQL = 'SELECT id, username, name, surname, email FROM users WHERE id = ?'
         return query(SQL, [id])
+    },
+    getUserByUsername: (username) => {
+        const SQL = 'SELECT id, personal_id, username, password, name, surname, email FROM users WHERE username = ?'
+        return query(SQL, [username])
     }
 }

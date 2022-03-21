@@ -1,0 +1,18 @@
+.absence-list {
+    display: flex;
+    flex-flow: column;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    max-width: var(--max-width);
+}
+.absence-list .list-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.absence-list .list {
+    flex: 1 1 auto;
+    overflow-y: auto;
+}

@@ -6,7 +6,7 @@ var deadlines = require("../database/deadlines.js")
 router.get('/', async (req, res) => {
     const [year, month] = [req.query.year, req.query.month]
     if(!year || !month){
-        res.send("Missing year or month argument")
+        res.status(400).end()
         return
     }
     const data = await deadlines.getDeadlineByYearMonth(year, month)

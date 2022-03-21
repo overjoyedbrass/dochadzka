@@ -16,12 +16,11 @@ export const mainTheme = createTheme({
             dark: "#a00037",
             contrastText: "#000",
         }
+    },
+    gui: {
+        primary: "#ffffff",
+        border: "lightgray",
+        picked: "#faff9c",
+        weekend: "#efefef",      
     }
 })
-
-export const guiColors = {
-    primary: "#ffffff",
-    border: "lightgray",
-    picked: "#faff9c",
-    weekend: "#efefef",
-}

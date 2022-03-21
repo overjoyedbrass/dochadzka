@@ -4,13 +4,9 @@ var holidays = require('../database/holidays.js')
 
 router.get('/', async (req, res) => {
     const [month, year] = [req.query.month, req.query.year]
-    if(!month && !year){
-        const data = await holidays.getHolidays()
-        res.send(data)
-        return
-    }
+
     if(!month || !year){
-        res.send("Arguments are missing")
+        res.status(400).end()
         return
     }
     const data = await holidays.getHolidaysByYearMonth(year, month)
