@@ -23,9 +23,35 @@ body {
 
 .App {
     flex: 1 1 auto;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
     overflow-y: auto;
     display: flex;
+    width: 100%;
+}
+
+.controllerBar {
+    margin: 0.2em 0;
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.wrapper {
+    display: flex;
+}
+
+.span {
+    margin-left: 0.1em;
+}
+
+.list {
+    width: 100%;
+    max-width: var(--max-width);
+    display: flex;
+    justify-content: center;
+    margin: 1em;
 }
 
 .spinner {
@@ -38,6 +64,83 @@ body {
 .spinner h4 {
   margin: 5px;
 }
+
+
+.app-content {
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: var(--max-width);
+
+    height: 100%;
+    display: flex;
+    flex-flow: column;
+}
+
+.labelWithInput {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin: 0.3em 0 0.3em 0;
+}
+
+.fieldlabel {
+    display: inline-block;
+    min-height: 100%;
+    align-items: center;
+    padding-right: 1em;
+    height: 100%;
+}
+.error {
+    color: black;
+    background: red;
+    border: 1px solid black;
+    border-radius: 1em;
+    padding: 0.3em 1em 0.3em 1em;
+    margin: 1em;
+    font-size: 2em;
+}
+
+.users-container {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    width: 100%;
+}
+
+.user-row {
+    display: flex;
+    flex-flow: row;
+    width: 100%;
+    line-height: 3em;
+    margin: 0.1em 0 0.1em 0;
+    border: 1px solid black;
+}
+.user-column {
+    display: flex;
+    flex: 1 1 auto;
+}
+
+.profile-label {
+    padding: 1em 0 0.5em 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -82,6 +185,7 @@ body {
   -ms-transform: translateZ(0);
   transform: translateZ(0);
 }
+
 
 .loader:before {
   width: 50%;

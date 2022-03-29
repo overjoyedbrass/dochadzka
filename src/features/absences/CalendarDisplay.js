@@ -10,25 +10,25 @@ import {
 import { AbsenceAuthor } from './AbsenceAuthor.js'
 import { mainTheme } from '../../helpers/themes'
 import { formatFromTo } from '../../helpers/helpers'
-import { startOfMonth, format, add } from 'date-fns'
+import { startOfMonth, format, add, getDay } from 'date-fns'
 import { sk } from 'date-fns/locale'
 import { datesSameMonth, datesAreSame } from '../../helpers/helpers'
-
-const week = {
-    pondelok: 0,
-    utorok: 1,
-    streda: 2,
-    štvrtok: 3,
-    piatok: 4,
-    sobota: 5,
-    nedeľa: 6
-}
 
 function getColorForCell(dates,  cycledDate, i, skok){
     return dates.some(d => datesAreSame(d, cycledDate)) ? mainTheme.gui.picked: [6, 0].includes((i+skok)%7) ? mainTheme.gui.weekend : mainTheme.gui.primary
 }
 
-const AbsenceCell = ({absence, funOnClick}) => {
+const week = [
+    'pondelok',
+    'utorok',
+    'streda',
+    'štvrtok',
+    'piatok',
+    'sobota',
+    'nedeľa'
+]
+
+const AbsenceBox = ({absence, funOnClick}) => {
     return (
         <div 
             className="absence-box" 
@@ -62,7 +62,7 @@ const CalendarCell = ({isToday, day, absences, functions}) => {
                 className="absences-container"
             >
                 {absences.map((absence) => 
-                (<AbsenceCell key={absence.id} absence={absence} funOnClick={functions.edit}/>))
+                (<AbsenceBox key={absence.id} absence={absence} funOnClick={functions.edit}/>))
                 }
             </div>
         </div>
@@ -74,32 +74,28 @@ export const CalendarDisplay = ({selectedDates, viewDate, absences, controlFunct
     const dnes = new Date()
     let firstRow = []
     //hlavičky stlpcov
-    for (const [key, value] of Object.entries(week)) {
+    week.forEach((nazov, index) => {
         firstRow.push((
             <TableCell
                 variant="head"
-                key={value} 
+                key={index} 
                 className="first-row-table-cell"
                 sx={{
                     borderColor: mainTheme.gui.border,
                     verticalAlign: "top",
                 }}
             >
-                {key}
+                {nazov}
             </TableCell>
         ))
-    }
+    })
     let rows = [(<TableRow key={0}>{firstRow}</TableRow>)]
 
     //riadok tabuľky
     let row = [] 
-
     //premenna datumu v cykle
     var cycledDate = startOfMonth(viewDate)
-    
-    //kľuč do slovnika tyzdnov, ziskame tym odskok, piatok = odskok 4 bunky
-    const cycledDateDayKey = format(cycledDate, "eeee", {locale: sk})
-    const skok = week[cycledDateDayKey]
+    const skok = getDay(cycledDate)
     //prazdne bunky pred prvym dňom
     for(let i = 1; i <= skok; i++){
         row.push((<TableCell key={i%7}/>))

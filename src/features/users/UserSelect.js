@@ -1,8 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { selectAllUsers } from './usersSlice'
-import { FormControl, Select, MenuItem, IconButton } from '@mui/material'
-import { Clear } from '@mui/icons-material'
+import { FormControl, Select, MenuItem } from '@mui/material'
 
 export const UserSelect = ({ selected, onChange }) => {
     const allUsers = useSelector(selectAllUsers)
@@ -14,9 +13,17 @@ export const UserSelect = ({ selected, onChange }) => {
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 value={selected ? selected : ""}
+                defaultValue={""}
+                displayEmpty={true}
                 onChange={(event) => onChange(event.target.value)}
                 size="small"
+                sx={{size:"fit-content"}}
             >
+                <MenuItem
+                    value=""
+                >
+                    Všetci
+                </MenuItem>
             {
                 allUsers.map(user => 
                     <MenuItem
@@ -28,7 +35,6 @@ export const UserSelect = ({ selected, onChange }) => {
                 )
             }
             </Select>
-            {selected ? <IconButton aria-label="clear" style={{display: "inline-block"}} onClick={() => onChange("")}><Clear /></IconButton> : null}
         </FormControl>
     )
 }

@@ -9,8 +9,8 @@ export const Navbar = () => {
         <nav>
             <div className="navLinks">
                 <Link to="/">Neprítomnosti</Link>
-                <Link to="/calendar">Kalendár</Link>
                 {loggedBoolean ? <Link to="/profile">Profil</Link> : null }
+                {loggedBoolean ? <Link to="/usermanagment">Správa používateľov</Link> : null }
             </div>
         </nav>
     )

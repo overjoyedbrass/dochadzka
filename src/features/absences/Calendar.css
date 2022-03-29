@@ -18,7 +18,8 @@
     flex: 0 1 auto;
     width: fit-content;
     height: fit-content;
-    overflow-y: auto;
+    overflow-y: hidden;
+    text-overflow: ellipsis;
     display: flex;
     align-items: flex-start;
     flex-direction: column;
@@ -28,6 +29,7 @@
     user-select: none;
     border-radius: 0.2em;
     padding: 0.1em 0.2em 0.1em 0.2em;
+    cursor: pointer;
 }
 
 .calendar-controller .wrapper {

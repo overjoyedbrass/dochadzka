@@ -7,13 +7,12 @@ import {
 
 // toastify
 import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.min.css';
-// import 'react-toastify/dist/ReactToastify.css';
+import 'react-toastify/dist/ReactToastify.css';
 
-import { AbsencesList } from './features/absences/AbsencesList.js'
-
-import { CalendarController } from './features/absences/CalendarController.js'
+import { AbsenceController } from './features/absences/AbsenceController.js'
 import { Mainbar } from './components/Mainbar.js'
+import { UserProfile } from './features/users/UserProfile.js';
+import { UserManagment } from './features/users/UserManagment.js';
 
 function App() {
   return (             
@@ -21,8 +20,9 @@ function App() {
             <Mainbar />            
         <div className="App">
             <Routes>
-                <Route exact path="/" element = {<AbsencesList />} />
-                <Route exact path="/calendar" element = {<CalendarController />} />
+                <Route exact path="/" element = {<AbsenceController />} />
+                <Route exact path="/profile" element = {<UserProfile />} />
+                <Route exact path="/usermanagment" element = {<UserManagment />} />
             </Routes>
             <ToastContainer 
                 position="top-center"

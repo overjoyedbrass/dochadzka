@@ -31,10 +31,11 @@ router.post('/', async (req, res) => {
 
         const data_to_hash = {
             id: data.id,
-            personsal_id: data.personsal_id,
+            personal_id: data.personal_id,
             username: data.username,
             name: data.name,
             surname: data.surname,
+            email: data.email,
             //status vymenit za právomoci
             status: data.status,
         }

@@ -30,7 +30,7 @@ export const AbsenceFormular = ({onClose, dates, setPickedDates}) => {
                 dates[index] = newDate
             }
             else {
-                toast(`${format(newDate, "dd-MM-yyyy")} Je už vybratý.`, {toastId: 1, type: "warning"})
+                toast(`${format(newDate, "dd. MM. yyyy")} Je už vybratý.`, {type: "warning"})
             }
         }
         setPickedDates(dates)
@@ -100,8 +100,8 @@ export const AbsenceFormular = ({onClose, dates, setPickedDates}) => {
             <label htmlFor="popis">{popisText}: </label>
             <TextField id="popis" onChange={event => setDescription(event.target.value)}multiline sx={{width: "90%"}} helperText="Nepovinné">{description}</TextField><br/><br/>
 
-            <Button onClick={() => onClose()} style={{color: mainTheme.palette.secondary.main}}>Zrušiť</Button>
-            <Button sx={{float:"right"}} style={{fill: mainTheme.palette.primary.main}} variant="contained" onClick={() => submit()}>Potvrdiť</Button>
+            <Button variant="outlined" onClick={() => onClose()}>Zrušiť</Button>
+            <Button color="success" sx={{float:"right"}} variant="contained" onClick={() => submit()}>Pridať</Button>
         </div>
     )
 }
