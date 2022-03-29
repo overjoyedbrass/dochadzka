@@ -33,13 +33,14 @@ body {
 .controllerBar {
     margin: 0.2em 0;
     display: flex;
-    width: 100%;
+    width: 95%;
     flex-direction: row;
     justify-content: space-between;
 }
 
 .wrapper {
     display: flex;
+    justify-content: center;
 }
 
 .span {
@@ -101,6 +102,12 @@ body {
     font-size: 2em;
 }
 
+.user-panel {
+    display: flex;
+    align-items: center;
+    margin: "1em 1em 0 0"
+}
+
 .users-container {
     flex: 1 1 auto;
     display: flex;
@@ -125,17 +132,6 @@ body {
 .profile-label {
     padding: 1em 0 0.5em 0;
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 

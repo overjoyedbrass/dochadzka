@@ -11,6 +11,9 @@ export const Navbar = () => {
                 <Link to="/">Neprítomnosti</Link>
                 {loggedBoolean ? <Link to="/profile">Profil</Link> : null }
                 {loggedBoolean ? <Link to="/usermanagment">Správa používateľov</Link> : null }
+                {loggedBoolean ? <Link to="/deadlines">Termíny</Link> : null }
+                {loggedBoolean ? <Link to="/holidays">Voľné dni</Link> : null }
+                {loggedBoolean ? <Link to="/btrips">Pracovné cesty</Link> : null }
             </div>
         </nav>
     )

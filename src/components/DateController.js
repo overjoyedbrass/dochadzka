@@ -5,21 +5,23 @@ import {
 } from '@mui/material'
 import { displaySelectedMonth } from '../helpers/helpers.js'
 
-export const DateController = ({viewDate, onChange}) => {
+export const DateController = ({viewDate, onChange, type="month", button=true}) => {
+    const subYear = () => onChange(sub(viewDate, {years: 1}))
+    const addYear = () => onChange(add(viewDate, {years: 1}))
+    const subMonth = () => onChange(sub(viewDate, {months: 1}))
+    const addMonth = () => onChange(add(viewDate, {months: 1}))
 
-    const subMonth = () => {
-        onChange(sub(viewDate, {months: 1}))
-    }
-    const addMonth = () => {
-        onChange(add(viewDate, {months: 1}))
-    }
-
+    const type_int = type === "month"
+        
     return (
         <div className="date-controller">
-            <Button variant="outlined" onClick={() => onChange(new Date())}>Dnes</Button>
-            <Button onClick={subMonth}>{"<"}</Button>
-            <b>{displaySelectedMonth(viewDate)}</b>
-            <Button onClick={addMonth}>{">"}</Button>
+            {button ? <Button variant="outlined" onClick={() => onChange(new Date())}>
+                Dnes
+            </Button> : null }
+
+            <Button onClick={type_int ? subMonth : subYear}>{"<"}</Button>
+            <b>{type_int ? displaySelectedMonth(viewDate) : viewDate.getFullYear()}</b>
+            <Button onClick={type_int ? addMonth : addYear}>{">"}</Button>
         </div>
-    )
+        )
 }

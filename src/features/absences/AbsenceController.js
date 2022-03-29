@@ -45,7 +45,10 @@ export const AbsenceController = () => {
                     <Button 
                         variant="outlined"
                         onClick={() => setSelectedUser(loggedUser.id)}
-                        sx={{marginRight: "0.2em"}}
+                        sx={{
+                            marginRight: "0.2em",
+                            height: "100%"
+                        }}
                     >
                         Zobraziť Vaše
                 </Button></span> : null}
@@ -53,6 +56,7 @@ export const AbsenceController = () => {
                     onChange={setSelectedUser} 
                     selected={selectedUser}
                 />
+                <span style={{marginLeft: "2em", display: "flex", alignItems: "center"}}>Zobrazenie: </span>
                 <ButtonGroup>
                     <IconButton onClick={() => showCalendarDisplay(true)}>
                         <CalendarIcon 

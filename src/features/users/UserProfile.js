@@ -10,8 +10,7 @@ import { selectLoggedUser } from '../auth/authSlice'
 
 export const UserProfile = () => {
     const user = useSelector(selectLoggedUser)
-
-    const [open, setOpen] = React.useState(false)
+    
     const [username, setUsername] = React.useState(user.username)
     const [email, setEmail] = React.useState(user.email)
     const [password, setPassword] = React.useState("")
@@ -45,7 +44,7 @@ export const UserProfile = () => {
                     onChange={(e) => setUsername(e.target.value)}
                 />
 
-                <label htmlFor="email" className="profile-label">Email</label>
+                <label htmlFor="email" className="profile-label">Email: </label>
                 <TextField
                     style={{width:"fit-content"}}
                     id="email"
@@ -74,8 +73,9 @@ export const UserProfile = () => {
                     onChange={(e) => setNewPassAgain(e.target.value)}
                 />
 
-                <label htmlFor="password" className="profile-label">Súčasné heslo pre potvrdenie zmien</label>
+                <label htmlFor="password" className="profile-label">Súčasné heslo pre potvrdenie zmien: </label>
                 <TextField
+                    id="password"
                     style={{width:"fit-content"}}
                     placeholder="Súčasné heslo"
                     size="small"

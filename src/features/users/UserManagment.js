@@ -4,6 +4,8 @@ import { useSelector } from 'react-redux'
 import { selectAllUsers } from './usersSlice'
 import { selectLoggedUser } from '../auth/authSlice'
 import { CreateUserDialog } from './CreateUserDialog'
+// import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import {
     Table,
     TableBody,
@@ -12,13 +14,17 @@ import {
     TableCell,
     TableHead,
     Paper,
-    Button
+    Button,
+    IconButton,
 } from '@mui/material'
+
+import EditIcon from '@mui/icons-material/Edit';
 
 export const UserManagment = () => {
     const users = useSelector(selectAllUsers)
     const loggedUser = useSelector(selectLoggedUser)
     const [open, setOpen] = React.useState(false)
+
     if(!loggedUser){
         return <div className="error">Nie ste prihlásený</div>
     }
@@ -41,16 +47,26 @@ export const UserManagment = () => {
                             <TableCell>Celé meno</TableCell>
                             <TableCell>Rola</TableCell>
                             <TableCell>Dovolenka</TableCell>
+                            <TableCell>Upraviť</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {
                             users.map(user => 
                             <TableRow key={ user.id }>
-                                <TableCell>{user.username}#{user.personal_id}</TableCell>
+                                <TableCell>
+                                    <Link to={"/useredit/"+user.id} style={{textDecoration: "none", color: "blue"}}>
+                                        {user.username}#{user.personal_id}
+                                    </Link>
+                                </TableCell>
                                 <TableCell>{user.name} {user.surname}</TableCell>
                                 <TableCell> { user.status } </TableCell>
-                                <TableCell>45/45 <Button>Edit</Button></TableCell>
+                                <TableCell>45/45</TableCell>
+                                <TableCell>
+                                    <IconButton><Link to={"/useredit/"+user.id} style={{textDecoration: "none", color: "blue"}}>
+                                        <EditIcon />
+                                    </Link></IconButton>
+                                </TableCell>
                             </TableRow>
                             )
                         }
