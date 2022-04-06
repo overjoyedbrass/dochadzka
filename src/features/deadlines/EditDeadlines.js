@@ -28,7 +28,8 @@ export const EditDeadlines = () => {
     }
 
     return (
-    <div className="app-content" style={{width: "fit-content"}}>
+    <div className="app-content">
+        <h1>Termíny pre pridávanie dovolenky a práceneschopnosti</h1>
         <DateController viewDate={viewDate} onChange={setViewDate} type="year"/>
         <DeadlinesLoader viewDate={viewDate}/>
     </div>
@@ -73,9 +74,8 @@ const DeadlinesDisplayer = ({deadlines, fromDatabase}) => {
     }
 
     return (<>
-        <h3>Deadliny pridávania dovolenky a práceneschopnosti</h3>
         {fromDatabase ? null : <h4>Ešte nie je v databáze</h4>}
-        <form onSubmit={submit}>
+        <form onSubmit={submit} style={{maxWidth: "20em"}}>
             {mesiace.map((mesiac, index) => 
                 <div className="labelWithInput" key={mesiac}>
                     <label htmlFor={mesiac}>{mesiac}</label>
@@ -90,16 +90,14 @@ const DeadlinesDisplayer = ({deadlines, fromDatabase}) => {
                     />
                 </div>
             )}
-            <div className="wrapper">
-                <Button 
-                    style={{width: "fit-content"}} 
-                    variant="contained" 
-                    type="submit"
-                    color={fromDatabase ? "primary" : "success"}
-                >
-                    {fromDatabase ? "Zmeniť" : "+ Pridať"}
-                </Button>
-            </div>
+            <Button 
+                style={{width: "fit-content"}} 
+                variant="contained" 
+                type="submit"
+                color={fromDatabase ? "primary" : "success"}
+            >
+                {fromDatabase ? "Zmeniť" : "+ Pridať"}
+            </Button>
         </form>
         </>
         )

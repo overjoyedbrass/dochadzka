@@ -2,8 +2,10 @@ import React from 'react'
 
 
 import { DateController} from '../../components/DateController'
-import { useGetAbsencesQuery } from '../api/apiSlice'
+import { useGetRequestsQuery } from '../api/apiSlice'
 import { Spinner } from '../../components/Spinner.js'
+import { useLocation } from 'react-router-dom'
+
 import {
     Table,
     TableContainer,
@@ -12,46 +14,67 @@ import {
     TableRow,
     Paper,
     TableHead,
-    Button
+    Button,
+    ButtonGroup
 } from '@mui/material'
-
 import { format, parseISO } from 'date-fns'
 
-export const Btrips = () => {
-    const [viewDate, setViewDate] = React.useState(new Date())
+
+function useQuery() {
+    const { search } = useLocation();
+    return React.useMemo(() => new URLSearchParams(search), [search]);
+}
 
 
+
+export const Requests = () => {
+    const query = useQuery()
+    const year = query.get("year")
+
+    const [viewDate, setViewDate] = React.useState(year ? new Date(year) : new Date())
+    const [filter, setFilter] = React.useState(2)
 
     return (
         <div className="app-content">
-            <h3>Pracovné cesty</h3>
-            <DateController viewDate={viewDate} onChange={setViewDate}/>
-            <BtripsLoader viewDate={viewDate}/>
+            <h1>Žiadosti</h1>
+            <div className="wrapper" style={{margin: "0.25em 0"}}>
+                <DateController viewDate={viewDate} onChange={setViewDate} type="year"/>
+                <ButtonGroup>
+                    <Button onClick={() => setFilter(2)} variant={filter === 2 ? "contained" : "outlined"}>Všetky</Button>
+                    <Button onClick={() => setFilter(1)} variant={filter === 1 ? "contained" : "outlined"}>Potvrdené</Button>
+                    <Button onClick={() => setFilter(0)} variant={filter === 0 ? "contained" : "outlined"}>Nepotvrdené</Button>
+                </ButtonGroup>
+            </div>
+
+            <RequestsLoader viewDate={viewDate} filter={filter}/>
         </div>
     )
 }
 
-const BtripsLoader = ({viewDate}) => {
+const RequestsLoader = ({viewDate, filter}) => {
     const{
-        data: absences=[],
+        data,
         isLoading,
         isSuccess,
         isError,
         error,
         isFetching
-    } = useGetAbsencesQuery({year: viewDate.getFullYear(), month: viewDate.getMonth()})
-
+    } = useGetRequestsQuery(viewDate.getFullYear())
 
     if(isLoading || isFetching){
         return <Spinner />
     }
+    let absences;
+    if(filter < 2)
+        absences = data.filter(ab => ab.confirmation === filter)
+    else absences = data
 
     return (
-        <MemoizedBtrips absences={absences}/>
+        <RequestDisplayer absences={absences}/>
     )
 }
 
-const BtripsDisplayer = ({absences}) => {
+const RequestDisplayer = ({absences}) => {
     return (
         <TableContainer component={Paper}>
             <Table stickyHeader aria-label="users table">
@@ -75,7 +98,10 @@ const BtripsDisplayer = ({absences}) => {
                                 <TableCell>{ab.from_time} - {ab.to_time}</TableCell>
                                 <TableCell>{ab.description}</TableCell>
                                 <TableCell>
-                                    <Button variant="outlined" color="success">Potvrdiť</Button>
+                                    {ab.confirmation ? 
+                                    <Button variant="contained" color="success">Potvrdené</Button> :
+                                    <Button variant="outlined" color="success">Potvrdiť</Button> 
+                                    }
                                 </TableCell>
                             </TableRow>)
                     }
@@ -84,7 +110,5 @@ const BtripsDisplayer = ({absences}) => {
         </TableContainer>
     )
 }
-
-const MemoizedBtrips = React.memo(BtripsDisplayer)
 
 

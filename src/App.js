@@ -15,8 +15,9 @@ import { UserProfile } from './features/users/UserProfile.js';
 import { UserManagment } from './features/users/UserManagment.js';
 import { UserEdit } from './features/users/UserEdit.js';
 import { EditDeadlines } from './features/deadlines/EditDeadlines.js';
-import { Btrips } from './features/absences/Btrips.js';
+import { Requests } from './features/absences/Requests';
 import { Holidays } from './features/holidays/Holidays.js';
+
 function App() {
   return (             
         <Router>
@@ -25,10 +26,10 @@ function App() {
             <Routes>
                 <Route exact path="/" element = {<AbsenceController />} />
                 <Route path="/profile" element = {<UserProfile />} />
-                <Route path="/usermanagment" element = {<UserManagment />} />
-                <Route path="/useredit/:id" element = {<UserEdit />} />
+                <Route path="/users" element = {<UserManagment />} />
+                <Route path="/users/:id" element = {<UserEdit />} />
                 <Route path="/deadlines" element = {<EditDeadlines />} />
-                <Route path="/btrips" element = {<Btrips />} />
+                <Route path="/requests" element = {<Requests />} />
                 <Route path="/holidays" element = {<Holidays />} />
             </Routes>
             <ToastContainer 

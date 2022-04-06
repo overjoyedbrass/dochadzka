@@ -25,6 +25,15 @@ export const apiSlice = createApi({
                 }
             }
         }),
+        getRequests: builder.query({
+            query: (year) => {
+                const params = { year, request: 1 }
+                return {
+                    url: 'absences',
+                    params: params
+                }
+            }
+        }),
         updateAbsences: builder.mutation({
             query: ({data}) => ({
                 url: 'absences',
@@ -56,6 +65,7 @@ export const apiSlice = createApi({
 export const { 
     useGetAbsencesQuery,
     useUpdateAbsencesMutation,
+    useGetRequestsQuery,
     useGetDeadlinesQuery,
     useGetHolidaysQuery
 } = apiSlice

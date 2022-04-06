@@ -13,6 +13,8 @@ export const absenceTypes = [
     "Iná neprítomnosť"
 ]
 
+export const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
 export function formatFromTo(from, to){
     if(isFullDay(from, to)){
         return "Celý deň"

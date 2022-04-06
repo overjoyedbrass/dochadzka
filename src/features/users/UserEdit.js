@@ -6,7 +6,7 @@ import { selectUserById } from './usersSlice.js'
 import {
     TextField,
     FormControl,
-    Select,
+    NativeSelect,
     MenuItem,
     Button
 } from '@mui/material'
@@ -37,8 +37,7 @@ export const UserEdit = () => {
 }
 
 const UserEditForm = ({user}) => {
-
-    const [holidaysLimit, setHolidaysLimit] = React.useState(user.holidays)
+    
     const [personalId, setPersonalId] = React.useState(user.personal_id)
     const [name, setName] = React.useState(user.name)
     const [surname, setSurname] = React.useState(user.surname)
@@ -76,19 +75,8 @@ const UserEditForm = ({user}) => {
 
     return (
         <div className="app-content">
-            <h3>Editácia používateľa: {user.name} {user.surname}</h3>
+            <h1>Editácia používateľa: {user.name} {user.surname}</h1>
             <FormControl>
-                <div className="labelWithInput">
-                <label htmlFor="holidays">Počet dní dovolenky (pre rok {today.getFullYear()})</label>
-                <TextField
-                    id="holidays"
-                    size="small"
-                    onChange={(e) => setHolidaysLimit(e.target.value)}
-                    value={holidaysLimit}
-                    placeholder="Počet dní dovolenky"
-                    type="number"
-                /></div>
-
                 {form_fields}
 
                 <div className="labelWithInput">
@@ -104,22 +92,23 @@ const UserEditForm = ({user}) => {
 
 
                 <div className="labelWithInput">
-                    <div htmlFor="rola" className="fieldlabel">Rola: </div>
-                    <Select 
+                    <label htmlFor="rola" className="fieldlabel">Rola: </label>
+                    <NativeSelect 
                         size="small"
                         defaultValue="1"
                         displayEmpty={true}
+                        id="rola"
                         onChange={(e)=> setRole(e.target.value)}
                     >   
-                        <MenuItem value={1}>Používateľ</MenuItem>
-                        <MenuItem value={2}>Administrátor</MenuItem>
-                        <MenuItem value={3}>Sekretárka</MenuItem>
-                        <MenuItem value={4}>Vedúci katedry</MenuItem>
-                        <MenuItem value={0}>Deaktivovaný</MenuItem>
-                    </Select>
+                        <option value={1}>Používateľ</option>
+                        <option value={2}>Administrátor</option>
+                        <option value={3}>Sekretárka</option>
+                        <option value={4}>Vedúci katedry</option>
+                        <option value={0}>Deaktivovaný</option>
+                    </NativeSelect>
                 </div>
 
-                <Button variant="contained" onClick={submit} style={{width: "fit-content"}}> Potvrdiť údaje </Button>
+                <Button variant="contained" onClick={submit} style={{width: "fit-content"}}> Uložiť zmeny </Button>
 
 
 

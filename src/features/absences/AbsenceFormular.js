@@ -98,7 +98,7 @@ export const AbsenceFormular = ({onClose, dates, setPickedDates}) => {
                 {absenceTypes.map((d, i) => <MenuItem key={i} value={d}>{d}</MenuItem>)}
             </Select><br/><br/>
             <label htmlFor="popis">{popisText}: </label>
-            <TextField id="popis" onChange={event => setDescription(event.target.value)}multiline sx={{width: "90%"}} helperText="Nepovinné">{description}</TextField><br/><br/>
+            <TextField id="popis" onChange={event => setDescription(event.target.value)} multiline sx={{width: "90%"}} helperText="Nepovinné">{description}</TextField><br/><br/>
 
             <Button variant="outlined" onClick={() => onClose()}>Zrušiť</Button>
             <Button color="success" sx={{float:"right"}} variant="contained" onClick={() => submit()}>Pridať</Button>

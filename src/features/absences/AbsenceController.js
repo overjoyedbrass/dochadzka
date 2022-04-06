@@ -92,7 +92,7 @@ const AbsenceMiddleware = ({viewDate, userId, calendarDisplay}) => {
         isError,
         error,
         isFetching
-    } = useGetAbsencesQuery({year: viewDate.getFullYear(), month: viewDate.getMonth(), userid: userId})
+    } = useGetAbsencesQuery({year: viewDate.getFullYear(), month: viewDate.getMonth() + 1, userid: userId})
 
     const groupedAbsences = []
     for(let i = 1; i <= 31; i++){

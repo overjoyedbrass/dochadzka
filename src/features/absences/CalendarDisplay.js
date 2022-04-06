@@ -95,7 +95,7 @@ export const CalendarDisplay = ({selectedDates, viewDate, absences, controlFunct
     let row = [] 
     //premenna datumu v cykle
     var cycledDate = startOfMonth(viewDate)
-    const skok = getDay(cycledDate)
+    const skok = getDay(cycledDate)-1
     //prazdne bunky pred prvym dňom
     for(let i = 1; i <= skok; i++){
         row.push((<TableCell key={i%7}/>))

@@ -7,8 +7,7 @@ import {
     IconButton,
     Button,
     TextField,
-    MenuItem,
-    Select,
+    NativeSelect,
 } from '@mui/material'
 import { Close } from '@mui/icons-material'
 
@@ -81,19 +80,19 @@ export const CreateUserDialog = ({open, onClose}) => {
             <DialogContent> 
                 { formFields }
                 <div className="labelWithInput">
-                    <div htmlFor="rola" className="fieldlabel">Rola: </div>
-                    <Select 
-                        size="small"
+                    <label htmlFor="rola" className="fieldlabel">Rola: </label>
+                    <NativeSelect 
+                        id="rola"
                         defaultValue="1"
                         displayEmpty={true}
                         onChange={(e)=> setRole(e.target.value)}
                     >   
-                        <MenuItem value={1}>Používateľ</MenuItem>
-                        <MenuItem value={2}>Administrátor</MenuItem>
-                        <MenuItem value={3}>Sekretárka</MenuItem>
-                        <MenuItem value={4}>Vedúci katedry</MenuItem>
-                        <MenuItem value={0}>Deaktivovaný</MenuItem>
-                    </Select>
+                        <option value={1}>Používateľ</option>
+                        <option value={2}>Administrátor</option>
+                        <option value={3}>Sekretárka</option>
+                        <option value={4}>Vedúci katedry</option>
+                        <option value={0}>Deaktivovaný</option>
+                    </NativeSelect>
                 </div>
 
                 <div className="labelWithInput" style={{marginTop: "2em"}}>

@@ -12,16 +12,16 @@ export const DateController = ({viewDate, onChange, type="month", button=true}) 
     const addMonth = () => onChange(add(viewDate, {months: 1}))
 
     const type_int = type === "month"
+    const today = new Date()
         
     return (
         <div className="date-controller">
-            {button ? <Button variant="outlined" onClick={() => onChange(new Date())}>
-                Dnes
-            </Button> : null }
-
             <Button onClick={type_int ? subMonth : subYear}>{"<"}</Button>
             <b>{type_int ? displaySelectedMonth(viewDate) : viewDate.getFullYear()}</b>
             <Button onClick={type_int ? addMonth : addYear}>{">"}</Button>
+            {button ? <Button variant="outlined" onClick={() => onChange(new Date())}>
+                Dnes
+            </Button> : null }
         </div>
         )
 }

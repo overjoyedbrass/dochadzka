@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { selectLoggedBoolean } from '../features/auth/authSlice.js'
 export const Navbar = () => {
     const loggedBoolean = useSelector(selectLoggedBoolean)
@@ -8,11 +8,40 @@ export const Navbar = () => {
     return (
         <nav>
             <div className="navLinks">
-                <Link to="/">Neprítomnosti</Link>
-                {loggedBoolean ? <Link to="/usermanagment">Správa používateľov</Link> : null }
-                {loggedBoolean ? <Link to="/deadlines">Termíny</Link> : null }
-                {loggedBoolean ? <Link to="/holidays">Voľné dni</Link> : null }
-                {loggedBoolean ? <Link to="/btrips">Pracovné cesty</Link> : null }
+                <NavLink 
+                    className={({ isActive }) => "nav-link" + (isActive ? " activated" : "")}
+                    end to="/"
+                >
+                    Neprítomnosti
+                </NavLink>
+
+                <NavLink 
+                    to="/users"
+                    className={({ isActive }) => "nav-link" + (isActive ? " activated" : "")}
+                >
+                    Správa používateľov
+                </NavLink>
+
+                <NavLink 
+                    to="/deadlines"
+                    className={({ isActive }) => "nav-link" + (isActive ? " activated" : "")}
+                >
+                    Termíny
+                </NavLink>
+
+                <NavLink 
+                    to="/holidays"
+                    className={({ isActive }) => "nav-link" + (isActive ? " activated" : "")}
+                >
+                    Voľné dni
+                </NavLink>
+
+                <NavLink 
+                    to="/requests"
+                    className={({ isActive }) => "nav-link" + (isActive ? " activated" : "")}
+                >
+                    Žiadosti
+                </NavLink>
             </div>
         </nav>
     )

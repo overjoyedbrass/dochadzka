@@ -30,7 +30,7 @@ export const UserManagment = () => {
     }
     return (
         <div className="app-content">
-            <h3 style={{flex: "0 0 auto"}}>Správa používateľov</h3>
+            <h1 style={{flex: "0 0 auto"}}>Správa používateľov</h1>
             <Button 
                 style={{width:"fit-content", margin: "1em 0"}} 
                 variant="contained"
@@ -55,7 +55,7 @@ export const UserManagment = () => {
                             users.map(user => 
                             <TableRow key={ user.id }>
                                 <TableCell>
-                                    <Link to={"/useredit/"+user.id} style={{textDecoration: "none", color: "blue"}}>
+                                    <Link to={"/users/"+user.id} style={{textDecoration: "none", color: "blue"}}>
                                         {user.username}#{user.personal_id}
                                     </Link>
                                 </TableCell>
@@ -63,7 +63,7 @@ export const UserManagment = () => {
                                 <TableCell> { user.status } </TableCell>
                                 <TableCell>45/45</TableCell>
                                 <TableCell>
-                                    <IconButton><Link to={"/useredit/"+user.id} style={{textDecoration: "none", color: "blue"}}>
+                                    <IconButton><Link to={"/users/"+user.id} style={{textDecoration: "none", color: "blue"}}>
                                         <EditIcon />
                                     </Link></IconButton>
                                 </TableCell>
