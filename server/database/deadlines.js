@@ -1,9 +1,9 @@
 const query = require('./query.js')
 
 module.exports = {
-    getDeadlineByYearMonth: (year, month) => {
-        const arguments = [year, month]
-        const SQL = "SELECT * FROM deadlines WHERE year = ? AND month = ?"
+    getDeadlinesByYear: (year) => {
+        const arguments = [year]
+        const SQL = "SELECT * FROM deadlines WHERE year = ?"
         return query(SQL, arguments)
     },
     insert: (data) => {

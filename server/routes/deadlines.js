@@ -4,12 +4,13 @@ var router = express.Router();
 var deadlines = require("../database/deadlines.js")
 
 router.get('/', async (req, res) => {
-    const [year, month] = [req.query.year, req.query.month]
-    if(!year || !month){
+    const year = req.query.year
+    
+    if(!year){
         res.status(400).end()
         return
     }
-    const data = await deadlines.getDeadlineByYearMonth(year, month)
+    const data = await deadlines.getDeadlinesByYear(year)
     res.send(data)
 });
 

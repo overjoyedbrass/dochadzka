@@ -3,13 +3,13 @@ var router = express.Router();
 var holidays = require('../database/holidays.js')
 
 router.get('/', async (req, res) => {
-    const [month, year] = [req.query.month, req.query.year]
+    const year = req.query.year
 
-    if(!month || !year){
+    if(!year){
         res.status(400).end()
         return
     }
-    const data = await holidays.getHolidaysByYearMonth(year, month)
+    const data = await holidays.getHolidaysByYear(year)
     res.send(data)
 });
 

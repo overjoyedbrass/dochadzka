@@ -15,6 +15,8 @@ import {
     Button
 } from '@mui/material'
 
+import { format, parseISO } from 'date-fns'
+
 export const Btrips = () => {
     const [viewDate, setViewDate] = React.useState(new Date())
 
@@ -69,7 +71,7 @@ const BtripsDisplayer = ({absences}) => {
                         absences.map(ab => 
                             <TableRow key={ ab.id }>
                                 <TableCell>{ab.user_id}</TableCell>
-                                <TableCell>{ab.date_time}</TableCell>
+                                <TableCell>{format(parseISO(ab.date_time), "dd.MM.yyyy")}</TableCell>
                                 <TableCell>{ab.from_time} - {ab.to_time}</TableCell>
                                 <TableCell>{ab.description}</TableCell>
                                 <TableCell>
