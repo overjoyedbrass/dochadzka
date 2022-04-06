@@ -3,12 +3,12 @@ var router = express.Router();
 const holidays_budget = require('../database/holidays_budget.js')
 
 router.get('/', async (req, res) => {
-    const userId = req.query.user_id
-    if(!userId){
+    const year = req.query.year
+    if(!year){
         res.status(400).end()
         return
     }
-    const data = await holidays_budget.getHolidaysBudgetByUser(userId)
+    const data = await holidays_budget.getHolidaysBudgetByYear(year)
     res.send(data)
 });
 

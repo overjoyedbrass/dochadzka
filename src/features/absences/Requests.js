@@ -18,8 +18,8 @@ import {
     ButtonGroup
 } from '@mui/material'
 import { format, parseISO } from 'date-fns'
-
-
+import { AbsenceAuthor } from './AbsenceAuthor'
+import { formatFromTo } from '../../helpers/helpers.js'
 function useQuery() {
     const { search } = useLocation();
     return React.useMemo(() => new URLSearchParams(search), [search]);
@@ -93,9 +93,9 @@ const RequestDisplayer = ({absences}) => {
                     {
                         absences.map(ab => 
                             <TableRow key={ ab.id }>
-                                <TableCell>{ab.user_id}</TableCell>
                                 <TableCell>{format(parseISO(ab.date_time), "dd.MM.yyyy")}</TableCell>
-                                <TableCell>{ab.from_time} - {ab.to_time}</TableCell>
+                                <TableCell><AbsenceAuthor userId={ab.user_id}/></TableCell>
+                                <TableCell>{formatFromTo(ab.from_time, ab.to_time)}</TableCell>
                                 <TableCell>{ab.description}</TableCell>
                                 <TableCell>
                                     {ab.confirmation ? 

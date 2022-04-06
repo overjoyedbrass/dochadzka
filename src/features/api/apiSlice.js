@@ -58,6 +58,22 @@ export const apiSlice = createApi({
                     params: params
                 }
             }
+        }),
+        getHolidaysBudget: builder.query({
+            query: (year) => {
+                const params = { year }
+                return {
+                    url: 'holidays_budget',
+                    params: params
+                }
+            },
+            transformResponse: responseData => {
+                let data = {}
+                responseData.forEach(b => {
+                    data[b.user_id] = b.num
+                })
+                return data
+            }
         })
     })
 })
@@ -67,5 +83,6 @@ export const {
     useUpdateAbsencesMutation,
     useGetRequestsQuery,
     useGetDeadlinesQuery,
-    useGetHolidaysQuery
+    useGetHolidaysQuery,
+    useGetHolidaysBudgetQuery
 } = apiSlice

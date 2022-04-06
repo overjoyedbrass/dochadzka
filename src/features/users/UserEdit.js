@@ -96,7 +96,6 @@ const UserEditForm = ({user}) => {
                     <NativeSelect 
                         size="small"
                         defaultValue="1"
-                        displayEmpty={true}
                         id="rola"
                         onChange={(e)=> setRole(e.target.value)}
                     >   

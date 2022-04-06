@@ -17,6 +17,7 @@ import { UserEdit } from './features/users/UserEdit.js';
 import { EditDeadlines } from './features/deadlines/EditDeadlines.js';
 import { Requests } from './features/absences/Requests';
 import { Holidays } from './features/holidays/Holidays.js';
+import { Budgets } from './features/holidays/Budgets.js';
 
 function App() {
   return (             
@@ -31,6 +32,7 @@ function App() {
                 <Route path="/deadlines" element = {<EditDeadlines />} />
                 <Route path="/requests" element = {<Requests />} />
                 <Route path="/holidays" element = {<Holidays />} />
+                <Route path="/budgets" element = {<Budgets />} />
             </Routes>
             <ToastContainer 
                 position="top-center"

@@ -84,7 +84,6 @@ export const CreateUserDialog = ({open, onClose}) => {
                     <NativeSelect 
                         id="rola"
                         defaultValue="1"
-                        displayEmpty={true}
                         onChange={(e)=> setRole(e.target.value)}
                     >   
                         <option value={1}>Používateľ</option>
