@@ -28,7 +28,20 @@ const week = [
     'nedeľa'
 ]
 
-const AbsenceBox = ({absence, funOnClick}) => {
+export const AbsenceBox = ({absence, funOnClick, empty, size, day}) => {
+    if(empty){
+        return (
+        <div
+            className="absence-box"
+            style={{background: mainTheme.palette.primary.light, whiteSpace: "pre-wrap"}}
+            onClickCapture={(e) => {
+                e.nativeEvent.stopPropagation()
+                funOnClick(day)
+            }}
+        >
+            Zobraziť ďalšie ({size})
+        </div>)
+    }
     return (
         <div 
             className="absence-box" 
@@ -45,7 +58,10 @@ const AbsenceBox = ({absence, funOnClick}) => {
     )
 }
 
-const CalendarCell = ({isToday, day, absences, functions}) => {        
+const CalendarCell = ({isToday, day, absences, functions}) => {  
+    const MAX_PER_CELL = 4
+    const overflow = absences.length > MAX_PER_CELL
+    const show_4th = !overflow && absences.length === MAX_PER_CELL
     return (
         <div 
             className="calendar-cell"
@@ -61,9 +77,10 @@ const CalendarCell = ({isToday, day, absences, functions}) => {
             <div 
                 className="absences-container"
             >
-                {absences.map((absence) => 
-                (<AbsenceBox key={absence.id} absence={absence} funOnClick={functions.edit}/>))
-                }
+                {absences.map((absence, index) => index < 3 ? 
+                    (<AbsenceBox key={absence.id} absence={absence} funOnClick={functions.detail}/>) : null)}
+                {show_4th ? <AbsenceBox key={absences[MAX_PER_CELL-1].id} absence={absences[MAX_PER_CELL-1]} funOnClick={functions.detail}/> : null}
+                {overflow ? <AbsenceBox day={day} empty={true} size={absences.length-MAX_PER_CELL+1} funOnClick={functions.showMore} /> : null }
             </div>
         </div>
     ) 

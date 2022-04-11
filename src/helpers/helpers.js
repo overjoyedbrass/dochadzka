@@ -13,11 +13,11 @@ export const absenceTypes = [
     "Iná neprítomnosť"
 ]
 export const roles = [
+    'Deaktivovaný',
     'Používateľ',
     'Administrátor',
     'Sekretárka',
     'Vedúci katedry',
-    'Deaktivovaný'
 ]
 
 export const clamp = (num, min, max) => Math.min(Math.max(num, min), max);

@@ -55,6 +55,7 @@ export const AbsenceController = () => {
                 <UserSelect 
                     onChange={setSelectedUser} 
                     selected={selectedUser}
+                    onlyActive={true}
                 />
                 <span style={{marginLeft: "2em", display: "flex", alignItems: "center"}}>Zobrazenie: </span>
                 <ButtonGroup>

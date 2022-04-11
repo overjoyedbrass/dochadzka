@@ -39,3 +39,5 @@ export const selectUsersData = createSelector(
 
 export const { selectAll: selectAllUsers, selectById: selectUserById } =
   usersAdapter.getSelectors(state => selectUsersData(state) ?? initialState)
+
+export const selectAllActiveUsers = state => selectAllUsers(state).filter(u => u.status > 0)

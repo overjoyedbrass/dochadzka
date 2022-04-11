@@ -61,12 +61,10 @@ const DeadlinesDisplayer = ({deadlines, fromDatabase}) => {
 
     const [formState, setFormState] = React.useState(ddlines)
 
-    React.useEffect(()=> {
-        setFormState(ddlines)
-    }, [deadlines])
+    React.useEffect(() => setFormState(ddlines), [deadlines])
 
     const handleChange = ({target: { name, value }}) =>
-        setFormState((prev) => ({ ...prev, [name]: value }))
+        setFormState((prev) => ({ ...prev, [parseInt(name)]: parseInt(value) }))
 
     function submit(e){
         e.preventDefault()
@@ -80,7 +78,7 @@ const DeadlinesDisplayer = ({deadlines, fromDatabase}) => {
                 <div className="labelWithInput" key={mesiac}>
                     <label htmlFor={mesiac}>{mesiac}</label>
                     <TextField 
-                        name={toString(index)}
+                        name={(index+1).toString()}
                         id={mesiac}
                         size="small"
                         type="number"

@@ -1,10 +1,10 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { selectAllUsers } from './usersSlice'
+import { selectAllUsers, selectAllActiveUsers } from './usersSlice'
 import { FormControl, Select, MenuItem } from '@mui/material'
 
-export const UserSelect = ({ selected, onChange }) => {
-    const allUsers = useSelector(selectAllUsers)
+export const UserSelect = ({ selected, onChange, onlyActive }) => {
+    const allUsers = useSelector(onlyActive ? selectAllActiveUsers : selectAllUsers)
     return (
         <FormControl
             sx={{display: "inline-block"}}

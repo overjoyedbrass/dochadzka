@@ -39,7 +39,10 @@ export const Holidays = () => {
             <h1>Voľné dni</h1>
             <div className="wrapper">
                 <DateController viewDate={viewDate} onChange={setViewDate} type="year" button={false}/>
-                <Button onClick={() => setOpen(true)} variant="contained" color="success">+ Pridať</Button>
+                <div className="wrapper">
+                    { holidays.length === 0 ? <Button variant="contained" color="success" style={{marginRight: "4em"}}>Skopírovať z roku 2022</Button> : null }
+                    <Button onClick={() => setOpen(true)} variant="contained" color="success">+ Pridať</Button>
+                </div>
             </div>
             {
                 isLoading || isFetching ? (<Spinner />) :
@@ -92,7 +95,6 @@ const VolneDniDisplayer = ({holidays}) => {
         { holidays.length === 0 ? 
             (<div>
                 <h3>Žiadne voľné dni</h3>
-                <Button variant="contained" color="success">Skopírovať z posledného vyplneného roku</Button>
             </div>) : null
         }
         </>

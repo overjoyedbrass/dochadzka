@@ -70,7 +70,7 @@ export const apiSlice = createApi({
             transformResponse: responseData => {
                 let data = {}
                 responseData.forEach(b => {
-                    data[b.user_id] = b.num
+                    data[b.user_id] = Math.round(b.num)
                 })
                 return data
             }

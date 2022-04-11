@@ -1,11 +1,11 @@
 import React from 'react'
 import { useGetHolidaysBudgetQuery } from '../api/apiSlice.js'
 import { useSelector} from 'react-redux'
-import { selectAllUsers } from '../users/usersSlice'
+import { selectAllActiveUsers } from '../users/usersSlice'
 import { DateController } from '../../components/DateController'
-
+import { Spinner } from '../../components/Spinner'
 import {
-    Table, TableContainer, TableBody, TableHead, TableRow, TableCell, Button, IconButton, TextField
+    Table,  TableBody, TableHead, TableRow, TableCell, Button, IconButton, TextField
 } from '@mui/material'
 import { Edit } from '@mui/icons-material'
 
@@ -16,7 +16,7 @@ function roundNumberOrText(number){
     return Math.round(number)
 }
 export const Budgets = () => {
-    const users = useSelector(selectAllUsers)
+    const users = useSelector(selectAllActiveUsers)
     const [editId, setEditId] = React.useState(0)
     const [viewDate, setViewDate] = React.useState(new Date())
 
@@ -29,87 +29,56 @@ export const Budgets = () => {
         refetch
     } = useGetHolidaysBudgetQuery(viewDate.getFullYear())
 
-    return (
-        <div className="app-content">
-            <h1>Maximálny počet dovoleniek</h1>
-            <DateController viewDate={viewDate} type="year" onChange={setViewDate}/>
+    const [formState, setFormState] = React.useState(budgets)
+    const handleChange = ({target: { name, value }}) => 
+        setFormState((prev) => ({ ...prev, [parseInt(name)]: parseInt(value) }))
 
-            <TableContainer>
-                <Table stickyHeader>
-                    <TableHead>
-                        <TableCell style={{fontSize: "1em"}}>Zamestnanec</TableCell>
-                        <TableCell style={{fontSize: "1em"}}>Limit</TableCell>
-                        <TableCell style={{fontSize: "1em"}}>Upraviť</TableCell>
-                    </TableHead>
-                    <TableBody>
-                        {users.map(u => (
-                            <TableRow>
-                                <TableCell style={{fontSize: "1em"}}>{u.surname} {u.name}</TableCell>
-
-                                    {
-                                    u.id === editId ? 
-                                        <EditBudget 
-                                            userId={u.id} 
-                                            onClose={() => setEditId(0)}
-                                            budget={budgets[u.id] ?? 0}
-                                        /> :
-                                        <TableCell style={{fontSize: "1em"}}>
-                                            {roundNumberOrText(budgets[u.id])}
-                                        </TableCell>
-                                    }
-
-                                {u.id !== editId ? 
-                                <TableCell style={{fontSize: "1em"}}>
-                                    <IconButton
-                                        color="primary"
-                                        onClick={() => setEditId(u.id)}
-                                        ><Edit />
-                                    </IconButton>
-                                </TableCell> : null}
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </div>
-    )
-}
-
-
-const EditBudget = ({userId, onClose, budget}) => {
-    const [num, setNum] = React.useState(Math.round(budget))
-    const [changed, setChanged] = React.useState(false)
-    function submit(e){
-        if(!changed){
-            onClose()
-            return
+    var changed = false
+    for(let u of users){
+        if(budgets[u.id] !== formState[u.id]){
+            changed = true
         }
-        
-        onClose()
     }
 
+    React.useEffect(() => {
+        setFormState(budgets)
+    }, [budgets])
+    
     return (
-        <>
-        <TableCell>
-            <TextField
-                type="number"
-                size="small"
-                value={num}
-                style={{maxWidth:"5em"}}
-                onChange={(e) => {
-                    setNum(e.target.value)
-                    setChanged(true)
-                }}
-            />
-        </TableCell>
-        <TableCell>
-            <Button 
-                variant="contained"
-                onClick={submit}
-            >
-                Potvrdiť
-            </Button>
-        </TableCell>
-        </>
+        <div className="app-content">
+            <h1>Maximálny počet dovolenkových dní</h1>
+            <div className="wrapper">
+                <DateController viewDate={viewDate} type="year" onChange={setViewDate}/>
+                <Button variant="contained" disabled={!changed}>Uložiť</Button>
+            </div>
+            { isFetching || isLoading ? <Spinner /> :
+            <Table stickyHeader>
+                <TableHead>
+                    <TableRow>
+                        <TableCell style={{fontSize: "1em"}}>Zamestnanec</TableCell>
+                        <TableCell style={{fontSize: "1em"}}>Aktuálna hodnota</TableCell>
+                        <TableCell style={{fontSize: "1em"}}>Nová hodnota</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {users.map(u => (
+                        <TableRow key={u.id}>
+                            <TableCell style={{fontSize: "1em"}}>{u.surname} {u.name}</TableCell>
+                            <TableCell style={{fontSize: "1em"}}>{budgets[u.id] ? budgets[u.id] : "Neurčené"}</TableCell>
+                            <TableCell style={{fontSize: "1em"}}>
+                                <TextField
+                                    name={u.id.toString()}
+                                    type="number"
+                                    size="small"
+                                    value={formState[u.id] ?? 0}
+                                    style={{maxWidth:"6em"}}
+                                    onChange={ handleChange }
+                                />
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>}
+        </div>
     )
 }

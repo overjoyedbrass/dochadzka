@@ -40,10 +40,10 @@ export const Login = () => {
         try {
             const token = await login(formState).unwrap()
             localStorage.token = JSON.stringify(token)
-            toast("Prihlásenie úspešné", {type: "success", id: 33, position: toast.POSITION.TOP_RIGHT})
+            toast("Prihlásenie úspešné", {type: "success", id: 33, position: toast.POSITION.TOP})
             setOpen(false)
         } catch (err) {
-            toast("Prihlásenie neúspešné. Nesprávne meno alebo heslo", {type: "error",  position: toast.POSITION.TOP_RIGHT})
+            toast("Prihlásenie neúspešné. Nesprávne meno alebo heslo", {type: "error",  position: toast.POSITION.TOP})
         }
     }
     function handleEnter(event){

@@ -21,7 +21,7 @@ export const Navbar = () => {
                 <NavLink 
                     to="/budgets"
                     className={({ isActive }) => "nav-link" + (isActive ? " activated" : "")}
-                > Budgets </NavLink>
+                > Dovolenky </NavLink>
 
                 <NavLink 
                     to="/deadlines"

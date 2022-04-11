@@ -12,6 +12,7 @@ import {
 } from '@mui/material'
 
 import {  ConfirmDialog } from '../../components/ConfirmDialog'
+import { AbsenceEditDialog } from './AbsenceEditDialog.js'
 
 import { Close } from '@mui/icons-material'
 import { selectLoggedUser } from '../auth/authSlice'
@@ -21,6 +22,7 @@ export const AbsenceDetailDialog = ({open, absence, onClose, openEdit}) => {
     const loggedUser = useSelector(selectLoggedUser)
     
     const [openConfirm, setOpenConfirm] = React.useState(false)
+    const [openEditDialog, setOpenEditDialog] = React.useState(false)
 
     if(!open){
         return null
@@ -30,10 +32,9 @@ export const AbsenceDetailDialog = ({open, absence, onClose, openEdit}) => {
         <Dialog
             open={open}
             onClose={onClose}
-            maxWidth="sm"
-            fullWidth
+            maxWidth="xs"
         >
-            <DialogTitle>
+            <DialogTitle style={{marginRight: "2em"}}>
                 {absence ? "Neprítomnosť: " + format(new Date(absence.date_time), "dd.MM.yy") : ""}
             </DialogTitle>
             <IconButton
@@ -59,7 +60,7 @@ export const AbsenceDetailDialog = ({open, absence, onClose, openEdit}) => {
                     </Button>
 
                     <Button
-                        onClick={openEdit}
+                        onClick={() => setOpenEditDialog(true)}
                         variant='contained'
                     >
                         Upraviť
@@ -80,6 +81,11 @@ export const AbsenceDetailDialog = ({open, absence, onClose, openEdit}) => {
                 setOpenConfirm(false)
                 onClose()
             }}
+        />
+        <AbsenceEditDialog 
+            open={openEditDialog}
+            onClose={() => setOpenEditDialog(false)}
+            absence={absence}
         />
         </>
     )

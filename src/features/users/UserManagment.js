@@ -31,10 +31,10 @@ export const UserManagment = () => {
     const navigate = useNavigate()
     let users
     if(filter === 0){
-        users = allusers.filter(u => u.status === 4)
+        users = allusers.filter(u => u.status === 0)
     }
     else if(filter === 1){
-        users = allusers.filter(u => u.status !== 4)
+        users = allusers.filter(u => u.status > 0)
     }
     else {
         users = allusers
@@ -64,7 +64,7 @@ export const UserManagment = () => {
                 <Table stickyHeader aria-label="users table">
                     <TableHead>
                         <TableRow>
-                            <TableCell style={{fontSize: "1em"}}>Používateľ</TableCell>
+                            <TableCell style={{fontSize: "1em"}}>Zamestnanec</TableCell>
                             <TableCell style={{fontSize: "1em"}}>Rola</TableCell>
                             <TableCell style={{fontSize: "1em"}}>Dovolenka</TableCell>
                             <TableCell style={{fontSize: "1em"}}>Upraviť</TableCell>

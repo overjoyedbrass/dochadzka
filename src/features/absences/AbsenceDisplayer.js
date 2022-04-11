@@ -9,6 +9,7 @@ import { mainTheme } from '../../helpers/themes'
 import Draggable from 'react-draggable'
 import { CalendarDisplay } from './CalendarDisplay'
 import { AbsencesList } from './AbsencesList'
+import { ShowMoreAbsencesDialog } from './ShowMoreAbsencesDialog'
 
 import { 
     IconButton,
@@ -32,8 +33,8 @@ export const AbsenceDisplayer = ({viewDate, absences, calendarDisplay}) => {
     const [open, setOpen] = React.useState(false)
     const [dates, setPickedDates] = React.useState([])
 
-    const [isDetailDialogOpened, setDetailDialogOpened] = React.useState({isOpen: false, absence: null})
-    const [isEditDialogOpened, setEditDialogOpened] = React.useState(false)
+    const [detailDialog, setDetailDialog] = React.useState({isOpen: false, absence: null})
+    const [moreDialog, setMoreDialog] = React.useState({isOpen: false, day: null})
 
     const [adding, setIsAdding] = React.useState(true)
     const [hovering, setHovering] = React.useState(false)
@@ -64,7 +65,7 @@ export const AbsenceDisplayer = ({viewDate, absences, calendarDisplay}) => {
     }
 
     function openDetailDialog (ab) {
-        setDetailDialogOpened({isOpen: true, absence: ab})
+        setDetailDialog({isOpen: true, absence: ab})
     }
 
     function mouseDown (event, clickedDay) {
@@ -111,6 +112,10 @@ export const AbsenceDisplayer = ({viewDate, absences, calendarDisplay}) => {
         hoveredDate.setDate(hoveredDay)
         addRemoveDay(hoveredDate, adding)
     }
+
+    function showMore(day){
+        setMoreDialog({isOpen: true, day: day})
+    }
     return (
         <>
         { calendarDisplay ? 
@@ -121,8 +126,9 @@ export const AbsenceDisplayer = ({viewDate, absences, calendarDisplay}) => {
                     mdown: mouseDown,
                     hover: handleHover,
                     dc: doubleClick,
-                    edit: openDetailDialog,
-                    setHovering: setHovering
+                    detail: openDetailDialog,
+                    setHovering: setHovering,
+                    showMore: showMore
                 }}
                 absences={absences}
                 selectedDates={dates}
@@ -160,17 +166,17 @@ export const AbsenceDisplayer = ({viewDate, absences, calendarDisplay}) => {
         }
 
         <AbsenceDetailDialog 
-            onClose={() => setDetailDialogOpened({isOpen: false, absence: null})}
-            openEdit={() => setEditDialogOpened(true)}
-            open={isDetailDialogOpened.isOpen}
-            absence={isDetailDialogOpened.absence}
+            onClose={() => setDetailDialog({isOpen: false, absence: null})}
+            open={detailDialog.isOpen}
+            absence={detailDialog.absence}
         />
-        { isEditDialogOpened ? 
-        <AbsenceEditDialog 
-            open={isEditDialogOpened}
-            onClose={() => setEditDialogOpened(false)}
-            absence={isDetailDialogOpened.absence}
-        /> : null}
+
+        <ShowMoreAbsencesDialog 
+            onClose={() => setMoreDialog({isOpen: false, day: null})}
+            absences={absences[moreDialog.day]}
+            open={moreDialog.isOpen}
+            onDetail={openDetailDialog}
+        />
         </>
     )
 }
