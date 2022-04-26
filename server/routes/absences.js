@@ -34,7 +34,10 @@ router.get('/', async (req, res) => {
 
 router.post('/',  async(req, res) => {
     const data = req.body
+
     absences.insert(data)
+
+    
     res.send("OK")
 })
 

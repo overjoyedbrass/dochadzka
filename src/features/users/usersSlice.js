@@ -23,11 +23,29 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
                 responseData.sort(compareUsersByName)
                 return usersAdapter.setAll(initialState, responseData)
             }
+        }),
+        updateUser: builder.mutation({
+            query: (data) => ({
+                url: `users/${data.id}`,
+                method: 'PATCH',
+                body: data
+            })
+        }),
+        createUser: builder.mutation({
+            query: (data) => ({
+                url: 'users',
+                method: "POST",
+                body: data
+            })
         })
     })
 })
   
-export const { useGetUsersQuery } = extendedApiSlice
+export const { 
+    useGetUsersQuery, 
+    useUpdateUserMutation,
+    useCreateUserMutation
+ } = extendedApiSlice
 
 
 export const selectUsersResult = extendedApiSlice.endpoints.getUsers.select()

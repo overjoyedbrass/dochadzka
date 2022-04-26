@@ -16,6 +16,7 @@ export const apiSlice = createApi({
     tagTypes: ['Absence'],
 
     endpoints: builder => ({
+        // ABSENCES
         getAbsences: builder.query({
             query: ({year, month, userid}) => {
                 const params = { year, month, userid }
@@ -41,6 +42,7 @@ export const apiSlice = createApi({
                 body: data
             })
         }),
+        // DEADLINES
         getDeadlines: builder.query({
             query: (year) => {
                 const params = { year }
@@ -50,6 +52,16 @@ export const apiSlice = createApi({
                 }
             }
         }),
+        insertDeadlines: builder.query({
+            query: (data) => ({
+                url: "deadlines",
+                method: "POST",
+                body: data
+            })
+        }),
+
+        // HOLIDAYS
+
         getHolidays: builder.query({
             query: (year) => {
                 const params = { year }
@@ -59,6 +71,17 @@ export const apiSlice = createApi({
                 }
             }
         }),
+
+        insertHolidays: builder.query({
+            query: (data) => ({
+                url: "holidays",
+                method: "POST",
+                body: data
+            })
+        }),
+
+        // budgets
+
         getHolidaysBudget: builder.query({
             query: (year) => {
                 const params = { year }
@@ -74,6 +97,14 @@ export const apiSlice = createApi({
                 })
                 return data
             }
+        }),
+
+        insertHolidaysBudget: builder.query({
+            query: (data) => ({
+                url: "holidays_budget",
+                method: "POST",
+                body: data
+            })
         })
     })
 })

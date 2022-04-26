@@ -37,7 +37,7 @@ export const Requests = () => {
     return (
         <div className="app-content">
             <h1>Žiadosti</h1>
-            <div className="wrapper" style={{margin: "0.25em 0"}}>
+            <div className="wrapper" style={{marginBottom: "0.25em"}}>
                 <DateController viewDate={viewDate} onChange={setViewDate} type="year"/>
                 <ButtonGroup>
                     <Button onClick={() => setFilter(2)} variant={filter === 2 ? "contained" : "outlined"}>Všetky</Button>
@@ -89,7 +89,7 @@ const RequestDisplayer = ({absences}) => {
                 </TableHead>
                 <TableBody>
                     { absences.length === 0 ? 
-                        <TableRow style={{alignItems: "center"}}colSpan={5}>Žiadne pracovné cesty</TableRow> : null}
+                        <TableRow style={{alignItems: "center"}} colSpan={5}>Žiadne pracovné cesty</TableRow> : null}
                     {
                         absences.map(ab => 
                             <TableRow key={ ab.id }>

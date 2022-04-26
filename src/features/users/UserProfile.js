@@ -7,21 +7,50 @@ import {
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { selectLoggedUser } from '../auth/authSlice'
+import { useUpdateUserMutation } from './usersSlice'
+import { Spinner } from '../../components/Spinner'
+import { toast } from 'react-toastify'
+
 
 export const UserProfile = () => {
     const user = useSelector(selectLoggedUser)
-    
-    const [username, setUsername] = React.useState(user.username)
-    const [email, setEmail] = React.useState(user.email)
-    const [password, setPassword] = React.useState("")
-    const [newPassword, setNewPassword] = React.useState("")
-    const [newPassAgain, setNewPassAgain] = React.useState("")
 
-    function submit(){
-        
+    const [formState, setFormState] = React.useState({
+        username: user.username,
+        email: user.email,
+        password: "",
+        newPassword: "",
+        newPassAgain: "",
+    })
 
+    const handleChange = ({target: { name, value }}) =>
+        setFormState((prev) => ({ ...prev, [name]: value }))
+
+    const [updateUser, { isLoading }] = useUpdateUserMutation()
+    async function submit(){
+        try {
+            const result = await updateUser({
+                id: user.id,
+                username: formState.username,
+                email: formState.email,
+                password: formState.password,
+                newPassword: formState.newPassword
+            }).unwrap()
+
+            console.log("RESPONSE",JSON.stringify(result))
+
+            toast("Zmena údajov úspešná", {type: "success", id: 33, position: toast.POSITION.TOP})
+        }
+        catch (err){
+            toast("Zmena údajov neprebehla úspešne. Nesprávne heslo", {type: "error",  position: toast.POSITION.TOP})
+            console.log(err)
+        }
     }
-
+    if(isLoading){
+        return (
+            <Spinner />
+        )
+    }
 
     if(!user) {
         return (
@@ -36,52 +65,57 @@ export const UserProfile = () => {
             <FormControl>
                 <label htmlFor="username" className="profile-label">Prihlasovacie meno: </label>
                 <TextField
+                    name="username"
                     style={{width:"fit-content"}}
                     id="username"
                     placeholder="Používateľské meno"
                     size="small"
-                    value={username} 
-                    onChange={(e) => setUsername(e.target.value)}
+                    value={formState.username} 
+                    onChange={handleChange}
                 />
 
                 <label htmlFor="email" className="profile-label">Email: </label>
                 <TextField
+                    name="email"
                     style={{width:"fit-content"}}
                     id="email"
                     placeholder="E-mail"
                     size="small"
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={formState.email} 
+                    onChange={handleChange}
                 />
 
                 <label htmlFor="newPassword" className="profile-label">Prihlasovacie heslo:</label>
                 <TextField
+                    name="newPassword"
                     style={{width:"fit-content"}}
                     id="newPassword"
                     placeholder="Nové heslo"
                     size="small"
-                    value={newPassword} 
+                    value={formState.newPassword} 
                     type="password"
-                    onChange={(e) => setNewPassword(e.target.value)}
+                    onChange={handleChange}
                 />
                 <TextField
+                    name="newPassAgain"
                     style={{width:"fit-content", marginTop: "0.5em"}}
                     placeholder="Nové heslo znovu"
                     size="small"
-                    value={newPassAgain} 
+                    value={formState.newPassAgain} 
                     type="password"
-                    onChange={(e) => setNewPassAgain(e.target.value)}
+                    onChange={handleChange}
                 />
 
                 <label htmlFor="password" className="profile-label">Súčasné heslo pre potvrdenie zmien: </label>
                 <TextField
+                    name="password"
                     id="password"
                     style={{width:"fit-content"}}
                     placeholder="Súčasné heslo"
                     size="small"
-                    value={password} 
+                    value={formState.password} 
                     type="password"
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={handleChange}
                 />
                 <Button variant="contained" style={{width: "fit-content", marginTop: "2em"}} onClick={submit}>Potvrdiť údaje</Button>
                 

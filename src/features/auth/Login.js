@@ -16,6 +16,7 @@ import {
     MenuItem
  } from '@mui/material'
  import { Close, AccountCircle } from '@mui/icons-material'
+ import { Spinner } from '../../components/Spinner'
 
 import './Login.css'
 
@@ -83,6 +84,7 @@ export const Login = () => {
                 onKeyDown={handleEnter}
             />
         </div>
+        { isLoading ? <Spinner /> : null}
         <div className="labelWithInput" style={{marginTop: "2em"}}>
             <Button onClick={() => setOpen(false)} variant="outlined">Zavrieť</Button>
             <Button onClick={submit} variant="contained">Prihlásiť</Button>

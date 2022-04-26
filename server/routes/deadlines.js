@@ -16,7 +16,9 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
     const data = req.body
+
     await deadlines.insert(data)
+    
     res.send("OK")
 })
 module.exports = router;

@@ -10,7 +10,8 @@ router.post('/', async (req, res) => {
     const req_password = req.body.password
     
     if(!req_username || !req_password){
-        res.status(401).end()
+        res.status(401)
+        res.end()
         return
     }
 

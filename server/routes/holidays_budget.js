@@ -12,4 +12,13 @@ router.get('/', async (req, res) => {
     res.send(data)
 });
 
+
+router.post('/', async (req, res) => {
+    const data = req.body
+
+    // await holidays_budget.insert(data)
+    
+    res.end()
+})
+
 module.exports = router;

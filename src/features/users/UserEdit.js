@@ -1,13 +1,12 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { selectUserById } from './usersSlice.js'
+import { selectUserById, useUpdateUserMutation } from './usersSlice.js'
 
 import {
     TextField,
     FormControl,
     NativeSelect,
-    MenuItem,
     Button
 } from '@mui/material'
 
@@ -49,7 +48,9 @@ const UserEditForm = ({user}) => {
     const hooks = [setPersonalId, setName, setSurname, setEmail, setUsername, setPassword]
     const values = [personalId, name, surname, email, username, password]
 
-    const today = new Date()
+
+    const [ updateUser, { isLoading }] = useUpdateUserMutation()
+
     const form_fields = []
     let i = 0
     for(const [key, value] of Object.entries(field_names)){
@@ -69,8 +70,9 @@ const UserEditForm = ({user}) => {
         ))
         i++
     } 
-    function submit(e){
 
+    function submit(e){
+        
     }
 
     return (
