@@ -13,7 +13,7 @@ export const apiSlice = createApi({
             return headers
         },
     }),
-    tagTypes: ['Absence', "Holidays", "Deadlines", "Users"],
+    tagTypes: ['Absence', "Holidays", "Deadlines", "Users", "UNAUTHORIZED"],
 
     endpoints: builder => ({
         // ABSENCES
@@ -27,13 +27,13 @@ export const apiSlice = createApi({
             },
             providesTags: (result, error, arg) =>
                 result
-                ? [...result.map(({ id }) => ({ type: 'Absence', id })), 'Absences']
-                : ['Absences'],
+                ? [...result.map(({ id }) => ({ type: 'Absence', id })), 'Absences', "UNAUTHORIZED"]
+                : ['Absences', "UNAUTHORIZED"],
         }),
 
         getAbsence: builder.query({
             query: (id) => `absences/${id}`,
-            providesTags: (result, error, id) => [{ type: 'Absence', id }],
+            providesTags: (result, error, id) => [{ type: 'Absence', id }, "UNAUTHORIZED"],
         }),
         insertAbsences: builder.mutation({
             query: (absences) => ({
@@ -91,7 +91,7 @@ export const apiSlice = createApi({
                     params: params
                 }
             },
-            providesTags: ["Deadlines"]
+            providesTags: ["Deadlines", "UNAUTHORIZED"]
         }),
         insertDeadlines: builder.mutation({
             query: ({year, ...data}) => ({
@@ -113,7 +113,7 @@ export const apiSlice = createApi({
                     params: params
                 }
             },
-            providesTags: ['Holidays']
+            providesTags: ['Holidays', "UNAUTHORIZED"]
         }),
 
         insertHoliday: builder.mutation({
@@ -158,7 +158,7 @@ export const apiSlice = createApi({
                 })
                 return data
             },
-            providesTags: ["Budgets"]
+            providesTags: ["Budgets", "UNAUTHORIZED"]
         }),
 
         insertHolidaysBudget: builder.mutation({
@@ -167,7 +167,7 @@ export const apiSlice = createApi({
                 method: "PUT",
                 body: data
             }),
-            invalidatesTags: ["Budgets"]
+            invalidatesTags: ["Budgets", "UNAUTHORIZED"]
         }),
     })
 })

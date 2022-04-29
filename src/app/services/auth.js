@@ -8,8 +8,18 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
                 method: 'POST',
                 body: credentials,
             }),
+            invalidatesTags: ["UNAUTHORIZED"]
+        }),
+        logout: builder.mutation({
+            query: () => ({
+                url: 'logout'
+            }),
+            invalidatesTags: ["UNAUTHORIZED"]
         })
     })
 })
 
-export const { useLoginMutation } = extendedApiSlice
+export const { 
+    useLoginMutation,
+    useLogoutMutation,
+} = extendedApiSlice

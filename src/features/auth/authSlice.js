@@ -30,6 +30,14 @@ const authSlice = createSlice({
                 state.token = payload.token
             }
         )
+        builder.addMatcher(
+            apiSlice.endpoints.logout.matchFulfilled,
+            (state, { payload }) => {
+                localStorage.token = null
+                state.user = {}
+                state.token = ""
+            }
+        )
     },
 })
 

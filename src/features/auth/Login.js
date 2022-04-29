@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useLoginMutation } from '../../app/services/auth'
+import { useLoginMutation, useLogoutMutation } from '../../app/services/auth'
 
 import { selectCurrentAuth, selectLoggedUser } from './authSlice'
 import { useDispatch, useSelector } from 'react-redux'
@@ -42,11 +42,13 @@ export const Login = () => {
             const token = await login(formState).unwrap()
             localStorage.token = JSON.stringify(token)
             toast("Prihlásenie úspešné", {type: "success", id: 33, position: toast.POSITION.TOP})
+            setFormState({username: "", password: ""})
             setOpen(false)
         } catch (err) {
             toast("Prihlásenie neúspešné. Nesprávne meno alebo heslo", {type: "error",  position: toast.POSITION.TOP})
         }
     }
+
     function handleEnter(event){
         if(event.keyCode === 13){
             submit()
@@ -142,7 +144,18 @@ const DropMenu = ({navigate}) => {
     const handleClose = () => {
         setAnchorEl(null);
     };
-    
+
+    const [logout, { isLoggingOut }] = useLogoutMutation()
+
+    async function doLogout(){
+        try {
+            await logout().unwrap()
+            toast("Boli ste odhlásený", {type: "warning", id: 33, position: toast.POSITION.TOP})
+        }
+        catch(err){
+            console.log(err)
+        }
+    }    
     return (
         <div>
         <IconButton
@@ -174,9 +187,8 @@ const DropMenu = ({navigate}) => {
             <MenuItem 
                 onClick={() => {
                     handleClose()
-                    localStorage.token = ""
+                    doLogout()
                     navigate("/")
-                    window.location.href = "/"
                 }}>
                     Odhlásiť sa
             </MenuItem>

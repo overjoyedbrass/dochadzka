@@ -24,14 +24,22 @@ app.use(express.static("public"))
 
 // jwt middleware
 app.use(
-    jwt({secret: process.env.SECRET_TOKEN, algorithms: ['HS256']}).unless({ path: ['/api/login', '/api/users', '/api/absences']})
+    jwt({secret: process.env.SECRET_TOKEN, algorithms: ['HS256']}).unless({ path: ['/api/login','/api/logout', '/api/users', '/api/absences']})
 )
+
+// DUMMY LOGOUT QUERY USEFULL FOR
+// LOGOUTING IN APP USING RTK QUERY + TAG INVALIDATORS
+app.get('/api/logout', (req, res) => {
+    res.end()
+})
 
 const routes = ['login', 'users', 'absences', 'deadlines', 'holidays', 'holidays_budget']
 routes.forEach(route => {
     const mw = require(`./routes/${route}`)
     app.use(`/api/${route}`, mw)
 })
+
+
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
