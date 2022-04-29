@@ -13,35 +13,75 @@ export const apiSlice = createApi({
             return headers
         },
     }),
-    tagTypes: ['Absence'],
+    tagTypes: ['Absence', "Holidays", "Deadlines", "Users"],
 
     endpoints: builder => ({
         // ABSENCES
         getAbsences: builder.query({
-            query: ({year, month, userid}) => {
-                const params = { year, month, userid }
+            query: ({year, month, userid, rq_only}) => {
+                const params = { year, month, userid, rq_only }
                 return {
                     url: 'absences',
                     params: params
                 }
-            }
+            },
+            providesTags: (result, error, arg) =>
+                result
+                ? [...result.map(({ id }) => ({ type: 'Absence', id })), 'Absences']
+                : ['Absences'],
         }),
-        getRequests: builder.query({
-            query: (year) => {
-                const params = { year, request: 1 }
-                return {
-                    url: 'absences',
-                    params: params
+
+        getAbsence: builder.query({
+            query: (id) => `absences/${id}`,
+            providesTags: (result, error, id) => [{ type: 'Absence', id }],
+        }),
+        insertAbsences: builder.mutation({
+            query: (absences) => ({
+                url: "absences",
+                method: "POST",
+                body: absences
+            }),
+            invalidatesTags: ["Absences"]
+        }),
+        updateAbsence: builder.mutation({
+            query: ({id, ...patch}) => ({
+                url: `absences/${id}`,
+                method: 'PATCH',
+                body: patch
+            }),
+            invalidatesTags: ["Absences"]
+        }),
+
+        confirmAbsence: builder.mutation({
+            query: ({id, ...patch}) => ({
+                url: `absences/${id}`,
+                method: 'PATCH',
+                body: patch
+            }),
+            async onQueryStarted(params, { dispatch, queryFulfilled }) {
+                const patchResult = dispatch(
+                    apiSlice.util.updateQueryData('getAbsences', {year: params.year, rq_only: params.rq_only}, draft => {
+                        const absence = draft.find(ab => ab.id === params.id)
+                        if (absence) {
+                            absence.confirmation = params.confirmation
+                        }
+                    })
+                )
+                try {
+                    await queryFulfilled
+                } catch {
+                    patchResult.undo()
                 }
-            }
+              }
         }),
-        updateAbsences: builder.mutation({
-            query: ({data}) => ({
-                url: 'absences',
-                method: 'POST',
-                body: data
-            })
+        deleteAbsence: builder.mutation({
+            query: (id) => ({
+                url: `absences/${id}`,
+                method: 'DELETE'
+            }),
+            invalidatesTags: ["Absences"]
         }),
+
         // DEADLINES
         getDeadlines: builder.query({
             query: (year) => {
@@ -50,14 +90,17 @@ export const apiSlice = createApi({
                     url: 'deadlines',
                     params: params
                 }
-            }
+            },
+            providesTags: ["Deadlines"]
         }),
-        insertDeadlines: builder.query({
-            query: (data) => ({
+        insertDeadlines: builder.mutation({
+            query: ({year, ...data}) => ({
                 url: "deadlines",
-                method: "POST",
+                params: { year },
+                method: "PUT",
                 body: data
-            })
+            }),
+            invalidatesTags: ["Deadlines"]
         }),
 
         // HOLIDAYS
@@ -69,15 +112,33 @@ export const apiSlice = createApi({
                     url: 'holidays',
                     params: params
                 }
-            }
+            },
+            providesTags: ['Holidays']
         }),
 
-        insertHolidays: builder.query({
+        insertHoliday: builder.mutation({
             query: (data) => ({
                 url: "holidays",
                 method: "POST",
                 body: data
-            })
+            }),
+            invalidatesTags: ["Holidays"]
+        }),
+        updateHoliday: builder.mutation({
+            query: ({id, ...patch}) => ({
+                url: `holidays/${id}`,
+                method: "PATCH",
+                body: patch
+            }),
+            invalidatesTags: ["Holidays"]
+        }),
+
+        deleteHoliday: builder.mutation({
+            query: (id) => ({
+                url: `holidays/${id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["Holidays"]
         }),
 
         // budgets
@@ -96,24 +157,39 @@ export const apiSlice = createApi({
                     data[b.user_id] = Math.round(b.num)
                 })
                 return data
-            }
+            },
+            providesTags: ["Budgets"]
         }),
 
-        insertHolidaysBudget: builder.query({
-            query: (data) => ({
-                url: "holidays_budget",
-                method: "POST",
+        insertHolidaysBudget: builder.mutation({
+            query: ({year, ...data}) => ({
+                url: `holidays_budget?year=${year}`,
+                method: "PUT",
                 body: data
-            })
-        })
+            }),
+            invalidatesTags: ["Budgets"]
+        }),
     })
 })
 
 export const { 
     useGetAbsencesQuery,
-    useUpdateAbsencesMutation,
+    useGetAbsenceQuery,
+    useUpdateAbsenceMutation,
+    useConfirmAbsenceMutation,
     useGetRequestsQuery,
+    useInsertAbsencesMutation,
+    useDeleteAbsenceMutation,
+
     useGetDeadlinesQuery,
+    useInsertDeadlinesMutation,
+
     useGetHolidaysQuery,
-    useGetHolidaysBudgetQuery
+    useInsertHolidayMutation,
+    useUpdateHolidayMutation,
+    useDeleteHolidayMutation,
+
+    useGetHolidaysBudgetQuery,
+    useInsertHolidaysBudgetMutation
+
 } = apiSlice

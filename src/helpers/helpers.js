@@ -61,3 +61,8 @@ export function datesSameMonth(d1, d2){
 export function datesAreSame(d1, d2){
     return d1.getYear() === d2.getYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate()
 }
+
+export function lastDayOfMonth(month, year){
+    var lastDay = new Date(year, month, 0);
+    return lastDay.getDate()
+}

@@ -22,21 +22,24 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
             transformResponse: responseData => {
                 responseData.sort(compareUsersByName)
                 return usersAdapter.setAll(initialState, responseData)
-            }
+            },
+            providesTags: ["Users"]
         }),
         updateUser: builder.mutation({
             query: (data) => ({
                 url: `users/${data.id}`,
                 method: 'PATCH',
                 body: data
-            })
+            }),
+            invalidatesTags: ["Users"]
         }),
         createUser: builder.mutation({
             query: (data) => ({
                 url: 'users',
                 method: "POST",
                 body: data
-            })
+            }),
+            invalidatesTags: ["Users"]
         })
     })
 })

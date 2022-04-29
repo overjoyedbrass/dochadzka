@@ -2,13 +2,14 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { selectUserById, useUpdateUserMutation } from './usersSlice.js'
-
+import { toast } from 'react-toastify'
 import {
     TextField,
     FormControl,
     NativeSelect,
     Button
 } from '@mui/material'
+import { Spinner } from '../../components/Spinner.js'
 
 const field_names = {
     personal_id: "Osobné číslo",
@@ -36,70 +37,137 @@ export const UserEdit = () => {
 }
 
 const UserEditForm = ({user}) => {
-    
-    const [personalId, setPersonalId] = React.useState(user.personal_id)
-    const [name, setName] = React.useState(user.name)
-    const [surname, setSurname] = React.useState(user.surname)
-    const [email, setEmail] = React.useState(user.email)
-    const [username, setUsername] = React.useState(user.username)
-    const [password, setPassword] = React.useState("")
-    const [role, setRole] = React.useState(user.status)
+    const [formState, setFormState] = React.useState({
+        personalId: user.personal_id,
+        name:       user.name,
+        surname:    user.surname,
+        email:      user.email,
+        username:   user.username,
+        password:   "",
+        status:     user.status
+    })
 
-    const hooks = [setPersonalId, setName, setSurname, setEmail, setUsername, setPassword]
-    const values = [personalId, name, surname, email, username, password]
-
+    const handleChange = ({target: { name, value }}) =>
+        setFormState((prev) => ({ ...prev, [name]: value }))
 
     const [ updateUser, { isLoading }] = useUpdateUserMutation()
 
-    const form_fields = []
-    let i = 0
-    for(const [key, value] of Object.entries(field_names)){
-        const index = i
-        form_fields.push((
-            <div key={key} className="labelWithInput">
-                <label htmlFor={key}>{value}</label>
-                <TextField
-                    id={key}
-                    size="small"
-                    onChange={(e) => hooks[index](e.target.value)}
-                    value={values[index]}
-                    type={ key === "personal_id" ? "number" : "text"}
-                    placeholder={value}
-                />
-            </div>
-        ))
-        i++
-    } 
+    async function submit(e){
+        e.preventDefault()
 
-    function submit(e){
-        
+        try {
+            const result = await updateUser({
+                id: user.id,
+                ...formState,
+                password: formState.password ? formState.password : null
+            }).unwrap()
+            toast("Zmena údajov úspešná", {type: "success", id: 33, position: toast.POSITION.TOP})
+
+            setFormState({
+                ...formState,
+                newPassword: "",
+                newPassAgain: "",
+                password: ""
+            })
+        }
+        catch (err){
+            toast("Zmena údajov neprebehla úspešne.", {type: "error",  position: toast.POSITION.TOP})
+            console.log(err)
+        }
     }
 
     return (
         <div className="app-content">
             <h1>Editácia používateľa: {user.name} {user.surname}</h1>
-            <FormControl>
-                {form_fields}
+            <form onSubmit={submit}>
+                <div className="labelWithInput">
+                    <label htmlFor="personalId">Osobné číslo</label>
+                    <TextField
+                        id="personalId"
+                        name="personalId"
+                        size="small"
+                        onChange={handleChange}
+                        value={formState.personalId}
+                        required={true}
+                        placeholder="Osobné číslo"
+                    />
+                </div>
+
+                
+                <div className="labelWithInput">
+                    <label htmlFor="name">Meno</label>
+                    <TextField
+                        id="name"
+                        name="name"
+                        size="small"
+                        onChange={handleChange}
+                        value={formState.name}
+                        required={true}
+                        placeholder="Meno"
+                    />
+                </div>
+                
+                <div className="labelWithInput">
+                    <label htmlFor="surname">Priezvisko</label>
+                    <TextField
+                        id="surname"
+                        name="surname"
+                        size="small"
+                        onChange={handleChange}
+                        value={formState.surname}
+                        required={true}
+                        placeholder="Priezvisko"
+                    />
+                </div>
+                
+                <div className="labelWithInput">
+                    <label htmlFor="email">Email</label>
+                    <TextField
+                        id="email"
+                        name="email"
+                        size="small"
+                        onChange={handleChange}
+                        value={formState.email}
+                        required={true}
+                        placeholder="Email"
+                    />
+                </div>
 
                 <div className="labelWithInput">
-                <label htmlFor="password">Prihlasovacie heslo</label>
-                <TextField
-                    id="password"
-                    size="small"
-                    onChange={(e) => setPassword(e.target.value)}
-                    value={password}
-                    type="password"
-                    placeholder="Nové heslo pre používateľa"
-                /></div>
+                    <label htmlFor="username">Prihlasovacie meno</label>
+                    <TextField
+                        id="username"
+                        name="username"
+                        size="small"
+                        onChange={handleChange}
+                        value={formState.username}
+                        required={true}
+                        placeholder="Prihlasovacie meno"
+                    />
+                </div>
+
+                <div className="labelWithInput">
+                    <label htmlFor="password">Prihlasovacie heslo</label>
+                    <TextField
+                        id="password"
+                        name="password"
+                        size="small"
+                        onChange={handleChange}
+                        value={formState.password}
+                        type="password"
+                        placeholder="Nové heslo pre používateľa"
+                    />
+                </div>
 
 
                 <div className="labelWithInput">
                     <label htmlFor="rola" className="fieldlabel">Rola: </label>
-                    <NativeSelect 
+                    <NativeSelect
+                        name="status"
                         size="small"
-                        defaultValue="1"
+                        value={formState.status}
                         id="rola"
-                        onChange={(e)=> setRole(e.target.value)}
+                        onChange={handleChange}
                     >   
                         <option value={1}>Používateľ</option>
                         <option value={2}>Administrátor</option>
@@ -109,11 +177,17 @@ const UserEditForm = ({user}) => {
                     </NativeSelect>
                 </div>
 
-                <Button variant="contained" onClick={submit} style={{width: "fit-content"}}> Uložiť zmeny </Button>
+                { isLoading ? <Spinner /> :
+                <Button 
+                    variant="contained" 
+                    type="submit" 
+                    style={{width: "fit-content"}}
+                >    
+                    Potvrdiť údaje 
+                </Button>
+                }
 
-
-
-            </FormControl>
+            </form>
         </div>
     )
 }

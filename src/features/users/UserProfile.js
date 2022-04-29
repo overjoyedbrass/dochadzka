@@ -27,19 +27,30 @@ export const UserProfile = () => {
         setFormState((prev) => ({ ...prev, [name]: value }))
 
     const [updateUser, { isLoading }] = useUpdateUserMutation()
-    async function submit(){
+
+    function samePasswords(){
+        return formState.newPassword === formState.newPassAgain
+    }
+
+    async function submit(e){
+        e.preventDefault();
+        if(formState.newPassword !== formState.newPassAgain){
+            toast("Nové heslo sa nezhoduje s opakovaným heslom", {type: "warning", id: 40, position: toast.POSITION.TOP})
+            return
+        }
         try {
             const result = await updateUser({
                 id: user.id,
-                username: formState.username,
-                email: formState.email,
-                password: formState.password,
-                newPassword: formState.newPassword
+                ...formState
             }).unwrap()
-
-            console.log("RESPONSE",JSON.stringify(result))
-
             toast("Zmena údajov úspešná", {type: "success", id: 33, position: toast.POSITION.TOP})
+
+            setFormState({
+                ...formState,
+                newPassword: "",
+                newPassAgain: "",
+                password: ""
+            })
         }
         catch (err){
             toast("Zmena údajov neprebehla úspešne. Nesprávne heslo", {type: "error",  position: toast.POSITION.TOP})
@@ -62,7 +73,10 @@ export const UserProfile = () => {
             <h2 style={{textTransform: "uppercase"}}>Váš profil: {user.name} {user.surname}#{user.personal_id}</h2>
             <h4 style={{margin: "0"}}>Používateľská rola: {user.status}</h4>
 
-            <FormControl>
+            <form
+                className="form-general"
+                onSubmit={submit}
+            >
                 <label htmlFor="username" className="profile-label">Prihlasovacie meno: </label>
                 <TextField
                     name="username"
@@ -85,7 +99,7 @@ export const UserProfile = () => {
                     onChange={handleChange}
                 />
 
-                <label htmlFor="newPassword" className="profile-label">Prihlasovacie heslo:</label>
+                <label htmlFor="newPassword" className="profile-label">Nové prihlasovacie heslo: (pre žiadnu zmenu nechajte prázdne)</label>
                 <TextField
                     name="newPassword"
                     style={{width:"fit-content"}}
@@ -95,6 +109,7 @@ export const UserProfile = () => {
                     value={formState.newPassword} 
                     type="password"
                     onChange={handleChange}
+                    error={!samePasswords()}
                 />
                 <TextField
                     name="newPassAgain"
@@ -104,6 +119,8 @@ export const UserProfile = () => {
                     value={formState.newPassAgain} 
                     type="password"
                     onChange={handleChange}
+                    error={!samePasswords()}
+                    helperText={!samePasswords() ? "Heslá sa nezhodujú" : ""}
                 />
 
                 <label htmlFor="password" className="profile-label">Súčasné heslo pre potvrdenie zmien: </label>
@@ -116,10 +133,10 @@ export const UserProfile = () => {
                     value={formState.password} 
                     type="password"
                     onChange={handleChange}
+                    required={true}
                 />
-                <Button variant="contained" style={{width: "fit-content", marginTop: "2em"}} onClick={submit}>Potvrdiť údaje</Button>
-                
-            </FormControl>
+                <Button type="submit" variant="contained" style={{width: "fit-content", marginTop: "2em"}}>Potvrdiť údaje</Button>
+            </form>
         </div>
     )
 }

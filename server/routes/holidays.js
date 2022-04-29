@@ -13,10 +13,54 @@ router.get('/', async (req, res) => {
     res.send(data)
 });
 
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
     const data = req.body
-    await holidays.insert(data)
-    res.send("OK")
+
+    try {
+        await holidays.insert(data)
+    }
+    catch(err){
+        console.log(err)
+        res.status(400)
+    }
+    res.end()
+})
+
+router.patch('/:id', async (req, res) => {
+    const id = req.params.id
+
+    if(!id){
+        res.status(400)
+        res.end()
+        return
+    }
+
+    const data = req.body
+
+    try {
+        await holidays.update(id, data)
+    }
+    catch(err){
+        console.log(err)
+        res.status(400)
+    }
+
+    res.end()
+})
+
+router.delete("/:id", async (req, res) => {
+    const id = req.params.id
+    if(!id){
+        res.status(400)
+        res.end()
+    }
+    try {
+        await holidays.delete(id)
+    }
+    catch(err){
+        res.status(400)
+    }
+    res.end()
 })
 
 module.exports = router;

@@ -11,7 +11,23 @@ module.exports = {
         return query(SQL, [])
     },
     insert: (data) => {
-        const SQL = "INSERT INTO holidays VALUES(null, ?, ?)"
+        const SQL = "INSERT INTO holidays VALUES(NULL, ?, ?)"
         return query(SQL, [data.date_time, data.description])
+    },
+    delete: (id) => {
+        const SQL = "DELETE FROM holidays WHERE id = ?"
+        return query(SQL, [id])
+    },
+    update(id, patch){
+        const SQL = 
+           `UPDATE holidays
+            SET date_time = COALESCE(?, date_time),
+                description = COALESCE(?, description)
+            WHERE id = ?`;
+        return query(SQL, [
+            patch.date_time,
+            patch.description,
+            id
+        ])
     }
 }

@@ -1,13 +1,16 @@
 import React from 'react'
 import { IconButton, Button, ButtonGroup, TextField, Select, MenuItem, FormControl, FormControlLabel, Checkbox } from "@mui/material"
 import { DeleteForever, Add } from '@mui/icons-material'
+import { useSelector } from 'react-redux'
 
 import { format, parseISO, add } from 'date-fns'
 import { mainTheme } from  "../../helpers/themes.js"
 
 import { absenceTypes, datesAreSame } from '../../helpers/helpers.js'
-import { useUpdateAbsencesMutation } from '../api/apiSlice.js'
+import { useInsertAbsencesMutation } from '../api/apiSlice.js'
+import { selectLoggedUser } from '../auth/authSlice'
 import { toast } from 'react-toastify'
+import { Spinner } from '../../components/Spinner'
 
 export const AbsenceFormular = ({onClose, dates, setPickedDates}) => {
     const [isFullDay, setFullDay] = React.useState(true)
@@ -16,10 +19,12 @@ export const AbsenceFormular = ({onClose, dates, setPickedDates}) => {
     const [toTime, setToTime] = React.useState("16:00")
 
     const [publicValue, setPublic] = React.useState(0)
-    const [type, setType] = React.useState(absenceTypes[0])
+    const [type, setType] = React.useState(1)
     const [description, setDescription] = React.useState("")
 
-    const [addAbsences, { loading }] = useUpdateAbsencesMutation()
+    const [ addAbsences, { isAddingAbsence }] = useInsertAbsencesMutation()
+
+    const user = useSelector(selectLoggedUser)
 
     function updateDates(index, newDate){
         if(newDate === null){
@@ -42,18 +47,30 @@ export const AbsenceFormular = ({onClose, dates, setPickedDates}) => {
     }
 
     async function submit(){
+        const absences = []
+        dates.forEach(d => {
+            absences.push({
+                user_id: user.id,
+                date_time: format(d, "yyyy-MM-dd"),
+                from_time: isFullDay ? "08:00" : fromTime,
+                to_time: isFullDay ? "16:00" : toTime,
+                description: description,
+                type: type,
+                public: publicValue,
+                confirmation: 1
+            })
+        })
+
         try {
-            const response = await addAbsences().unwrap()
-            const data = JSON.stringify(response)
+            await addAbsences(absences).unwrap()
             toast("Pridanie neprítomností úspešne", { type: "success"})
-            //invalidate tags in RTK Query
             onClose(true)
         }
         catch(err){
-            toast("Pridanie neprítomnosti sa nepodarilo, skúste znovu", { type: "error"})
+            toast("Pridanie neprítomnosti sa nepodarilo.", { type: "error"})
         }
     }
-    const popisText = type !== "Dovolenka" ? "Dôvod neprítomnosti" : "Miesto pobytu na dovolenke"
+    const popisText = type !== 1 ? "Dôvod neprítomnosti" : "Miesto pobytu na dovolenke"
     const labelForDni = dates.length <= 1 ? "Deň neprítomnosti: " : `Dni neprítomnosti (${dates.length})`
     
     
@@ -95,13 +112,13 @@ export const AbsenceFormular = ({onClose, dates, setPickedDates}) => {
 
             <label htmlFor="typNeprit">Druh neprítomnosti: </label>
             <Select id="typNeprit" value={type} size="small" onChange={event => setType(event.target.value)}>
-                {absenceTypes.map((d, i) => <MenuItem key={i} value={d}>{d}</MenuItem>)}
+                {absenceTypes.slice(1).map((d, i) => <MenuItem key={i} value={i+1}>{d}</MenuItem>)}
             </Select><br/><br/>
             <label htmlFor="popis">{popisText}: </label>
             <TextField id="popis" onChange={event => setDescription(event.target.value)} multiline sx={{width: "90%"}} helperText="Nepovinné">{description}</TextField><br/><br/>
-
+            {isAddingAbsence ? <Spinner /> : <>
             <Button variant="outlined" onClick={() => onClose()}>Zrušiť</Button>
-            <Button color="success" sx={{float:"right"}} variant="contained" onClick={() => submit()}>Pridať</Button>
+            <Button color="success" sx={{float:"right"}} variant="contained" onClick={() => submit()}>Pridať</Button></>}
         </div>
     )
 }

@@ -1,18 +1,42 @@
 import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, IconButton } from '@mui/material'
 import { Close } from '@mui/icons-material'
 import React from 'react'
-import { clamp } from '../../helpers/helpers.js'
-
-
+import { clamp, lastDayOfMonth } from '../../helpers/helpers.js'
+import { useInsertHolidayMutation } from '../api/apiSlice.js'
+import { toast } from 'react-toastify'
+import format from 'date-fns/esm/format'
+import { Spinner } from '../../components/Spinner'
 export const AddHolidayDialog = ({onClose, year, open}) => {
-    const [day, setDay] = React.useState(1)
-    const [month, setMonth] = React.useState(1)
-    const [name, setName] = React.useState("")
+    const [date, setDate] = React.useState({
+        day: 1,
+        month: 1
+    })
+    const [description, setDescription] = React.useState("")
 
-    function submit(e){
+    const [insertHoliday , { isLoading }] = useInsertHolidayMutation()
+
+    function setNewDate(e){
+        const isDay = e.target.name === "day"
+        setDate({
+            day: clamp(1, isDay ? e.target.value ?? 1 : date.day, lastDayOfMonth(isDay ? date.month : e.target.value ?? 1, year)),
+            month: clamp(1, isDay ? date.month : e.target.value ?? 1, 12)
+        })
+    }
+
+    async function submit(e){
         e.preventDefault()
-        console.log("submit")
-        onClose()
+        try {
+            await insertHoliday({
+                date_time: format(new Date(year, date.month-1, date.day), "yyyy-MM-dd"),
+                description: description
+            }).unwrap()
+            toast("Voľný deň úspešné pridaný", {type: "success", id: 33, position: toast.POSITION.TOP})
+            onClose()
+        }
+        catch(err){
+            console.log(err)
+            toast("Voľný deň sa nepodarilo pridať", {type: "error", id: 33, position: toast.POSITION.TOP})
+        }
     }
 
     return (
@@ -27,18 +51,20 @@ export const AddHolidayDialog = ({onClose, year, open}) => {
                 </IconButton>
             </DialogTitle>
             <DialogContent>
-            <FormControl 
+            <form onSubmit={submit}
                 style={{maxWidth: "20em", width:"100%", display: 'flex', alignItems: 'flex-end'}}
+                className="form-general"
             >
                 <div className="labelWithInput">
                 <label htmlFor="day">Deň: </label>
                 <TextField 
                     id="day"
+                    name="day"
                     size="small"
-                    value={day}
+                    value={date.day}
                     type="number"
-                    style={{width: "4em"}}
-                    onChange={(e) => setDay(clamp(1, parseInt(e.target.value), 31))}
+                    style={{width: "4em"}} 
+                    onChange={setNewDate}
                 />
                 </div>
 
@@ -46,26 +72,26 @@ export const AddHolidayDialog = ({onClose, year, open}) => {
                 <label htmlFor="month">Mesiac: </label>
                 <TextField
                     id="month"
+                    name="month"
                     size="small"
-                    value={month}
+                    value={date.month}
                     type="number"
                     style={{width: "4em"}}
-                    onChange={(e) => setMonth(clamp(1, parseInt(e.target.value), 12))}
+                    onChange={setNewDate}
                 />
                 </div>
 
                 <TextField
                     id="name"
                     size="small"
-                    value={name}
+                    value={description}
                     label="Názov voľného dňa"
-                    multiline
+                    required={true}
                     sx={{width: "100%"}}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => setDescription(e.target.value)}
                 />
-
-                <Button 
-                    onClick={submit} 
+                { isLoading ? <Spinner /> :
+                <Button
                     type="submit" 
                     variant="contained" 
                     color="success" 
@@ -73,8 +99,8 @@ export const AddHolidayDialog = ({onClose, year, open}) => {
                     sx={{float:"right"}}
                 >
                     Pridať
-                </Button>
-            </FormControl>
+                </Button>}
+            </form>
             </DialogContent>
         </Dialog>
     )

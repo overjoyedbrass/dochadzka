@@ -1,13 +1,13 @@
 import React from 'react'
-import { useGetHolidaysBudgetQuery } from '../api/apiSlice.js'
+import { useGetHolidaysBudgetQuery, useInsertHolidaysBudgetMutation } from '../api/apiSlice.js'
 import { useSelector} from 'react-redux'
 import { selectAllActiveUsers } from '../users/usersSlice'
 import { DateController } from '../../components/DateController'
 import { Spinner } from '../../components/Spinner'
 import {
-    Table,  TableBody, TableHead, TableRow, TableCell, Button, IconButton, TextField
+    Table,  TableBody, TableHead, TableRow, TableCell, Button, IconButton, TextField, TableContainer, Paper
 } from '@mui/material'
-import { Edit } from '@mui/icons-material'
+import { toast } from 'react-toastify'
 
 function roundNumberOrText(number){
     if(isNaN(number) || !number){
@@ -16,22 +16,25 @@ function roundNumberOrText(number){
     return Math.round(number)
 }
 export const Budgets = () => {
-    const users = useSelector(selectAllActiveUsers)
-    const [editId, setEditId] = React.useState(0)
+    const users = useSelector(selectAllActiveUsers)    
     const [viewDate, setViewDate] = React.useState(new Date())
 
     const {
         data: budgets={},
-        isSuccess,
         isFetching,
         isLoading,
         isError,
-        refetch
     } = useGetHolidaysBudgetQuery(viewDate.getFullYear())
 
     const [formState, setFormState] = React.useState(budgets)
     const handleChange = ({target: { name, value }}) => 
         setFormState((prev) => ({ ...prev, [parseInt(name)]: parseInt(value) }))
+
+    React.useEffect(() => {
+        if(!isError){
+            setFormState(budgets)
+        }
+    }, [budgets])
 
     var changed = false
     for(let u of users){
@@ -39,20 +42,39 @@ export const Budgets = () => {
             changed = true
         }
     }
-
-    React.useEffect(() => {
-        setFormState(budgets)
-    }, [budgets])
     
+    const [ insertHoliday , { isInserting }] = useInsertHolidaysBudgetMutation()
+    async function submit(e){
+        e.preventDefault();
+        try {
+            await insertHoliday({year: viewDate.getFullYear(), ...formState}).unwrap()
+            toast("Počty dovolenkových dní nastavené!", {type:"success"})
+        }
+        catch(err){
+            toast("Chyba na strane servera.", {type:"error"})
+        }
+    }
+
     return (
         <div className="app-content">
             <h1>Maximálny počet dovolenkových dní</h1>
+            <form 
+                onSubmit={submit}
+                style={{flex: "0 1 auto", display: "flex", flexFlow: "column", overflowY: "auto"}}
+            >
             <div className="wrapper">
                 <DateController viewDate={viewDate} type="year" onChange={setViewDate}/>
-                <Button variant="contained" disabled={!changed}>Uložiť</Button>
+                {isInserting ? <Spinner /> : <Button type={"submit"} variant="contained" disabled={!changed}>Uložiť</Button> }
             </div>
             { isFetching || isLoading ? <Spinner /> :
-            <Table stickyHeader>
+            <TableContainer 
+                component={Paper}
+                sx={{width: "fit-content", margin: "0 auto"}}
+            >
+            <Table 
+                stickyHeader
+                // sx={{width: "fit-content"}}
+            >
                 <TableHead>
                     <TableRow>
                         <TableCell style={{fontSize: "1em"}}>Zamestnanec</TableCell>
@@ -70,7 +92,7 @@ export const Budgets = () => {
                                     name={u.id.toString()}
                                     type="number"
                                     size="small"
-                                    value={formState[u.id] ?? 0}
+                                    value={formState[u.id] ?? ""}
                                     style={{maxWidth:"6em"}}
                                     onChange={ handleChange }
                                 />
@@ -78,7 +100,9 @@ export const Budgets = () => {
                         </TableRow>
                     ))}
                 </TableBody>
-            </Table>}
+            </Table>
+            </TableContainer>}
+            </form>
         </div>
     )
 }

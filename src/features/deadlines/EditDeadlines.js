@@ -1,13 +1,20 @@
 import React from 'react'
 
 import {
-    FormControl,
+    Table,
+    TableRow,
+    TableCell,
+    TableHead,
+    Paper,
+    TableBody,
     Button,
     TextField,
+    TableContainer,
 } from '@mui/material'
 import { DateController } from '../../components/DateController'
-import { useGetDeadlinesQuery } from '../api/apiSlice'
+import { useGetDeadlinesQuery, useInsertDeadlinesMutation } from '../api/apiSlice'
 import { Spinner } from '../../components/Spinner'
+import { toast } from 'react-toastify'
 
 const mesiace = ['Január', 'Február', 'Marec', 'Apríl', 'Máj', 'Jún', 'Júl', 'August', 'September', 'Október', 'November', 'December']
 
@@ -21,22 +28,6 @@ function getInitialDeadlines(){
 
 export const EditDeadlines = () => {
     const [viewDate, setViewDate] = React.useState(new Date())
-
-    function submit(e){
-        e.preventDefault()
-        console.log("submit")
-    }
-
-    return (
-    <div className="app-content">
-        <h1>Termíny pre pridávanie dovolenky a práceneschopnosti</h1>
-        <DateController viewDate={viewDate} onChange={setViewDate} type="year"/>
-        <DeadlinesLoader viewDate={viewDate}/>
-    </div>
-    )
-}
-
-const DeadlinesLoader = ({viewDate}) => {
     const {
         data: deadlines = [],
         isFetching,
@@ -46,57 +37,79 @@ const DeadlinesLoader = ({viewDate}) => {
         error
     } = useGetDeadlinesQuery(viewDate.getFullYear())
 
-    if(isLoading || isFetching){
-        return <Spinner />
-    }
-    return <DeadlinesDisplayer deadlines={deadlines} fromDatabase={deadlines.length}/>
-}
-
-const DeadlinesDisplayer = ({deadlines, fromDatabase}) => {
     const ddlines = getInitialDeadlines()
     for(let i = 0; i < deadlines.length; i++){
         const deadline = deadlines[i]
         ddlines[deadline['month']] = deadline['day']
     }
-
     const [formState, setFormState] = React.useState(ddlines)
+    const [insertDeadlines, { isLoadingInsert }] = useInsertDeadlinesMutation()
+    const handleChange = ({target: { name, value }}) =>
+        setFormState((prev) => ({ ...prev, [parseInt(name)]: value ? parseInt(value) : ""}))
 
     React.useEffect(() => setFormState(ddlines), [deadlines])
 
-    const handleChange = ({target: { name, value }}) =>
-        setFormState((prev) => ({ ...prev, [parseInt(name)]: parseInt(value) }))
-
-    function submit(e){
+    async function submit(e){
         e.preventDefault()
-        console.log("submit")
+        try {
+            await insertDeadlines({year: year, ...formState}).unwrap()
+            toast("Termíny úspešne nastavené", {type: "success", id: 33, position: toast.POSITION.TOP})
+        }
+        catch (err){
+            toast("Nepodarilo sa zmeniť termíny.", {type: "error",  position: toast.POSITION.TOP})
+            console.log(err)
+        }
     }
 
-    return (<>
-        {fromDatabase ? null : <h4>Ešte nie je v databáze</h4>}
-        <form onSubmit={submit} style={{maxWidth: "20em"}}>
-            {mesiace.map((mesiac, index) => 
-                <div className="labelWithInput" key={mesiac}>
-                    <label htmlFor={mesiac}>{mesiac}</label>
-                    <TextField 
-                        name={(index+1).toString()}
-                        id={mesiac}
-                        size="small"
-                        type="number"
-                        value={formState[index+1]}
-                        style={{maxWidth: "4em"}}
-                        onChange={handleChange}
-                    />
-                </div>
-            )}
-            <Button 
-                style={{width: "fit-content"}} 
-                variant="contained" 
-                type="submit"
-                color={fromDatabase ? "primary" : "success"}
+    const inDatabase = Boolean(deadlines.length)
+    const year = viewDate.getFullYear()
+
+    return (
+    <div className="app-content">
+        <h1>Termíny pre pridávanie dovolenky a práceneschopnosti</h1>
+        <form 
+            onSubmit={submit} 
+            style={{flex: "0 1 auto", display: "flex", flexFlow: "column", overflowY: "auto"}}
+        >
+            <div className="labelWithInput">
+                <DateController viewDate={viewDate} onChange={setViewDate} type="year"/>
+                <Button variant="contained" type="submit">Zmeniť</Button>
+            </div>
+            {inDatabase ? null : <h4>Ešte nie je v databáze</h4>}
+            { isLoading || isFetching ? <Spinner /> :
+            <TableContainer 
+                component={Paper}
+                // sx={{width: "fit-content"}}
             >
-                {fromDatabase ? "Zmeniť" : "+ Pridať"}
-            </Button>
+                <Table 
+                    stickyHeader 
+                >
+                    <TableHead>
+                        <TableCell>Mesiac</TableCell>
+                        <TableCell>Hodnota</TableCell>
+                    </TableHead>
+                <TableBody>
+                {mesiace.map((mesiac, index) => 
+                    <TableRow>
+                        <TableCell>{mesiace[index]}</TableCell>
+                        <TableCell>
+                            <TextField 
+                                name={(index+1).toString()}
+                                id={mesiac}
+                                size="small"
+                                type="number"
+                                value={formState[index+1]}
+                                style={{maxWidth: "6em"}}
+                                onChange={handleChange}
+                                required={true}
+                            />
+                        </TableCell>
+                    </TableRow>
+                )}
+                </TableBody>
+            </Table>
+            </TableContainer>}
         </form>
-        </>
-        )
+    </div>
+    )
 }

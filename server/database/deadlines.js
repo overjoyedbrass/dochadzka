@@ -6,9 +6,17 @@ module.exports = {
         const SQL = "SELECT * FROM deadlines WHERE year = ?"
         return query(SQL, arguments)
     },
-    insert: (data) => {
-        const arguments = [data.year, data.month, data.day]
-        const SQL = "INSERT INTO deadlines VALUES (?, ?, ?)"
+    replace: (year, data) => {
+        const MONTHS_COUNT  = 12
+        const arguments = []
+        for(let month = 1; month <= MONTHS_COUNT; month++){
+            arguments.push(year)
+            arguments.push(month)
+            arguments.push(data[String(month)])
+        }
+        const values = Array(MONTHS_COUNT).fill("(?, ?, ?)").join(", ")
+        const SQL = `REPLACE INTO deadlines VALUES ${values}`
+
         return query(SQL, arguments)
     }
 }

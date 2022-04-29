@@ -1,11 +1,10 @@
 import React from 'react'
 import { DateController } from '../../components/DateController'
-import { useGetHolidaysQuery } from '../api/apiSlice';
+import { useGetHolidaysQuery, useUpdateHolidayMutation, useDeleteHolidayMutation } from '../api/apiSlice';
 import { Spinner } from '../../components/Spinner'
 import {
     Button,
     TextField,
-    FormControl,
     TableCell,
     Table,
     TableBody,
@@ -17,7 +16,7 @@ import {
 
 } from '@mui/material'
 import { DeleteForever, Edit } from '@mui/icons-material'
-
+import { toast } from 'react-toastify'
 import { parseISO, format } from 'date-fns'
 import { AddHolidayDialog } from './AddHolidayDialog';
 
@@ -63,7 +62,18 @@ export const Holidays = () => {
 
 const VolneDniDisplayer = ({holidays}) => {
     const [editId, setEditId] = React.useState(0)
+    const [deleteHoliday, {isLoading}] = useDeleteHolidayMutation()
 
+    async function deleteSubmit(id){
+        try {
+            await deleteHoliday(id).unwrap()
+            toast("Voľný deň odstránený", {type: "success", id: 33, position: toast.POSITION.TOP})
+        }
+        catch (err){
+            toast("Nepodarilo sa odstrániť voľný deň.", {type: "error",  position: toast.POSITION.TOP})
+            console.log(err)
+        }
+    }
     return (
         <>
         <TableContainer component={Paper} style={{margin: "1em 0"}}>
@@ -83,9 +93,9 @@ const VolneDniDisplayer = ({holidays}) => {
                             <TableCell>{ format(parseISO(holid.date_time), "dd.MM.yyyy") }</TableCell>
                             <TableCell> { holid.description } </TableCell>
                             <TableCell><IconButton color='primary' onClick={() => setEditId(holid.id)}><Edit /></IconButton></TableCell>
-                            <TableCell><IconButton color="error"><DeleteForever /></IconButton></TableCell>
+                            <TableCell><IconButton disabled={isLoading} onClick={() => deleteSubmit(holid.id)} color="error"><DeleteForever /></IconButton></TableCell>
                         </TableRow>) :
-                        <EditHoliday holiday={holid} onClose={() => setEditId(0)}/>
+                        <EditHoliday key={holid.id} holiday={holid} onClose={() => setEditId(0)}/>
                         )
                     }
                 </TableBody>
@@ -106,15 +116,29 @@ const EditHoliday = ({holiday, onClose}) => {
     const [desc, setDesc] = React.useState(holiday.description)
     const [changed, setChanged] = React.useState(false)
 
-    function submit(e){
+    const [updateHoliday, {isLoading}] = useUpdateHolidayMutation()
+
+    async function submit(e){
         if(!changed){
             onClose()
             return
         }
-        onClose()
+        try {
+            await updateHoliday({
+                id: holiday.id,
+                date_time: format(date, "yyyy-MM-dd"),
+                description: desc
+            }).unwrap()
+            toast("Voľný deň upravený", {type: "success", id: 33, position: toast.POSITION.TOP})
+            onClose()
+        }
+        catch (err){
+            toast("Zmena neprebehla úspešne.", {type: "error",  position: toast.POSITION.TOP})
+            console.log(err)
+        }
     }
     return (
-        <TableRow key={holiday.id}>
+        <TableRow>
             <TableCell>
             <TextField 
                 style={{marginBottom:"0.5em"}} 
@@ -141,7 +165,9 @@ const EditHoliday = ({holiday, onClose}) => {
             </TableCell>
 
             <TableCell colSpan={1}>
-                <Button variant="contained" onClick={submit}>Povrdiť</Button>
+                <Button disabled={!desc || isLoading} variant={changed ? "contained" : "outlined"} onClick={submit}>
+                    {changed ? "Povrdiť" : "Zrušiť"}
+                </Button>
             </TableCell>
             <TableCell></TableCell>
         </TableRow>

@@ -53,14 +53,15 @@ router.patch("/:userId", async (req, res) => {
     const data = req.body;
     data.id = userId
 
-    const user = (await users.getUserById(userId, true))[0]
 
-    const compareResult = await checkPassword(data.password, user.password)
-
-    if(!compareResult){
-        res.status(400)
-        res.end()
-        return
+    if(data.password){
+        const user = (await users.getUserById(userId, true))[0]
+        const compareResult = await checkPassword(data.password, user.password)
+        if(!compareResult){
+            res.status(400)
+            res.end()
+            return
+        }
     }
 
     data.newPassword = data.newPassword ? await hashPassword(data.newPassword) : null
@@ -73,7 +74,14 @@ router.patch("/:userId", async (req, res) => {
 router.post("/", async (req, res) => {
     const data = req.body;
 
+    if(!data.password){
+        res.status(400)
+        res.end()
+        return
+    }
+    data.password = await hashPassword(data.password)
     // insert user into database
+    await users.insertUser(data);
 
     res.end()
 })

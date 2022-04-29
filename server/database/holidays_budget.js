@@ -4,6 +4,15 @@ module.exports = {
     getHolidaysBudgetByYear: function(year){
         const SQL = "SELECT * FROM holidays_budget WHERE year = ?"
         return query(SQL, [year])
+    },
+    replaceHolidaysBudgetsWithYear(year, rows){
+        const arguments = []
+        rows.forEach(r => {
+            r.forEach(e => arguments.push(e))
+        })
+        const empty_values = Array(rows.length).fill("(?, ?, ?)").join(", ")
+        const SQL = `REPLACE INTO holidays_budget VALUES ${empty_values}`
+        return query(SQL, arguments)
     }
     /*
     SELECT hb.user_id, used.used

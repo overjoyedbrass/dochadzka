@@ -13,11 +13,25 @@ router.get('/', async (req, res) => {
 });
 
 
-router.post('/', async (req, res) => {
+router.put('/', async (req, res) => {
     const data = req.body
-
-    // await holidays_budget.insert(data)
-    
+    const year = req.query.year
+    if(!year || !data){
+        res.status(400)
+        res.end()
+        return
+    }
+    try{
+        const rows = []
+        for (const [user, number] of Object.entries(data)) {
+            rows.push([user, number, year])
+        }
+        await holidays_budget.replaceHolidaysBudgetsWithYear(year, rows)
+    }
+    catch(err){
+        console.log(err)
+        res.status(400)
+    }    
     res.end()
 })
 

@@ -5,6 +5,10 @@ module.exports = {
         let SQL = "SELECT * FROM absence"
         return query(SQL, [])
     },
+    getAbsenceById: (id) => {
+        let SQL = "SELECT * FROM absence WHERE id = ?"
+        return query(SQL, [id])
+    },
     getAbsencesByYearMonth: (year, month) => {
         let SQL = "SELECT * FROM absence WHERE EXTRACT(YEAR FROM date_time) = ? AND EXTRACT(MONTH FROM date_time) = ?"
         return query(SQL, [year, month])
@@ -18,17 +22,44 @@ module.exports = {
         let SQL = "SELECT * FROM absence WHERE EXTRACT(YEAR FROM date_time) = ? AND (type = 2 OR type = 4) ORDER BY date_time DESC"
         return query(SQL, [year])
     },
-    insert(data){
-        let SQL = "INSERT INTO absence (user_id, date_time, from_time, to_time, description, type, public, confirmation) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-        query(SQL, [
-            data.user_id, 
-            data.date_time, 
-            data.from_time, 
+    insertAbsences(rows){
+        const arguments = []
+        rows.forEach(r => {
+            arguments.push(r.user_id)
+            arguments.push(r.date_time)
+            arguments.push(r.from_time)
+            arguments.push(r.to_time)
+            arguments.push(r.description)
+            arguments.push(r.type)
+            arguments.push(r.public)
+            arguments.push(r.confirmation)
+        })
+        const empty_values = Array(rows.length).fill("(?, ?, ?, ?, ?, ?, ?, ?)").join(", ")
+        let SQL = `INSERT INTO absence (user_id, date_time, from_time, to_time, description, type, public, confirmation) VALUES ${empty_values}`
+        return query(SQL, arguments)
+    },
+    update(data){
+        const SQL = 
+           `UPDATE absence
+            SET from_time = COALESCE(?, from_time),
+                to_time = COALESCE(?, to_time),
+                description = COALESCE(?, description),
+                public = COALESCE(?, public),
+                type = COALESCE(?, type),
+                confirmation = COALESCE(?, confirmation)
+            WHERE id = ?`;
+        return query(SQL, [
+            data.from_time,
             data.to_time,
-            data.description, 
-            data.type, 
+            data.description,
             data.public,
-            data.confirmation
+            data.type,
+            data.confirmation,
+            data.id
         ])
+    },
+    delete(id){
+        const SQL = "DELETE FROM absence WHERE id = ?"
+        return query(SQL, [id])
     }
 }

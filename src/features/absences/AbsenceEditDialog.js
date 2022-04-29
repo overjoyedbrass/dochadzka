@@ -17,6 +17,9 @@ import { Close } from '@mui/icons-material'
 import { mainTheme } from '../../helpers/themes.js'
 import { format, parseISO } from 'date-fns'
 import { absenceTypes, isFullDay as isAbsenceFullDay } from '../../helpers/helpers.js'
+import { useUpdateAbsenceMutation } from '../api/apiSlice'
+import { toast } from 'react-toastify'
+import { Spinner } from '../../components/Spinner'
 
 export const AbsenceEditDialog =  ({open, onClose, absence}) => {
     const [isFullDay, setFullDay] = React.useState(isAbsenceFullDay(absence.from_time, absence.to_time))
@@ -26,13 +29,36 @@ export const AbsenceEditDialog =  ({open, onClose, absence}) => {
     const [publicValue, setPublic] = React.useState(absence?.public)
     const [type, setType] = React.useState(absence.type)
     const [description, setDescription] = React.useState(absence.description)
-
-    // rtk query PATCH request hook
+    const [ updateAbsence, { isLoading }] = useUpdateAbsenceMutation()
 
 
     const popisText = type !== "Dovolenka" ? "Dôvod neprítomnosti" : "Miesto pobytu na dovolenke"
-    function submit(){
-        onClose()
+    async function submit(e){
+        e.preventDefault()
+        const patch = {
+            id: absence.id,
+            from_time: isFullDay ? "08:00" : fromTime,
+            to_time: isFullDay ? "16:00" : toTime,
+            public: publicValue,
+            type: type,
+            description: description
+        }
+        try{
+            const date = parseISO(absence.date_time)
+            await updateAbsence({
+                id: absence.id, 
+                year: date.getFullYear(), 
+                month: date.getMonth(),
+                ...patch
+            }).unwrap()
+            toast("Neprítomnosť úspešne upravená", {type: "success"})
+        }
+        catch(err){
+            toast("Úprava neprítomnosti sa nepodarila", {type: "error"})
+        }
+    }
+    if(!open){
+        return null
     }
     return (
         <Dialog
@@ -50,8 +76,7 @@ export const AbsenceEditDialog =  ({open, onClose, absence}) => {
                 <Close />
             </IconButton>
             <DialogContent>
-                <>
-
+                <form onSubmit={submit}>
                 Neprítomnosť v čase: <br/>
                 <FormControlLabel control={<Checkbox checked={isFullDay} onChange={(event) => setFullDay(event.target.checked)}/>} label="Celý deň" />
                 {isFullDay ? null : 
@@ -77,11 +102,12 @@ export const AbsenceEditDialog =  ({open, onClose, absence}) => {
                     {absenceTypes.map((d, i) => <MenuItem key={i} value={i}>{d}</MenuItem>)}
                 </Select><br/><br/>
                 <label htmlFor="popis">{popisText}: </label>
-                <TextField id="popis" onChange={event => setDescription(event.target.value)}multiline sx={{width: "90%"}} helperText="Nepovinné">{description}</TextField><br/><br/>
-
+                <TextField id="popis" onChange={event => setDescription(event.target.value)} multiline sx={{width: "90%"}} helperText="Nepovinné" value={description} /><br/><br/>
+                
+                {isLoading ? <Spinner /> : <>
                 <Button variant="outlined" onClick={() => onClose()}>Zrušiť</Button>
-                <Button sx={{float:"right"}} style={{fill: mainTheme.palette.primary.main}} variant="contained" onClick={() => submit()}>Potvrdiť zmeny</Button>
-                </>
+                <Button sx={{float:"right"}} style={{fill: mainTheme.palette.primary.main}} variant="contained" type="submit">Potvrdiť zmeny</Button></>}
+                </form>
             </DialogContent>
 
         </Dialog>

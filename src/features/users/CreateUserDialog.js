@@ -10,53 +10,55 @@ import {
     NativeSelect,
 } from '@mui/material'
 import { Close } from '@mui/icons-material'
+import { useCreateUserMutation } from './usersSlice'
+import { Spinner } from '../../components/Spinner'
+import { toast } from 'react-toastify'
 
-const fields = {
-    name: "Meno",
-    surname: "Priezvisko",
-    personal_id: "Osobné čislo",
-    username: "Používateľské meno",
-    email: "E-mail",
-    username: "Používateľské meno",
-    password: "Heslo",
-    passwordAgain: "Heslo znovu"
-}
+const fields = [
+    ["name", "Meno", "text"],
+    ["surname", "Priezvisko", "text"],
+    ["personal_id", "Osobné čislo", "number"],
+    ["username", "Používateľské meno", "text"],
+    ["email", "E-mail", "email"],
+]
 
 export const CreateUserDialog = ({open, onClose}) => {
-    const [name, setName] = React.useState("")
-    const [surname, setSurname] = React.useState("")
-    const [personalId,setPersonalId] = React.useState("")
-    const [username, setUsername] = React.useState("")
-    const [email, setEmail] = React.useState("")
-    const [password, setPassword] = React.useState("")
-    const [passwordAgain,setPasswordAgain] = React.useState("")
-    const [role, setRole] = React.useState(1)
+    const [formState, setFormState] = React.useState({
+        name: "",
+        surname: "",
+        personal_id: "",
+        username: "",
+        email: "",
+        password: "",
+        passagain: "",
+        status: 1
+    })
 
-    const values = [name, surname, personalId, username, email, password, passwordAgain]
-    const hooks = [setName, setSurname, setPersonalId, setUsername, setEmail, setPassword, setPasswordAgain]
-    const formFields = []
-    let i = 0
-    for (const [key, value] of Object.entries(fields)) {
-        const index = i
-        formFields.push(
-            <div key={key} className="labelWithInput">
-                <label htmlFor={key} className="fieldlabel">{value}:</label>
-                <TextField 
-                    required id={key} 
-                    size='small' 
-                    type={key.includes("password") ? "password" : "text"}
-                    value={values[index]}
-                    onChange={(e) => {
-                        hooks[index](e.target.value)
-                    }}
-                />
-            </div>
-        )
-        i++
-    }
+    const [createUser, { isLoading }] = useCreateUserMutation()
 
-    function submit(e){
-        onClose()
+    const handleChange = ({target: { name, value }}) =>
+        setFormState((prev) => ({ ...prev, [name]: value }))
+
+    async function submit(e){
+        e.preventDefault()
+
+        if(formState.password !== formState.passagain){
+            toast("Nové heslo sa nezhoduje s opakovaným heslom", {type: "warning", id: 40, position: toast.POSITION.TOP})
+            return
+        }
+
+        try {
+            const result = await createUser({
+                ...formState
+            }).unwrap()
+            toast("Používateľ úspešne vytvorený.", {type: "success", id: 33, position: toast.POSITION.TOP})
+
+            onClose()
+        }
+        catch (err){
+            toast("Nepodarilo sa vytvoriť používateľa", {type: "error",  position: toast.POSITION.TOP})
+            console.log(err)
+        }
     }
 
     return (
@@ -78,13 +80,52 @@ export const CreateUserDialog = ({open, onClose}) => {
             </div>
 
             <DialogContent> 
-                { formFields }
+                <form onSubmit={submit}>
+                    {fields.map((field, index) => 
+                        (<div key={index} className="labelWithInput">
+                            <label htmlFor={field[0]} className="fieldlabel">{field[1]}</label>
+                            <TextField 
+                                required id={field[0]}
+                                name={field[0]}
+                                size='small'
+                                type={field[2]}
+                                value={formState[field[0]]}
+                                onChange={handleChange}
+                            />
+                        </div>)
+                    )}
+                <div className="labelWithInput">
+                    <label htmlFor="password" className="fieldlabel">Heslo</label>
+                    <TextField 
+                        required id="password"
+                        name="password"
+                        size='small'
+                        type="password"
+                        value={formState.password}
+                        onChange={handleChange}
+                        error={formState.password !== formState.passagain}
+                    />
+                </div>
+                <div className="labelWithInput">
+                    <label htmlFor={"passagain"} className="fieldlabel">Heslo znovu:</label>
+                    <TextField 
+                        required id={"passagain"}
+                        name={"passagain"}
+                        size='small'
+                        type={"password"}
+                        value={formState.passagain}
+                        onChange={handleChange}
+                        error={formState.password !== formState.passagain}
+                    />
+                </div>
+
                 <div className="labelWithInput">
                     <label htmlFor="rola" className="fieldlabel">Rola: </label>
                     <NativeSelect 
                         id="rola"
+                        name="status"
                         defaultValue="1"
-                        onChange={(e)=> setRole(e.target.value)}
+                        onChange={handleChange}
                     >   
                         <option value={1}>Používateľ</option>
                         <option value={2}>Administrátor</option>
@@ -93,11 +134,13 @@ export const CreateUserDialog = ({open, onClose}) => {
                         <option value={0}>Deaktivovaný</option>
                     </NativeSelect>
                 </div>
-
+                
+                {isLoading ? <Spinner /> : 
                 <div className="labelWithInput" style={{marginTop: "2em"}}>
                     <Button onClick={onClose} variant="outlined">Zrušiť</Button>
-                    <Button onClick={submit} color="success" variant="contained">Vytvoriť</Button>
-                </div>
+                    <Button type="submit" color="success" variant="contained">Vytvoriť</Button>
+                </div>}
+                </form>
             </DialogContent>
         </Dialog>
     )

@@ -14,11 +14,23 @@ router.get('/', async (req, res) => {
     res.send(data)
 });
 
-router.post('/', async (req, res) => {
+router.put('/', async (req, res) => {
     const data = req.body
+    const year = req.query.year
 
-    await deadlines.insert(data)
+    if(!data || data?.length === 0 || !year){
+        res.status(400)
+        res.end()
+    }
+    try {
+        await deadlines.replace(year, data)
+    }
+    catch(err){
+        console.log(err)
+        res.status(400)
+        res.end()
+    }
     
-    res.send("OK")
+    res.end()
 })
 module.exports = router;

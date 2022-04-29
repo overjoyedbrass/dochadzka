@@ -16,6 +16,8 @@ import { AbsenceEditDialog } from './AbsenceEditDialog.js'
 
 import { Close } from '@mui/icons-material'
 import { selectLoggedUser } from '../auth/authSlice'
+import { useDeleteAbsenceMutation } from '../api/apiSlice'
+import { toast } from 'react-toastify'
 
 
 export const AbsenceDetailDialog = ({open, absence, onClose, openEdit}) => {
@@ -24,9 +26,22 @@ export const AbsenceDetailDialog = ({open, absence, onClose, openEdit}) => {
     const [openConfirm, setOpenConfirm] = React.useState(false)
     const [openEditDialog, setOpenEditDialog] = React.useState(false)
 
+    const [deleteAbsence, {}] = useDeleteAbsenceMutation()
+
+    async function submitDelete(){
+        try{
+            await deleteAbsence(absence.id)
+            toast("Neprítomnosť odstránená", {type:"success", autoClose: 1000})
+        }    
+        catch(err){
+            toast("Neprítomnosť sa nepodarilo odstrániť", {type: "error"})
+        }
+    }
+
     if(!open){
         return null
     }
+
     return (
         <>
         <Dialog
@@ -77,14 +92,12 @@ export const AbsenceDetailDialog = ({open, absence, onClose, openEdit}) => {
             yesText="Odstrániť"
             noAction={() => setOpenConfirm(false)}
             yesAction={() => {
-                console.log("nepritomnost ODSTRANENA")
-                setOpenConfirm(false)
-                onClose()
+                submitDelete()
             }}
         />
         <AbsenceEditDialog 
             open={openEditDialog}
-            onClose={() => setOpenEditDialog(false)}
+            onClose={onClose}
             absence={absence}
         />
         </>
