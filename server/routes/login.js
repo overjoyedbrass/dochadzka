@@ -3,7 +3,7 @@ var jwt = require('jsonwebtoken')
 var bcrypt = require('bcrypt')
 var router = express.Router();
 var { getUserByUsername } = require('../database/users.js')
-
+var getPerms = require('../perms/permissions.js')
 
 router.post('/', async (req, res) => {
     const req_username = req.body.username
@@ -37,10 +37,10 @@ router.post('/', async (req, res) => {
             name: data.name,
             surname: data.surname,
             email: data.email,
-            //status vymenit za právomoci
             status: data.status,
+            perms: getPerms(data.status)
         }
-        const accessToken = jwt.sign(data_to_hash, process.env.SECRET_TOKEN, {expiresIn: "1d"})
+        const accessToken = jwt.sign(data_to_hash, process.env.SECRET_TOKEN, { expiresIn: "7d" })
         res.send({ 
             token: accessToken
         })

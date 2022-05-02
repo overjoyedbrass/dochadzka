@@ -1,16 +1,15 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { selectLoggedUser } from '../auth/authSlice'
+import { selectLoggedUser, selectUserPerms } from '../auth/authSlice'
 
 import { AbsenceFormular } from './AbsenceFormular'
 import { AbsenceDetailDialog } from './AbsenceDetailDialog'
-import { AbsenceEditDialog } from './AbsenceEditDialog'
-import { mainTheme } from '../../helpers/themes'
+import { appTheme } from '../../helpers/themes'
 import Draggable from 'react-draggable'
 import { CalendarDisplay } from './CalendarDisplay'
 import { AbsencesList } from './AbsencesList'
 import { ShowMoreAbsencesDialog } from './ShowMoreAbsencesDialog'
-
+import { toast } from 'react-toastify'
 import { 
     IconButton,
     Paper,
@@ -40,9 +39,15 @@ export const AbsenceDisplayer = ({viewDate, absences, calendarDisplay}) => {
     const [hovering, setHovering] = React.useState(false)
 
     const loggedUser = useSelector(selectLoggedUser)
+    const perms = useSelector(selectUserPerms)
     const isLogged = loggedUser ? true:false
 
     function addRemoveDay(clickedDate, add_day, reset=false){
+        if(clickedDate < new Date() && !perms.bypass_time){
+            toast("Nemôžete zadávať do minulosti", {type: "warning", toastId: 50})
+            return
+        }
+
         if(add_day){
             if(reset || !dates.some(d => datesAreSame(d, clickedDate))){
                 const copy = reset ? [] : dates.slice()
@@ -161,7 +166,7 @@ export const AbsenceDisplayer = ({viewDate, absences, calendarDisplay}) => {
         </Dialog>
         {!open && isLogged ? (
             <div style={{position: "fixed", bottom: "3em", right: "3em"}}>
-                <IconButton onClick={() => setOpen(true) }><AddCircle  sx={{ fontSize: 60}} style={{ color: mainTheme.palette.primary.main}}/></IconButton>
+                <IconButton onClick={() => setOpen(true) }><AddCircle  sx={{ fontSize: 60}} style={{ color: appTheme.palette.primary.main}}/></IconButton>
             </div>) : null
         }
 

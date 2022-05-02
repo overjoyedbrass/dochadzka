@@ -2,6 +2,10 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { selectUserById, useUpdateUserMutation } from './usersSlice.js'
+
+import { selectUserPerms, selectLoggedBoolean } from '../auth/authSlice.js'
+import { MessageBox } from '../../components/MessageBox'
+
 import { toast } from 'react-toastify'
 import {
     TextField,
@@ -11,25 +15,34 @@ import {
 } from '@mui/material'
 import { Spinner } from '../../components/Spinner.js'
 
-const field_names = {
-    personal_id: "Osobné číslo",
-    name: "Meno",
-    surname: "Priezvisko",
-    email: "Email",
-    username: "Prihlasovacie meno",
-}
-
 export const UserEdit = () => {
     const { id } = useParams()
     const user = useSelector(state => selectUserById(state, id))
 
+
+    const perms = useSelector(selectUserPerms)
+    const isLogged = useSelector(selectLoggedBoolean)
+
+    if(!isLogged){
+        return <MessageBox type="warning" message="Nie ste prihlásený"/>
+    }
+
+    if(!perms.user_managment){
+        return <MessageBox type="error" message="Nemáte dostatočné oprávnenia zobraziť túto stránku" />
+    }
+    
     if(!user){
         return (
-            <div className="app-content">
-                <h3>Používateľ s ID {id} neexistuje.</h3>
-            </div>
+            <MessageBox 
+                message={`Používateľ s ID ${id} neexistuje.`}
+                type="warning"
+            />
         )
     }
+
+
+
+
     return (
         <UserEditForm user={user}/>
     )
@@ -56,7 +69,7 @@ const UserEditForm = ({user}) => {
         e.preventDefault()
 
         try {
-            const result = await updateUser({
+            await updateUser({
                 id: user.id,
                 ...formState,
                 password: formState.password ? formState.password : null

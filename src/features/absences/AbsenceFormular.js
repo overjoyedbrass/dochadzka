@@ -4,7 +4,7 @@ import { DeleteForever, Add } from '@mui/icons-material'
 import { useSelector } from 'react-redux'
 
 import { format, parseISO, add } from 'date-fns'
-import { mainTheme } from  "../../helpers/themes.js"
+import { appTheme } from  "../../helpers/themes.js"
 
 import { absenceTypes, datesAreSame } from '../../helpers/helpers.js'
 import { useInsertAbsencesMutation } from '../api/apiSlice.js'
@@ -78,7 +78,7 @@ export const AbsenceFormular = ({onClose, dates, setPickedDates}) => {
         <div>
             <div style={{maxHeight: "200px", overflow: "auto"}}>
                 <label htmlFor="date">{labelForDni}</label>
-                <IconButton style={{color: mainTheme.palette.primary.main}} onClick={() => addDate()}>
+                <IconButton style={{color: appTheme.palette.primary.main}} onClick={() => addDate()}>
                     <Add />
                 </IconButton>
             {dates.map((date, index) => 

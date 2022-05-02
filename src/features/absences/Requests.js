@@ -1,7 +1,9 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
+import { selectUserPerms, selectLoggedBoolean } from '../auth/authSlice.js'
+import { MessageBox } from '../../components/MessageBox'
+import { DateController } from '../../components/DateController'
 
-
-import { DateController} from '../../components/DateController'
 import {
     useGetAbsencesQuery,
     useConfirmAbsenceMutation
@@ -37,27 +39,12 @@ export const Requests = () => {
     const year = query.get("year")
 
     const [viewDate, setViewDate] = React.useState(year ? new Date(year) : new Date())
-    const [filter, setFilter] = React.useState(2)
+    const [filter, setFilter] = React.useState(0)
 
-    return (
-        <div className="app-content">
-            <h1>Žiadosti</h1>
-            <div className="wrapper" style={{marginBottom: "0.25em"}}>
-                <DateController viewDate={viewDate} onChange={setViewDate} type="year"/>
-                <ButtonGroup>
-                    <Button onClick={() => setFilter(2)} variant={filter === 2 ? "contained" : "outlined"}>Všetky</Button>
-                    <Button onClick={() => setFilter(1)} variant={filter === 1 ? "contained" : "outlined"}>Potvrdené</Button>
-                    <Button onClick={() => setFilter(0)} variant={filter === 0 ? "contained" : "outlined"}>Nepotvrdené</Button>
-                </ButtonGroup>
-            </div>
-
-            <RequestsLoader viewDate={viewDate} filter={filter}/>
-        </div>
-    )
-}
-
-const RequestsLoader = ({viewDate, filter}) => {
-    const{
+    const perms = useSelector(selectUserPerms)
+    const isLogged = useSelector(selectLoggedBoolean)
+    
+    const {
         data,
         isLoading,
         isSuccess,
@@ -67,16 +54,32 @@ const RequestsLoader = ({viewDate, filter}) => {
         refetch
     } = useGetAbsencesQuery({year: viewDate.getFullYear(), rq_only: true})
 
-    if(isLoading || isFetching){
-        return <Spinner />
+    if(!isLogged){
+        return <MessageBox type="warning" message="Nie ste prihlásený"/>
     }
+    if(!perms.manage_requests){
+        return <MessageBox type="error" message="Nemáte dostatočné oprávnenia zobraziť túto stránku" />
+    }
+
     let absences;
     if(filter < 2)
         absences = data.filter(ab => ab.confirmation === filter)
     else absences = data
 
     return (
-        <RequestDisplayer absences={absences}/>
+        <div className="app-content">
+            <h1>Žiadosti</h1>
+            <div className="wrapper" style={{marginBottom: "0.25em"}}>
+                <DateController viewDate={viewDate} onChange={setViewDate} type="year"/>
+                <ButtonGroup>
+                    <Button onClick={() => setFilter(0)} variant={filter === 0 ? "contained" : "outlined"}>Nepotvrdené</Button>
+                    <Button onClick={() => setFilter(1)} variant={filter === 1 ? "contained" : "outlined"}>Potvrdené</Button>
+                    <Button onClick={() => setFilter(2)} variant={filter === 2 ? "contained" : "outlined"}>Všetky</Button>
+                </ButtonGroup>
+            </div>
+            { isLoading || isFetching ? <Spinner /> :
+            <RequestDisplayer absences={absences}/>}
+        </div>
     )
 }
 
@@ -91,6 +94,7 @@ const RequestDisplayer = ({absences}) => {
                     <TableRow>
                         <TableCell>Dátum</TableCell>
                         <TableCell>Autor</TableCell>
+                        <TableCell>Typ</TableCell>
                         <TableCell>Čas</TableCell>
                         <TableCell>Popis</TableCell>
                         <TableCell>Potvrdenie</TableCell>
@@ -133,6 +137,7 @@ const ShowRequestRow = ({absence}) => {
         <TableRow>
             <TableCell>{format(parseISO(absence.date_time), "dd.MM.yyyy")}</TableCell>
             <TableCell><AbsenceAuthor userId={absence.user_id}/></TableCell>
+            <TableCell>{absence.type}</TableCell>
             <TableCell>{formatFromTo(absence.from_time, absence.to_time)}</TableCell>
             <TableCell>{absence.description}</TableCell>
             <TableCell>

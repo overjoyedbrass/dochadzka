@@ -1,5 +1,8 @@
 import React from 'react'
 
+import { useSelector } from 'react-redux'
+import { selectUserPerms, selectLoggedBoolean } from '../auth/authSlice.js'
+
 import {
     Table,
     TableRow,
@@ -15,6 +18,8 @@ import { DateController } from '../../components/DateController'
 import { useGetDeadlinesQuery, useInsertDeadlinesMutation } from '../api/apiSlice'
 import { Spinner } from '../../components/Spinner'
 import { toast } from 'react-toastify'
+
+import { MessageBox } from '../../components/MessageBox'
 
 const mesiace = ['Január', 'Február', 'Marec', 'Apríl', 'Máj', 'Jún', 'Júl', 'August', 'September', 'Október', 'November', 'December']
 
@@ -47,7 +52,22 @@ export const EditDeadlines = () => {
     const handleChange = ({target: { name, value }}) =>
         setFormState((prev) => ({ ...prev, [parseInt(name)]: value ? parseInt(value) : ""}))
 
-    React.useEffect(() => setFormState(ddlines), [deadlines])
+    React.useEffect(() => {
+        if(deadlines.length){
+            setFormState(ddlines)
+        }
+    }, [deadlines])
+
+    const perms = useSelector(selectUserPerms)
+    const isLogged = useSelector(selectLoggedBoolean)
+
+    if(!isLogged){
+        return <MessageBox type="warning" message="Nie ste prihlásený"/>
+    }
+    if(!perms.edit_deadlines){
+        return <MessageBox type="error" message="Nemáte dostatočné oprávnenia zobraziť túto stránku" />
+    }
+
 
     async function submit(e){
         e.preventDefault()
@@ -65,51 +85,53 @@ export const EditDeadlines = () => {
     const year = viewDate.getFullYear()
 
     return (
-    <div className="app-content">
-        <h1>Termíny pre pridávanie dovolenky a práceneschopnosti</h1>
-        <form 
-            onSubmit={submit} 
-            style={{flex: "0 1 auto", display: "flex", flexFlow: "column", overflowY: "auto"}}
-        >
-            <div className="labelWithInput">
-                <DateController viewDate={viewDate} onChange={setViewDate} type="year"/>
-                <Button variant="contained" type="submit">Zmeniť</Button>
-            </div>
-            {inDatabase ? null : <h4>Ešte nie je v databáze</h4>}
-            { isLoading || isFetching ? <Spinner /> :
-            <TableContainer 
-                component={Paper}
-                // sx={{width: "fit-content"}}
+        <div className="app-content">
+            <h1>Termíny pre pridávanie dovolenky a práceneschopnosti</h1>
+            <form 
+                onSubmit={submit} 
+                style={{flex: "0 1 auto", display: "flex", flexFlow: "column", overflowY: "auto"}}
             >
-                <Table 
-                    stickyHeader 
+                <div className="wrapper">
+                    <DateController viewDate={viewDate} onChange={setViewDate} type="year"/>
+                    <Button variant="contained" type="submit">Zmeniť</Button>
+                </div>
+                {inDatabase ? null : <h4>Ešte nie je v databáze</h4>}
+                { isLoading || isFetching ? <Spinner /> :
+                <TableContainer 
+                    component={Paper}
+                    // sx={{width: "fit-content"}}
                 >
-                    <TableHead>
-                        <TableCell>Mesiac</TableCell>
-                        <TableCell>Hodnota</TableCell>
-                    </TableHead>
-                <TableBody>
-                {mesiace.map((mesiac, index) => 
-                    <TableRow>
-                        <TableCell>{mesiace[index]}</TableCell>
-                        <TableCell>
-                            <TextField 
-                                name={(index+1).toString()}
-                                id={mesiac}
-                                size="small"
-                                type="number"
-                                value={formState[index+1]}
-                                style={{maxWidth: "6em"}}
-                                onChange={handleChange}
-                                required={true}
-                            />
-                        </TableCell>
-                    </TableRow>
-                )}
-                </TableBody>
-            </Table>
-            </TableContainer>}
-        </form>
-    </div>
+                    <Table 
+                        stickyHeader 
+                    >
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Mesiac</TableCell>
+                                <TableCell>Hodnota</TableCell>
+                            </TableRow>
+                        </TableHead>
+                    <TableBody>
+                    {mesiace.map((mesiac, index) => 
+                        <TableRow key={index}>
+                            <TableCell>{mesiace[index]}</TableCell>
+                            <TableCell>
+                                <TextField 
+                                    name={(index+1).toString()}
+                                    id={mesiac}
+                                    size="small"
+                                    type="number"
+                                    value={formState[index+1]}
+                                    style={{maxWidth: "6em"}}
+                                    onChange={handleChange}
+                                    required={true}
+                                />
+                            </TableCell>
+                        </TableRow>
+                    )}
+                    </TableBody>
+                </Table>
+                </TableContainer>}
+            </form>
+        </div>
     )
 }

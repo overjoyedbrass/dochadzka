@@ -22,10 +22,20 @@ app.use(cors())
 // express static - automatically renders react app on "/"
 app.use(express.static("public"))
 
+
+
 // jwt middleware
 app.use(
     jwt({secret: process.env.SECRET_TOKEN, algorithms: ['HS256']}).unless({ path: ['/api/login','/api/logout', '/api/users', '/api/absences']})
 )
+// custom error responses after catching an error
+app.use(function (err, req, res, next) {
+    if (err.name === "UnauthorizedError") {
+        res.status(401).send({message: "JWT Token expired", token_expired: err.code === "invalid_token"});
+    } else {
+      next(err);
+    }
+});
 
 // DUMMY LOGOUT QUERY USEFULL FOR
 // LOGOUTING IN APP USING RTK QUERY + TAG INVALIDATORS

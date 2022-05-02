@@ -1,42 +1,45 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { NavLink } from 'react-router-dom'
-import { selectLoggedBoolean } from '../features/auth/authSlice.js'
+import { selectLoggedBoolean, selectUserPerms } from '../features/auth/authSlice.js'
 export const Navbar = () => {
-    const loggedBoolean = useSelector(selectLoggedBoolean)
-
+    const perms = useSelector(selectUserPerms)
     return (
         <nav>
             <div className="navLinks">
                 <NavLink 
-                    className={({ isActive }) => "nav-link" + (isActive ? " activated" : "")}
                     end to="/"
+                    className={({ isActive }) => "nav-link" + (isActive ? " activated" : "")}
                 > Neprítomnosti </NavLink>
-
+                { perms.user_managment ? 
                 <NavLink 
                     to="/users"
                     className={({ isActive }) => "nav-link" + (isActive ? " activated" : "")}
-                > Správa používateľov </NavLink>
+                > Správa používateľov </NavLink> : null}
 
+                { perms.edit_budgets ? 
                 <NavLink 
                     to="/budgets"
                     className={({ isActive }) => "nav-link" + (isActive ? " activated" : "")}
-                > Dovolenky </NavLink>
+                > Dovolenky </NavLink> : null }
 
+                { perms.edit_deadlines ?
                 <NavLink 
                     to="/deadlines"
                     className={({ isActive }) => "nav-link" + (isActive ? " activated" : "")}
-                > Termíny </NavLink>
+                > Termíny </NavLink> : null }
 
+                { perms.edit_holidays ?
                 <NavLink 
                     to="/holidays"
                     className={({ isActive }) => "nav-link" + (isActive ? " activated" : "")}
-                > Voľné dni </NavLink>
+                > Voľné dni </NavLink> : null }
 
+                { perms.manage_requests ? 
                 <NavLink 
                     to="/requests"
                     className={({ isActive }) => "nav-link" + (isActive ? " activated" : "")}
-                > Žiadosti </NavLink>
+                > Žiadosti </NavLink> : null }
             </div>
         </nav>
     )

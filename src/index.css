@@ -27,7 +27,7 @@ body {
     align-items: center;
     overflow-y: auto;
     display: flex;
-    width: 100%;
+    margin: 0 0.5em;
 }
 
 
@@ -35,7 +35,6 @@ body {
     flex: 1 1 auto;
     width: 100%;
     max-width: var(--max-width);
-
     height: 100%;
     display: flex;
     flex-flow: column;
@@ -63,9 +62,9 @@ body {
 .list {
     width: 100%;
     max-width: var(--max-width);
-    display: flex;
     justify-content: center;
     margin: 1em;
+    overflow-y: auto;
 }
 
 .spinner {
@@ -108,6 +107,16 @@ body {
     padding: 0.3em 1em 0.3em 1em;
     margin: 1em;
     font-size: 2em;
+}
+.message-box {
+    border: 2px solid;
+    border-radius: 1em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0.5em;
+    width: fit-content;
 }
 
 .user-panel {

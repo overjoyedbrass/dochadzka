@@ -1,6 +1,10 @@
 import React from 'react'
+
+import { useSelector } from 'react-redux'
+import { selectUserPerms, selectLoggedBoolean } from '../auth/authSlice.js'
+import { MessageBox } from '../../components/MessageBox'
+
 import { useGetHolidaysBudgetQuery, useInsertHolidaysBudgetMutation } from '../api/apiSlice.js'
-import { useSelector} from 'react-redux'
 import { selectAllActiveUsers } from '../users/usersSlice'
 import { DateController } from '../../components/DateController'
 import { Spinner } from '../../components/Spinner'
@@ -31,7 +35,7 @@ export const Budgets = () => {
         setFormState((prev) => ({ ...prev, [parseInt(name)]: parseInt(value) }))
 
     React.useEffect(() => {
-        if(!isError){
+        if(!isError && budgets != {}){
             setFormState(budgets)
         }
     }, [budgets])
@@ -41,9 +45,19 @@ export const Budgets = () => {
         if(budgets[u.id] !== formState[u.id]){
             changed = true
         }
-    }
-    
+    }    
     const [ insertHoliday , { isInserting }] = useInsertHolidaysBudgetMutation()
+
+    const perms = useSelector(selectUserPerms)
+    const isLogged = useSelector(selectLoggedBoolean)
+
+    if(!isLogged){
+        return <MessageBox type="warning" message="Nie ste prihlásený"/>
+    }
+    if(!perms.edit_budgets){
+        return <MessageBox type="error" message="Nemáte dostatočné oprávnenia zobraziť túto stránku" />
+    }
+
     async function submit(e){
         e.preventDefault();
         try {

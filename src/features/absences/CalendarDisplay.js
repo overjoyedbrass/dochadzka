@@ -5,17 +5,17 @@ import {
     Table,
     TableRow,
     TableCell,
-    Paper
+    Paper,
+    TableHead,
 } from '@mui/material'
 import { AbsenceAuthor } from './AbsenceAuthor.js'
-import { mainTheme } from '../../helpers/themes'
-import { formatFromTo } from '../../helpers/helpers'
-import { startOfMonth, format, add, getDay } from 'date-fns'
-import { sk } from 'date-fns/locale'
+import { appTheme } from '../../helpers/themes'
+import { absenceTypes } from '../../helpers/helpers'
+import { startOfMonth, add, getDay } from 'date-fns'
 import { datesSameMonth, datesAreSame } from '../../helpers/helpers'
 
 function getColorForCell(dates,  cycledDate, i, skok){
-    return dates.some(d => datesAreSame(d, cycledDate)) ? mainTheme.gui.picked: [6, 0].includes((i+skok)%7) ? mainTheme.gui.weekend : mainTheme.gui.primary
+    return dates.some(d => datesAreSame(d, cycledDate)) ? appTheme.gui.picked: [6, 0].includes((i+skok)%7) ? appTheme.gui.weekend : appTheme.gui.primary
 }
 
 const week = [
@@ -28,18 +28,21 @@ const week = [
     'nedeľa'
 ]
 
-export const AbsenceBox = ({absence, funOnClick, empty, size, day}) => {
+export const AbsenceBox = ({absence, funOnClick, empty, day}) => {
     if(empty){
         return (
         <div
             className="absence-box"
-            style={{background: mainTheme.palette.primary.light, whiteSpace: "pre-wrap"}}
+            style={{
+                background: appTheme.palette.primary.light, 
+                color: "white"
+            }}
             onClickCapture={(e) => {
                 e.nativeEvent.stopPropagation()
                 funOnClick(day)
             }}
         >
-            Zobraziť ďalšie ({size})
+            Zobraziť všetky
         </div>)
     }
     return (
@@ -49,11 +52,12 @@ export const AbsenceBox = ({absence, funOnClick, empty, size, day}) => {
                 e.nativeEvent.stopPropagation()
                 funOnClick(absence)
             }}
-            style={{background: mainTheme.palette.primary.light, whiteSpace: "pre-wrap"}}
+            style={{
+                background: appTheme.gui.absence[absence.type],
+                color:      appTheme.text.absence[absence.type]
+            }}
         >
-            <AbsenceAuthor userId={absence.user_id}/>
-            {' - '}
-            {formatFromTo(absence.from_time, absence.to_time)}
+            <AbsenceAuthor userId={absence.user_id}/>{" – "}{absenceTypes[absence.type]}
         </div>
     )
 }
@@ -74,14 +78,11 @@ const CalendarCell = ({isToday, day, absences, functions}) => {
                 { isToday ? `[ ${day} ]` : day }
             </span>
 
-            <div 
-                className="absences-container"
-            >
-                {absences.map((absence, index) => index < 3 ? 
-                    (<AbsenceBox key={absence.id} absence={absence} funOnClick={functions.detail}/>) : null)}
-                {show_4th ? <AbsenceBox key={absences[MAX_PER_CELL-1].id} absence={absences[MAX_PER_CELL-1]} funOnClick={functions.detail}/> : null}
-                {overflow ? <AbsenceBox day={day} empty={true} size={absences.length-MAX_PER_CELL+1} funOnClick={functions.showMore} /> : null }
-            </div>
+            {absences.map((absence, index) => index < 3 ? 
+            (<AbsenceBox key={absence.id} absence={absence} funOnClick={functions.detail}/>) : null)}
+            {show_4th ? <AbsenceBox key={absences[MAX_PER_CELL-1].id} absence={absences[MAX_PER_CELL-1]} funOnClick={functions.detail}/> : null}
+            {overflow ? <AbsenceBox day={day} empty={true} funOnClick={functions.showMore} /> : null }
+            
         </div>
     ) 
 }
@@ -98,7 +99,7 @@ export const CalendarDisplay = ({selectedDates, viewDate, absences, controlFunct
                 key={index} 
                 className="first-row-table-cell"
                 sx={{
-                    borderColor: mainTheme.gui.border,
+                    borderColor: appTheme.gui.border,
                     verticalAlign: "top",
                 }}
             >
@@ -106,16 +107,16 @@ export const CalendarDisplay = ({selectedDates, viewDate, absences, controlFunct
             </TableCell>
         ))
     })
-    let rows = [(<TableRow key={0}>{firstRow}</TableRow>)]
+    let rows = []
 
     //riadok tabuľky
     let row = [] 
     //premenna datumu v cykle
     var cycledDate = startOfMonth(viewDate)
-    const skok = getDay(cycledDate)-1
+    const skok = getDay(cycledDate) ? getDay(cycledDate)-1 : 6
     //prazdne bunky pred prvym dňom
-    for(let i = 1; i <= skok; i++){
-        row.push((<TableCell key={i%7}/>))
+    for(let i = 0; i < skok; i++){
+        row.push((<TableCell key={skok+i}/>))
     }
     //všetky zvyšné bunky
     while(cycledDate.getMonth() === viewDate.getMonth()){
@@ -123,9 +124,9 @@ export const CalendarDisplay = ({selectedDates, viewDate, absences, controlFunct
         let bgColor = getColorForCell(selectedDates, cycledDate, i, skok)
         row.push((
         <TableCell
-            key={(i+skok)%7}
+            key={cycledDate.getDay()+20}
             sx={{
-                borderColor: mainTheme.gui.border,
+                borderColor: appTheme.gui.border,
                 backgroundColor: bgColor,
                 padding: "0.5em"
             }}
@@ -152,9 +153,13 @@ export const CalendarDisplay = ({selectedDates, viewDate, absences, controlFunct
             sx={{dragable:"false"}}
         >
             <Table 
+                stickyHeader
                 aria-label="calendar" 
                 sx={{tableLayout:"fixed"}}
             >
+                <TableHead>
+                    <TableRow key={0}>{firstRow}</TableRow>
+                </TableHead>
                 <TableBody>
                     {rows}
                 </TableBody>

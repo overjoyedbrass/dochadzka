@@ -2,6 +2,9 @@ import React from 'react'
 import { DateController } from '../../components/DateController'
 import { useGetHolidaysQuery, useUpdateHolidayMutation, useDeleteHolidayMutation } from '../api/apiSlice';
 import { Spinner } from '../../components/Spinner'
+import { selectUserPerms, selectLoggedBoolean } from '../auth/authSlice.js'
+import { useSelector } from 'react-redux'
+import { MessageBox } from '../../components/MessageBox'
 import {
     Button,
     TextField,
@@ -32,6 +35,15 @@ export const Holidays = () => {
         isError,
     } = useGetHolidaysQuery(viewDate.getFullYear())
 
+    const perms = useSelector(selectUserPerms)
+    const isLogged = useSelector(selectLoggedBoolean)
+
+    if(!isLogged){
+        return <MessageBox type="warning" message="Nie ste prihlásený"/>
+    }
+    if(!perms.edit_holidays){
+        return <MessageBox type="error" message="Nemáte dostatočné oprávnenia zobraziť túto stránku" />
+    }
    
     return (
         <div className="app-content">

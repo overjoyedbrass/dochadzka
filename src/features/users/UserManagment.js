@@ -6,6 +6,8 @@ import { selectLoggedUser } from '../auth/authSlice'
 import { CreateUserDialog } from './CreateUserDialog'
 import { useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
+import { selectUserPerms, selectLoggedBoolean } from '../auth/authSlice.js'
+import { MessageBox } from '../../components/MessageBox'
 import {
     Table,
     TableBody,
@@ -27,8 +29,19 @@ export const UserManagment = () => {
     const loggedUser = useSelector(selectLoggedUser)
     const [open, setOpen] = React.useState(false)
     const [filter, setFilter] = React.useState(2)
-
     const navigate = useNavigate()
+
+    const perms = useSelector(selectUserPerms)
+    const isLogged = useSelector(selectLoggedBoolean)
+
+    if(!isLogged){
+        return <MessageBox type="warning" message="Nie ste prihlásený"/>
+    }
+
+    if(!perms.user_managment){
+        return <MessageBox type="error" message="Nemáte dostatočné oprávnenia zobraziť túto stránku" />
+    }
+
     let users
     if(filter === 0){
         users = allusers.filter(u => u.status === 0)
@@ -61,9 +74,17 @@ export const UserManagment = () => {
                 </Button>
             </div>
             <TableContainer component={Paper}>
-                <Table stickyHeader aria-label="users table">
+                <Table 
+                    stickyHeader 
+                    aria-label="users table" 
+                    sx={{
+                        "& .MuiTableRow-root:hover": {
+                        backgroundColor: "primary.highlight",
+                        color: "white"
+                    }
+                }}>
                     <TableHead>
-                        <TableRow>
+                        <TableRow className="tablerow-hover">
                             <TableCell style={{fontSize: "1em"}}>Zamestnanec</TableCell>
                             <TableCell style={{fontSize: "1em"}}>Rola</TableCell>
                             <TableCell style={{fontSize: "1em"}}>Dovolenka</TableCell>

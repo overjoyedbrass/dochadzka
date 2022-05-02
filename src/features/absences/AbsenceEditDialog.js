@@ -14,7 +14,7 @@ import {
 
 } from '@mui/material'
 import { Close } from '@mui/icons-material'
-import { mainTheme } from '../../helpers/themes.js'
+import { appTheme } from '../../helpers/themes.js'
 import { format, parseISO } from 'date-fns'
 import { absenceTypes, isFullDay as isAbsenceFullDay } from '../../helpers/helpers.js'
 import { useUpdateAbsenceMutation } from '../api/apiSlice'
@@ -106,7 +106,7 @@ export const AbsenceEditDialog =  ({open, onClose, absence}) => {
                 
                 {isLoading ? <Spinner /> : <>
                 <Button variant="outlined" onClick={() => onClose()}>Zrušiť</Button>
-                <Button sx={{float:"right"}} style={{fill: mainTheme.palette.primary.main}} variant="contained" type="submit">Potvrdiť zmeny</Button></>}
+                <Button sx={{float:"right"}} style={{fill: appTheme.palette.primary.main}} variant="contained" type="submit">Potvrdiť zmeny</Button></>}
                 </form>
             </DialogContent>
 

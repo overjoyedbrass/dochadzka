@@ -7,7 +7,7 @@ export const absenceTypes = [
     null,
     "Dovolenka",
     "Práca doma",
-    "Práceneschopnosť",
+    "PN",
     "Pracovná cesta",
     "Materská dovolenka",
     "Rodičovská dovolenka",

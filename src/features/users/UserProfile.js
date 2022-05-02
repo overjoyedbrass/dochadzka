@@ -6,14 +6,17 @@ import {
 } from '@mui/material'
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { selectLoggedUser } from '../auth/authSlice'
+import { selectLoggedBoolean, selectLoggedUser } from '../auth/authSlice'
 import { useUpdateUserMutation } from './usersSlice'
 import { Spinner } from '../../components/Spinner'
 import { toast } from 'react-toastify'
-
+import { MessageBox } from '../../components/MessageBox'
+import { roles } from '../../helpers/helpers'
 
 export const UserProfile = () => {
-    const user = useSelector(selectLoggedUser)
+    const user = useSelector(selectLoggedUser) ?? {}
+    const isLogged = useSelector(selectLoggedBoolean)
+
 
     const [formState, setFormState] = React.useState({
         username: user.username,
@@ -22,11 +25,14 @@ export const UserProfile = () => {
         newPassword: "",
         newPassAgain: "",
     })
+    const [updateUser, { isLoading }] = useUpdateUserMutation()
+
+    if(!isLogged){
+        return <MessageBox type="warning" message="Nie ste prihlásený"/>
+    }
 
     const handleChange = ({target: { name, value }}) =>
         setFormState((prev) => ({ ...prev, [name]: value }))
-
-    const [updateUser, { isLoading }] = useUpdateUserMutation()
 
     function samePasswords(){
         return formState.newPassword === formState.newPassAgain
@@ -39,7 +45,7 @@ export const UserProfile = () => {
             return
         }
         try {
-            const result = await updateUser({
+            await updateUser({
                 id: user.id,
                 ...formState
             }).unwrap()
@@ -71,7 +77,7 @@ export const UserProfile = () => {
     return (
         <div className="app-content" style={{}}>
             <h2 style={{textTransform: "uppercase"}}>Váš profil: {user.name} {user.surname}#{user.personal_id}</h2>
-            <h4 style={{margin: "0"}}>Používateľská rola: {user.status}</h4>
+            <h4 style={{margin: "0"}}>Používateľská rola: {roles[user.status]}</h4>
 
             <form
                 className="form-general"
@@ -86,6 +92,7 @@ export const UserProfile = () => {
                     size="small"
                     value={formState.username} 
                     onChange={handleChange}
+                    required={true}
                 />
 
                 <label htmlFor="email" className="profile-label">Email: </label>
@@ -93,10 +100,12 @@ export const UserProfile = () => {
                     name="email"
                     style={{width:"fit-content"}}
                     id="email"
+                    type="email"
                     placeholder="E-mail"
                     size="small"
                     value={formState.email} 
                     onChange={handleChange}
+                    required={true}
                 />
 
                 <label htmlFor="newPassword" className="profile-label">Nové prihlasovacie heslo: (pre žiadnu zmenu nechajte prázdne)</label>
