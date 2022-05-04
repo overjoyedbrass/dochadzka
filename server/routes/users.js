@@ -74,6 +74,8 @@ router.patch("/:userId", async (req, res) => {
 router.post("/", async (req, res) => {
     const data = req.body;
 
+    // kontrola oprávnení
+
     if(!data.password){
         res.status(400)
         res.end()

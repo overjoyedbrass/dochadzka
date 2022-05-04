@@ -89,7 +89,14 @@ const VolneDniDisplayer = ({holidays}) => {
     return (
         <>
         <TableContainer component={Paper} style={{margin: "1em 0"}}>
-            <Table stickyHeader aria-label="users table">
+            <Table 
+                stickyHeader 
+                aria-label="users table"
+                sx={{
+                    "& .MuiTableRow-root:focus-within, & .MuiTableRow-root:hover": {
+                        backgroundColor: "primary.highlight",
+                }}}
+            >
                 <TableHead>
                     <TableRow>
                         <TableCell>Dátum</TableCell>

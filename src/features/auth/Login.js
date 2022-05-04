@@ -151,7 +151,6 @@ const DropMenu = ({navigate}) => {
         try {
             await logout().unwrap()
             toast("Boli ste odhlásený", {type: "warning", id: 33, position: toast.POSITION.TOP})
-            handleClose()
             navigate("/")
         }
         catch(err){

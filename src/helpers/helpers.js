@@ -28,14 +28,14 @@ export function formatFromTo(from, to){
     if(isFullDay(from, to)){
         return "Celý deň"
     }
-    return from.substring(0, from.length-3) + " - " + to.substring(0, to.length-3)
+    return from?.substring(0, from.length-3) + " - " + to?.substring(0, to.length-3)
 }
 export function isFullDay(from, to){
     return from === "08:00:00" && to === "16:00:00"
 }
 
 export function myDateFormat(date){
-    return format(date, "d. MMMM yyyy", {locale: sk})
+    return format(date ?? new Date(), "d. MMMM yyyy", {locale: sk})
 }
 
 export function displaySelectedMonth(date){
@@ -57,6 +57,7 @@ export function disableSelection() {
 export function datesSameMonth(d1, d2){
     return d1.getYear() === d2.getYear() && d1.getMonth() === d2.getMonth()
 }
+
 
 export function datesAreSame(d1, d2){
     return d1.getYear() === d2.getYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate()

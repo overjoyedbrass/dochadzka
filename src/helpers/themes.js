@@ -6,7 +6,7 @@ export const appTheme = createTheme({
     palette: {
         primary: {
             main: "#2c6ad4",
-            highlight: "#739de6"
+            highlight: "#c7dcff"
         },
         secondary: {
             light: "#ff5c8d",
@@ -14,7 +14,10 @@ export const appTheme = createTheme({
             dark: "#a00037",
             contrastText: "#000",
         },
-        
+        holiday: {
+            main: pink[900],
+            color: yellow[600]
+        }
     },
     gui: {
         primary: "#ffffff",
@@ -41,5 +44,16 @@ export const appTheme = createTheme({
             6: "white",
             7: "white",
         }
-    }
+    },
+    components: {
+        MuiTableCell: {
+            styleOverrides: {
+                root: {
+                    fontSize: "1em"
+                }
+            }
+        },
+    },
 })
+
+

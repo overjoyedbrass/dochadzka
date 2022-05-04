@@ -18,7 +18,7 @@ export const AbsenceFormular = ({onClose, dates, setPickedDates}) => {
     const [fromTime, setFromTime] = React.useState("08:00")
     const [toTime, setToTime] = React.useState("16:00")
 
-    const [publicValue, setPublic] = React.useState(0)
+    const [publicValue, setPublic] = React.useState(2)
     const [type, setType] = React.useState(1)
     const [description, setDescription] = React.useState("")
 

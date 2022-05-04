@@ -18,9 +18,10 @@ import { Close } from '@mui/icons-material'
 import { selectLoggedUser } from '../auth/authSlice'
 import { useDeleteAbsenceMutation } from '../api/apiSlice'
 import { toast } from 'react-toastify'
+import { absenceTypes } from '../../helpers/helpers'
+import { AbsenceAuthor } from './AbsenceAuthor'
 
-
-export const AbsenceDetailDialog = ({open, absence, onClose, openEdit}) => {
+export const AbsenceDetailDialog = ({open, absence, onClose}) => {
     const loggedUser = useSelector(selectLoggedUser)
     
     const [openConfirm, setOpenConfirm] = React.useState(false)
@@ -59,8 +60,9 @@ export const AbsenceDetailDialog = ({open, absence, onClose, openEdit}) => {
                 <Close />
             </IconButton>
             <DialogContent>
+                <p><AbsenceAuthor userId={absence.user_id} fullName={true}/></p>
                 <p>Nepritomnosť v čase: {formatFromTo(absence?.from_time, absence?.to_time)}</p>
-                <p>Typ neprítomnosti: {absence?.type}</p>
+                <p>{absenceTypes[absence?.type]}</p>
                 <p>Popis: {absence?.description}</p>
                 { absence?.user_id === loggedUser?.id ?
                 <div
@@ -97,7 +99,7 @@ export const AbsenceDetailDialog = ({open, absence, onClose, openEdit}) => {
         />
         <AbsenceEditDialog 
             open={openEditDialog}
-            onClose={onClose}
+            onClose={() => setOpenEditDialog(false)}
             absence={absence}
         />
         </>

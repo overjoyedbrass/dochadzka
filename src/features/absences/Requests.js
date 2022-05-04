@@ -24,7 +24,7 @@ import {
 } from '@mui/material'
 import { format, parseISO } from 'date-fns'
 import { AbsenceAuthor } from './AbsenceAuthor'
-import { formatFromTo } from '../../helpers/helpers.js'
+import { absenceTypes, formatFromTo } from '../../helpers/helpers.js'
 
 
 function useQuery() {
@@ -45,7 +45,7 @@ export const Requests = () => {
     const isLogged = useSelector(selectLoggedBoolean)
     
     const {
-        data,
+        data=[],
         isLoading,
         isSuccess,
         isError,
@@ -53,6 +53,7 @@ export const Requests = () => {
         isFetching,
         refetch
     } = useGetAbsencesQuery({year: viewDate.getFullYear(), rq_only: true})
+
 
     if(!isLogged){
         return <MessageBox type="warning" message="Nie ste prihlásený"/>
@@ -86,10 +87,14 @@ export const Requests = () => {
 const RequestDisplayer = ({absences}) => {
 
     return (
-        <TableContainer 
-            component={Paper}
-        >
-            <Table stickyHeader aria-label="users table">
+        <TableContainer component={Paper}>
+            <Table 
+                stickyHeader aria-label="users table"
+                sx={{
+                    "& .MuiTableRow-root:focus-within, & .MuiTableRow-root:hover": {
+                        backgroundColor: "primary.highlight",
+                }}}
+            >
                 <TableHead>
                     <TableRow>
                         <TableCell>Dátum</TableCell>
@@ -103,7 +108,7 @@ const RequestDisplayer = ({absences}) => {
                 <TableBody>
                     { absences.length === 0 ? 
                         <TableRow style={{alignItems: "center"}}>
-                            <TableCell colSpan={5}>Žiadne pracovné cesty</TableCell>
+                            <TableCell colSpan={6}>Žiadne žiadosti</TableCell>
                         </TableRow> : null}
                     {
                         absences.map(ab => <ShowRequestRow key={ab.id} absence={ab} />)
@@ -137,7 +142,7 @@ const ShowRequestRow = ({absence}) => {
         <TableRow>
             <TableCell>{format(parseISO(absence.date_time), "dd.MM.yyyy")}</TableCell>
             <TableCell><AbsenceAuthor userId={absence.user_id}/></TableCell>
-            <TableCell>{absence.type}</TableCell>
+            <TableCell>{absenceTypes[absence.type]}</TableCell>
             <TableCell>{formatFromTo(absence.from_time, absence.to_time)}</TableCell>
             <TableCell>{absence.description}</TableCell>
             <TableCell>

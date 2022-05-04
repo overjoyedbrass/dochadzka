@@ -45,6 +45,17 @@ export const AbsenceBox = ({absence, funOnClick, empty, day}) => {
             Zobraziť všetky
         </div>)
     }
+    if(absence.isHoliday){
+        return (<div
+            className="absence-box" 
+            style={{
+                background: appTheme.palette.holiday.main,
+                color: appTheme.palette.holiday.color,
+                cursor: ""
+            }}>
+            {absence.description}
+        </div>)
+    }
     return (
         <div 
             className="absence-box" 
@@ -79,7 +90,7 @@ const CalendarCell = ({isToday, day, absences, functions}) => {
             </span>
 
             {absences.map((absence, index) => index < 3 ? 
-            (<AbsenceBox key={absence.id} absence={absence} funOnClick={functions.detail}/>) : null)}
+            (<AbsenceBox key={absence.id ?? index} absence={absence} funOnClick={functions.detail}/>) : null)}
             {show_4th ? <AbsenceBox key={absences[MAX_PER_CELL-1].id} absence={absences[MAX_PER_CELL-1]} funOnClick={functions.detail}/> : null}
             {overflow ? <AbsenceBox day={day} empty={true} funOnClick={functions.showMore} /> : null }
             

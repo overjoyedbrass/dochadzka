@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { selectUserPerms, selectLoggedBoolean } from '../auth/authSlice.js'
 import { MessageBox } from '../../components/MessageBox'
+
 import {
     Table,
     TableBody,
@@ -20,7 +21,6 @@ import {
     IconButton,
     ButtonGroup
 } from '@mui/material'
-
 import EditIcon from '@mui/icons-material/Edit';
 import { roles } from '../../helpers/helpers.js'
 
@@ -37,7 +37,6 @@ export const UserManagment = () => {
     if(!isLogged){
         return <MessageBox type="warning" message="Nie ste prihlásený"/>
     }
-
     if(!perms.user_managment){
         return <MessageBox type="error" message="Nemáte dostatočné oprávnenia zobraziť túto stránku" />
     }
@@ -80,25 +79,26 @@ export const UserManagment = () => {
                     sx={{
                         "& .MuiTableRow-root:hover": {
                         backgroundColor: "primary.highlight",
-                        color: "white"
-                    }
-                }}>
+                    }}}
+                >
                     <TableHead>
                         <TableRow className="tablerow-hover">
-                            <TableCell style={{fontSize: "1em"}}>Zamestnanec</TableCell>
-                            <TableCell style={{fontSize: "1em"}}>Rola</TableCell>
-                            <TableCell style={{fontSize: "1em"}}>Dovolenka</TableCell>
-                            <TableCell style={{fontSize: "1em"}}>Upraviť</TableCell>
+                            <TableCell>Zamestnanec</TableCell>
+                            <TableCell>Osobné číslo</TableCell>
+                            <TableCell>Rola</TableCell>
+                            <TableCell>Dovolenka</TableCell>
+                            <TableCell>Upraviť</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {
                             users.map(user => 
                             <TableRow key={ user.id } onMouseUp={() => navigate("/users/"+user.id)}>
-                                <TableCell style={{fontSize: "1em"}}> {user.surname} {user.name} #{user.personal_id} </TableCell>
-                                <TableCell style={{fontSize: "1em"}}> { roles[user.status] } </TableCell>
-                                <TableCell style={{fontSize: "1em"}}>45/45</TableCell>
-                                <TableCell style={{fontSize: "1em"}}>
+                                <TableCell> {user.surname} {user.name}</TableCell>
+                                <TableCell>{user.personal_id}</TableCell>
+                                <TableCell> { roles[user.status] } </TableCell>
+                                <TableCell>45/45</TableCell>
+                                <TableCell>
                                     <IconButton><Link to={"/users/"+user.id} style={{textDecoration: "none", color: "blue"}}>
                                         <EditIcon />
                                     </Link></IconButton>

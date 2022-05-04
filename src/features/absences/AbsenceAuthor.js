@@ -4,10 +4,11 @@ import { useSelector } from 'react-redux'
 
 import { selectUserById } from '../users/usersSlice'
 
-export const AbsenceAuthor = ({userId}) => {
+export const AbsenceAuthor = ({userId, fullName}) => {
     const author = useSelector(state => selectUserById(state, userId))
     if(author){
-        return <span>{author.name[0]}. {author.surname}</span>
+        const firstName = fullName ? author.name : author.name[0] + "."
+        return <span>{firstName} {author.surname}</span>
     }
     else{
         return <span>Unknown user</span>

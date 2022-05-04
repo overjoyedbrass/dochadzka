@@ -13,12 +13,10 @@ import {
 } from '@mui/material'
 import { toast } from 'react-toastify'
 
-function roundNumberOrText(number){
-    if(isNaN(number) || !number){
-        return "Neurčené"
-    }
-    return Math.round(number)
-}
+
+
+
+
 export const Budgets = () => {
     const users = useSelector(selectAllActiveUsers)    
     const [viewDate, setViewDate] = React.useState(new Date())
@@ -87,7 +85,10 @@ export const Budgets = () => {
             >
             <Table 
                 stickyHeader
-                // sx={{width: "fit-content"}}
+                sx={{
+                    "& .MuiTableRow-root:focus-within, & .MuiTableRow-root:hover": {
+                        backgroundColor: "primary.highlight",
+                }}}
             >
                 <TableHead>
                     <TableRow>

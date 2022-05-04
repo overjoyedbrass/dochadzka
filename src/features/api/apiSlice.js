@@ -115,7 +115,7 @@ export const apiSlice = createApi({
                     params: params
                 }
             },
-            providesTags: ['Holidays', "UNAUTHORIZED"]
+            providesTags: ['Holidays', "UNAUTHORIZED"],
         }),
 
         insertHoliday: builder.mutation({

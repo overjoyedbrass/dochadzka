@@ -99,7 +99,10 @@ export const EditDeadlines = () => {
                 { isLoading || isFetching ? <Spinner /> :
                 <TableContainer 
                     component={Paper}
-                    // sx={{width: "fit-content"}}
+                    sx={{
+                        "& .MuiTableRow-root:focus-within, & .MuiTableRow-root:hover": {
+                            backgroundColor: "primary.highlight",
+                    }}}
                 >
                     <Table 
                         stickyHeader 

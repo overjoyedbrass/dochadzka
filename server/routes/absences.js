@@ -5,7 +5,6 @@ const absences = require('../database/absences.js');
 router.get('/', async (req, res) => {
     const [month, year, userid, rq_only] = [req.query.month, req.query.year, req.query.userid, req.query.rq_only]
 
-
     if(!year){
         res.status(400)
         res.end()

@@ -5,7 +5,7 @@ import {
     ButtonGroup
 } from '@mui/material'
 
-import { useGetAbsencesQuery } from '../api/apiSlice'
+import { useGetAbsencesQuery, useGetHolidaysQuery } from '../api/apiSlice'
 import { Spinner } from '../../components/Spinner.js'
 
 
@@ -17,6 +17,7 @@ import './Calendar.css'
 import { useSelector } from 'react-redux'
 import { selectLoggedUser } from '../auth/authSlice' 
 import { UserSelect } from '../users/UserSelect'
+import { parseISO } from 'date-fns' 
 
 import { 
     CalendarToday as CalendarIcon,
@@ -95,10 +96,22 @@ const AbsenceMiddleware = ({viewDate, userId, calendarDisplay}) => {
         isFetching
     } = useGetAbsencesQuery({year: viewDate.getFullYear(), month: viewDate.getMonth() + 1, userid: userId})
 
+    const {
+        data: holidays=[],
+    } = useGetHolidaysQuery(viewDate.getFullYear())
+
     const groupedAbsences = []
     for(let i = 1; i <= 31; i++){
         groupedAbsences[i] = []
     }
+    holidays.forEach(h => {
+        var [date_time, description] = [h.date_time, h.description]
+        date_time = parseISO(date_time)
+        if(date_time.getMonth() === viewDate.getMonth()){
+            groupedAbsences[date_time.getDate()].push({date_time, description, isHoliday: true}) 
+        }
+    })
+
     absences.forEach(absence => {
         const datum = new Date(absence.date_time);
         groupedAbsences[datum.getDate()].push(absence);
