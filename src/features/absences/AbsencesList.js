@@ -15,7 +15,7 @@ function HolidayRow({hd, rowSpan}){
                     backgroundColor: "holiday.main"
                 }}
             >
-                <TableCell rowSpan={rowSpan} sx={{color: "holiday.color"}}>
+                <TableCell rowSpan={rowSpan} sx={{color: "holiday.color", backgroundColor: "white"}}>
                     <b>{myDateFormat(hd.date_time)}</b>
                 </TableCell>
                 <TableCell colSpan={3} sx={{color: "holiday.color"}}>
@@ -43,7 +43,7 @@ export const AbsencesList = ({absences, userId, showDetail}) => {
                 >
                     {!firstInRow ? null :
                     <TableCell 
-                        sx={{verticalAlign: "top"}} 
+                        sx={{verticalAlign: "top", backgroundColor: "white"}} 
                         rowSpan={numberOfRows}
                     >
                         { myDateFormat(new Date(absence.date_time)) }

@@ -176,7 +176,7 @@ export const AbsenceDisplayer = ({viewDate, absences, calendarDisplay}) => {
             onClose={() => setDisplayMore(null)}
             absences={absences[displayMore]}
             open={displayMore ? true : false}
-            onDetail={setDisplayMore}
+            onDetail={setDetail}
         />
         </>
     )

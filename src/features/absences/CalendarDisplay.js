@@ -53,7 +53,7 @@ export const AbsenceBox = ({absence, funOnClick, empty, day}) => {
                 color: appTheme.palette.holiday.color,
                 cursor: ""
             }}>
-            {absence.description}
+            <b>{absence.description}</b>
         </div>)
     }
     return (
@@ -68,7 +68,7 @@ export const AbsenceBox = ({absence, funOnClick, empty, day}) => {
                 color:      appTheme.text.absence[absence.type]
             }}
         >
-            <AbsenceAuthor userId={absence.user_id}/>{" – "}{absenceTypes[absence.type]}
+            <AbsenceAuthor userId={absence.user_id}/>&nbsp;{"– "}{absenceTypes[absence.type]}
         </div>
     )
 }

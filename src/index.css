@@ -151,6 +151,14 @@ body {
 }
 
 
+.ticket {
+    border: 1px solid lightgray;
+    border-radius: 1em;
+    
+    padding: 0.5em 1em;
+    margin: 2em 0;
+}
+
 
 
 

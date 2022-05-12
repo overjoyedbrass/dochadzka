@@ -1,18 +1,18 @@
-import {format} from 'date-fns'
+import { format, add } from 'date-fns'
+import { parseISO } from 'date-fns/esm'
 import {sk} from 'date-fns/locale'
 
 const mesiace = ['Január', 'Február', 'Marec', 'Apríl','Máj', 'Jún', 'Júl', 'August','September','Október','November','December']
 
-export const absenceTypes = [
-    null,
-    "Dovolenka",
-    "Práca doma",
-    "PN",
-    "Pracovná cesta",
-    "Materská dovolenka",
-    "Rodičovská dovolenka",
-    "Iná neprítomnosť"
-]
+export const absenceTypes = {
+    1: "Práceneschopnosť",
+    2: "Pracovná cesta",
+    3: "Dovolenka",
+    4: "Práca doma",
+    5: "Iná neprítomnosť",
+    6: "Materská dovolenka",
+    7: "Rodičovská dovolenka"
+}
 
 export const roles = [
     'Deaktivovaný',
@@ -21,6 +21,46 @@ export const roles = [
     'Sekretárka',
     'Vedúci katedry',
 ]
+
+// return distance between dates by work dates
+function datesDistance(date1, date2){
+    var start = date1
+    var diff = 0
+    while(start < date2){
+       start = add(start, {days: 1})
+       if(![0, 6].includes(start.getDay())){
+            diff += 1
+       }
+    }
+    return diff
+}
+
+export function getTickets(absences, userId){
+    const tickets = []
+    const userHolidays = absences.filter(ab => ab.user_id === userId && ab.type === 3)
+    userHolidays.sort((a, b) => parseISO(a.date_time) - parseISO(b.date_time))
+    var start = null
+    var end = null
+    for(let i = 0; i < userHolidays.length; i++){
+        const cur = parseISO(userHolidays[i].date_time)
+        if(start === null){
+            start = cur
+            end = start
+            continue
+        }
+        const dist = datesDistance(end, cur)
+        if(dist > 1){
+            tickets.push({from_date: start, to_date: end})
+            start = cur
+            end = cur
+            continue
+        }
+        end = cur
+    }
+    if(start && end)
+        tickets.push({from_date: start, to_date: end})
+    return tickets
+}
 
 export const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 

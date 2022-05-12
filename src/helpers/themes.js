@@ -15,8 +15,8 @@ export const appTheme = createTheme({
             contrastText: "#000",
         },
         holiday: {
-            main: pink[900],
-            color: yellow[600]
+            main: "",
+            color: red[700]
         }
     },
     gui: {

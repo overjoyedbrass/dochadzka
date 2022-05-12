@@ -60,6 +60,14 @@ export const AbsenceEditDialog =  ({open, onClose, absence}) => {
     if(!open){
         return null
     }
+
+    const options = []
+    for(const key in absenceTypes){
+        options.push(
+            <MenuItem key={key} value={key}>{absenceTypes[key]}</MenuItem>
+        )
+    }
+
     return (
         <Dialog
             open={open}
@@ -99,7 +107,7 @@ export const AbsenceEditDialog =  ({open, onClose, absence}) => {
 
                 <label htmlFor="typNeprit">Druh neprítomnosti: </label>
                 <Select id="typNeprit" value={type} size="small" onChange={event => setType(event.target.value)}>
-                    {absenceTypes.map((d, i) => <MenuItem key={i} value={i}>{d}</MenuItem>)}
+                    { options }
                 </Select><br/><br/>
                 <label htmlFor="popis">{popisText}: </label>
                 <TextField id="popis" onChange={event => setDescription(event.target.value)} multiline sx={{width: "90%"}} helperText="Nepovinné" value={description} /><br/><br/>

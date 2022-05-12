@@ -73,6 +73,13 @@ export const AbsenceFormular = ({onClose, dates, setPickedDates}) => {
     const popisText = type !== 1 ? "Dôvod neprítomnosti" : "Miesto pobytu na dovolenke"
     const labelForDni = dates.length <= 1 ? "Deň neprítomnosti: " : `Dni neprítomnosti (${dates.length})`
     
+
+    const options = []
+    for(const key in absenceTypes){
+        options.push(
+            <MenuItem key={key} value={key}>{absenceTypes[key]}</MenuItem>
+        )
+    }
     
     return (
         <div>
@@ -112,7 +119,7 @@ export const AbsenceFormular = ({onClose, dates, setPickedDates}) => {
 
             <label htmlFor="typNeprit">Druh neprítomnosti: </label>
             <Select id="typNeprit" value={type} size="small" onChange={event => setType(event.target.value)}>
-                {absenceTypes.slice(1).map((d, i) => <MenuItem key={i} value={i+1}>{d}</MenuItem>)}
+                { options }
             </Select><br/><br/>
             <label htmlFor="popis">{popisText}: </label>
             <TextField id="popis" onChange={event => setDescription(event.target.value)} multiline sx={{width: "90%"}} helperText="Nepovinné">{description}</TextField><br/><br/>
