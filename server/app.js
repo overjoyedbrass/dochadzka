@@ -17,16 +17,14 @@ app.use(cors())
 
 
 // generate secret token
-//require('crypto').randomBytes(64).toString('hex')
+//require('crypto').randomBytes(64).toString('hex') 
 
 // express static - automatically renders react app on "/"
 app.use(express.static("public"))
 
-
-
-// jwt middleware
+//jwt middleware
 app.use(
-    jwt({secret: process.env.SECRET_TOKEN, algorithms: ['HS256']}).unless({ path: ['/api/login','/api/logout', '/api/users', '/api/absences', '/api/holidays']})
+    jwt.expressjwt({secret: process.env.SECRET_TOKEN, algorithms: ['HS256']}).unless({ path: ['/api/login','/api/logout', '/api/users', '/api/absences', '/api/holidays']})
 )
 
 // DUMMY LOGOUT QUERY USEFULL FOR
@@ -34,6 +32,8 @@ app.use(
 app.get('/api/logout', (req, res) => {
     res.end()
 })
+
+const test = null ?? {}
 
 const routes = ['login', 'users', 'absences', 'deadlines', 'holidays', 'holidays_budget']
 routes.forEach(route => {
