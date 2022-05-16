@@ -9,7 +9,7 @@ export const HolidayTickets = ({absences, userId}) => {
     const close = () => setOpen(false)
     const tickets = getTickets(absences, userId)
     return (<>
-        <Button onClick={() => setOpen(true)} variant="outlined">Lístky</Button>
+        <Button onClick={() => setOpen(true)} variant="outlined">Dovolenkové lístky</Button>
 
         <Dialog
             open={open}
@@ -39,10 +39,7 @@ export const HolidayTickets = ({absences, userId}) => {
 
 const Ticket = ({ticket}) => {
     return (<div className="ticket">
-        <h3>Lístok</h3>
-        <p>
-            od: {format(ticket.from_date, "dd.MM.yyyy")} &nbsp; &nbsp; do: {format(ticket.to_date, "dd.MM.yyyy")}
-        </p>
+        <p> {format(ticket.from_date, "d.")}&nbsp;- {format(ticket.to_date, "d. M. yyyy")} </p>
         <div className="wrapper">
             <i>{!ticket.printed ? "Nevytlačený" : "Už vytlačený"}</i>
             <Button variant="outlined" sx={{height: "2em"}}>Tlačiť</Button>

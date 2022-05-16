@@ -92,7 +92,7 @@ const UserEditForm = ({user}) => {
     return (
         <div className="app-content">
             <h1>Editácia používateľa: {user.name} {user.surname}</h1>
-            <form onSubmit={submit}>
+            <form onSubmit={submit}  style={{maxWidth: "35em"}}>
                 <div className="labelWithInput">
                     <label htmlFor="personalId">Osobné číslo</label>
                     <TextField
@@ -193,7 +193,7 @@ const UserEditForm = ({user}) => {
                 { isLoading ? <Spinner /> :
                 <Button 
                     variant="contained" 
-                    type="submit" 
+                    type="submit"
                     style={{width: "fit-content"}}
                 >    
                     Potvrdiť údaje 

@@ -65,7 +65,7 @@ export const Login = () => {
     let content = (
         <>
         <div className="labelWithInput">
-            <label htmlFor="username">Prihlasovacie meno: </label>
+            <label htmlFor="username">Prihlasovacie meno: &nbsp;</label>
             <TextField 
                 id="username"
                 name="username"
@@ -175,7 +175,7 @@ const DropMenu = ({navigate}) => {
             open={open}
             onClose={handleClose}
             MenuListProps={{
-            'aria-labelledby': 'basic-button',
+                'aria-labelledby': 'basic-button',
             }}
         >
             <MenuItem onClick={() => {
