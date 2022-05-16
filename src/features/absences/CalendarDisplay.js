@@ -46,15 +46,16 @@ export const AbsenceBox = ({absence, funOnClick, empty, day}) => {
         </div>)
     }
     if(absence.isHoliday){
-        return (<div
-            className="absence-box" 
-            style={{
-                background: appTheme.palette.holiday.main,
-                color: appTheme.palette.holiday.color,
-                cursor: ""
-            }}>
-            <b>{absence.description}</b>
-        </div>)
+        return null
+        // return (<div
+        //     className="absence-box" 
+        //     style={{
+        //         background: appTheme.palette.holiday.main,
+        //         color: appTheme.palette.holiday.color,
+        //         cursor: ""
+        //     }}>
+        //     <b>{absence.description}</b>
+        // </div>)
     }
     return (
         <div 
@@ -77,6 +78,7 @@ const CalendarCell = ({isToday, day, absences, functions}) => {
     const MAX_PER_CELL = 4
     const overflow = absences.length > MAX_PER_CELL
     const show_4th = !overflow && absences.length === MAX_PER_CELL
+    const holiday = absences[0]?.isHoliday ? absences[0] : null
     return (
         <div 
             className="calendar-cell"
@@ -85,8 +87,9 @@ const CalendarCell = ({isToday, day, absences, functions}) => {
             onMouseEnter={(event) => functions.hover(event, day)}
             onDoubleClick={() => functions.dc(day)}
         >
-            <span className="title" style={{color: isToday ? "blue" : ""}}>
-                { isToday ? `[ ${day} ]` : day }
+            <span className="title" style={{color: holiday ? appTheme.palette.holiday.color : isToday ? "blue" : ""}}>
+                <b style={{fontWeight: holiday ? "bold" : "unset"}}>{ isToday ? `[ ${day} ]` : day }&nbsp;{holiday ? holiday.description : ""}</b>
+                    
             </span>
 
             {absences.map((absence, index) => index < 3 ? 

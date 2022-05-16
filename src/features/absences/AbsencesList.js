@@ -4,9 +4,9 @@ import { AbsenceAuthor } from './AbsenceAuthor.js'
 import { formatFromTo, myDateFormat, absenceTypes } from '../../helpers/helpers'
 
 import { 
-    TableBody, TableCell, TableContainer, Table, TableRow, Paper
+    TableBody, TableCell, TableContainer, Table, TableRow, Paper, IconButton
 } from '@mui/material'
-import { useTheme } from '@mui/styles';
+import { Edit, Delete} from '@mui/icons-material'
 import './AbsenceList.css'
 
 function HolidayRow({hd, rowSpan}){
@@ -21,10 +21,18 @@ function HolidayRow({hd, rowSpan}){
                 <TableCell colSpan={3} sx={{color: "holiday.color"}}>
                     <b>{ hd.description }</b>
                 </TableCell>
+                <TableCell></TableCell>
         </TableRow>)
 }
 
 export const AbsencesList = ({absences, userId, showDetail}) => {    
+    function edit(e){
+        e.stopPropagation()
+    }
+    function deletee(e){
+        e.stopPropagation()
+    }
+
     const rows = [] 
     for(const [day, absencesByDay] of Object.entries(absences)){
         if(absencesByDay.length === 0)
@@ -53,9 +61,15 @@ export const AbsencesList = ({absences, userId, showDetail}) => {
                     (<TableCell>
                         <b><AbsenceAuthor userId={absence.user_id}/></b>
                     </TableCell>)}
-
                     <TableCell>{ absenceTypes[absence.type] }</TableCell>
                     <TableCell>{ formatFromTo(absence.from_time, absence.to_time) }</TableCell>
+                    <TableCell>{
+                        true ? 
+                        <>
+                        <IconButton color="primary" onClick={edit}><Edit /></IconButton>
+                        <IconButton color="error" onClick={deletee}><Delete /></IconButton>
+                        </> : null
+                    }</TableCell>
                 </TableRow>
             )
         }
@@ -72,13 +86,7 @@ export const AbsencesList = ({absences, userId, showDetail}) => {
     return (
         <div className="list">
             <TableContainer component={Paper}>
-                <Table 
-                    aria-label="absences table"
-                    sx={{
-                        "& .MuiTableRow-root:focus-within, & .MuiTableRow-root:hover": {
-                            backgroundColor: "primary.highlight",
-                    }}}
-                >
+                <Table aria-label="absences table">
                     <TableBody>
                         {rows}
                     </TableBody>

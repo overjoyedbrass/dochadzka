@@ -17,6 +17,13 @@ export const AddHolidayDialog = ({onClose, year, open}) => {
 
     function setNewDate(e){
         const isDay = e.target.name === "day"
+        if(!e.target.value){
+            setDate({
+                day: isDay ? e.target.value : date.day,
+                month: isDay ? date.month : e.target.value
+            })
+            return
+        }
         setDate({
             day: clamp(1, isDay ? e.target.value ?? 1 : date.day, lastDayOfMonth(isDay ? date.month : e.target.value ?? 1, year)),
             month: clamp(1, isDay ? date.month : e.target.value ?? 1, 12)
@@ -58,12 +65,13 @@ export const AddHolidayDialog = ({onClose, year, open}) => {
                 <div className="labelWithInput">
                 <label htmlFor="day">Deň: </label>
                 <TextField 
+                    required={true}
                     id="day"
                     name="day"
                     size="small"
                     value={date.day}
                     type="number"
-                    style={{width: "4em"}} 
+                    style={{width: "5em"}} 
                     onChange={setNewDate}
                 />
                 </div>
@@ -71,12 +79,13 @@ export const AddHolidayDialog = ({onClose, year, open}) => {
                 <div className="labelWithInput">
                 <label htmlFor="month">Mesiac: </label>
                 <TextField
+                    required={true}
                     id="month"
                     name="month"
                     size="small"
                     value={date.month}
                     type="number"
-                    style={{width: "4em"}}
+                    style={{width: "5em"}}
                     onChange={setNewDate}
                 />
                 </div>
