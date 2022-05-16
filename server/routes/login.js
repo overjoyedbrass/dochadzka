@@ -3,7 +3,7 @@ var jwt = require('jsonwebtoken')
 var bcrypt = require('bcrypt')
 var router = express.Router();
 var { getUserByUsername } = require('../database/users.js')
-var getPerms = require('../perms/permissions.js')
+var { getPerms } = require('../database/perms.js')
 
 router.post('/', async (req, res) => {
     const req_username = req.body.username
@@ -23,6 +23,7 @@ router.post('/', async (req, res) => {
         return
     }
     data = data[0]
+    let perms = (await getPerms(data.status)).map(row => row["key"])
 
     bcrypt.compare(req_password, data.password, function (err, result) {
         // nezhoda v hashoch
@@ -39,7 +40,7 @@ router.post('/', async (req, res) => {
             surname: data.surname,
             email: data.email,
             status: data.status,
-            perms: getPerms(data.status)
+            perms: perms
         }
         const accessToken = jwt.sign(data_to_hash, process.env.SECRET_TOKEN, { expiresIn: "7d" })
         res.send({ 

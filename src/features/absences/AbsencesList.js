@@ -1,8 +1,8 @@
 import React from 'react'
 import { AbsenceAuthor } from './AbsenceAuthor.js'
 
-import { formatFromTo, myDateFormat, absenceTypes } from '../../helpers/helpers'
-import { useDeleteAbsenceMutation } from '../api/apiSlice.js'
+import { formatFromTo, myDateFormat } from '../../helpers/helpers'
+import { useDeleteAbsenceMutation, useGetAbsenceTypesQuery } from '../api/apiSlice.js'
 import { ConfirmDialog } from '../../components/ConfirmDialog.js'
 import { toast } from 'react-toastify'
 import { 
@@ -30,6 +30,7 @@ function HolidayRow({hd, rowSpan}){
 export const AbsencesList = ({absences, userId, showDetail, openEdit}) => {
     const [absenceToDelete, setAbsenceToDelete] = React.useState(null)
     const [deleteAbsence, {}] = useDeleteAbsenceMutation()
+    const {data: absenceTypes={}} = useGetAbsenceTypesQuery()
 
     async function submitDelete(){
         try{
@@ -70,7 +71,7 @@ export const AbsencesList = ({absences, userId, showDetail, openEdit}) => {
                     (<TableCell>
                         <b><AbsenceAuthor userId={absence.user_id}/></b>
                     </TableCell>)}
-                    <TableCell>{ absenceTypes[absence.type] }</TableCell>
+                    <TableCell>{ absenceTypes[absence.type]?.value }</TableCell>
                     <TableCell>{ formatFromTo(absence.from_time, absence.to_time) }</TableCell>
                     <TableCell>{
                         true ? 

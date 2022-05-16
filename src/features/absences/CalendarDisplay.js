@@ -10,7 +10,6 @@ import {
 } from '@mui/material'
 import { AbsenceAuthor } from './AbsenceAuthor.js'
 import { appTheme } from '../../helpers/themes'
-import { absenceTypes } from '../../helpers/helpers'
 import { startOfMonth, add, getDay } from 'date-fns'
 import { datesSameMonth, datesAreSame } from '../../helpers/helpers'
 
@@ -69,7 +68,7 @@ export const AbsenceBox = ({absence, funOnClick, empty, day}) => {
                 color:      appTheme.text.absence[absence.type]
             }}
         >
-            <AbsenceAuthor userId={absence.user_id}/>&nbsp;{"– "}{absenceTypes[absence.type]}
+            <AbsenceAuthor userId={absence.user_id}/>&nbsp;{"– "}{absence.name}
         </div>
     )
 }

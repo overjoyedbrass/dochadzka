@@ -37,7 +37,7 @@ export const UserManagment = () => {
     if(!isLogged){
         return <MessageBox type="warning" message="Nie ste prihlásený"/>
     }
-    if(!perms.user_managment){
+    if(!perms.includes("user_managment")){
         return <MessageBox type="error" message="Nemáte dostatočné oprávnenia zobraziť túto stránku" />
     }
 
@@ -50,9 +50,6 @@ export const UserManagment = () => {
     }
     else {
         users = allusers
-    }
-    if(!loggedUser){
-        return <div className="error">Nie ste prihlásený</div>
     }
     return (
         <div className="app-content">

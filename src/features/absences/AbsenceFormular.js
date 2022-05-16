@@ -6,8 +6,8 @@ import { useSelector } from 'react-redux'
 import { format, parseISO, add } from 'date-fns'
 import { appTheme } from  "../../helpers/themes.js"
 
-import { absenceTypes, datesAreSame } from '../../helpers/helpers.js'
-import { useInsertAbsencesMutation } from '../api/apiSlice.js'
+import { datesAreSame } from '../../helpers/helpers.js'
+import { useGetAbsenceTypesQuery, useInsertAbsencesMutation } from '../api/apiSlice.js'
 import { selectLoggedUser } from '../auth/authSlice'
 import { toast } from 'react-toastify'
 import { Spinner } from '../../components/Spinner'
@@ -23,6 +23,7 @@ export const AbsenceFormular = ({onClose, dates, setPickedDates}) => {
     const [description, setDescription] = React.useState("")
 
     const [ addAbsences, { isAddingAbsence }] = useInsertAbsencesMutation()
+    const {data: absenceTypes={}} = useGetAbsenceTypesQuery()
 
     const user = useSelector(selectLoggedUser)
 
@@ -77,7 +78,7 @@ export const AbsenceFormular = ({onClose, dates, setPickedDates}) => {
     const options = []
     for(const key in absenceTypes){
         options.push(
-            <MenuItem key={key} value={key}>{absenceTypes[key]}</MenuItem>
+            <MenuItem key={key} value={key}>{absenceTypes[key].value}</MenuItem>
         )
     }
     

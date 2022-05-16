@@ -24,8 +24,19 @@ app.use(express.static("public"))
 
 //jwt middleware
 app.use(
-    jwt.expressjwt({secret: process.env.SECRET_TOKEN, algorithms: ['HS256']}).unless({ path: ['/api/login','/api/logout', '/api/users', '/api/absences', '/api/holidays']})
-)
+    jwt.expressjwt({
+        secret: process.env.SECRET_TOKEN, 
+        algorithms: ['HS256']
+    }).unless({ 
+        path: [
+            '/api/login',
+            '/api/logout', 
+            '/api/users', 
+            '/api/absences', 
+            '/api/holidays',
+            '/api/absence_types'
+        ]
+}))
 
 // DUMMY LOGOUT QUERY USEFULL FOR
 // LOGOUTING IN APP USING RTK QUERY + TAG INVALIDATORS
@@ -33,9 +44,7 @@ app.get('/api/logout', (req, res) => {
     res.end()
 })
 
-const test = null ?? {}
-
-const routes = ['login', 'users', 'absences', 'deadlines', 'holidays', 'holidays_budget']
+const routes = ['login', 'users', 'absences', 'deadlines', 'holidays', 'holidays_budget', 'absence_types']
 routes.forEach(route => {
     const mw = require(`./routes/${route}`)
     app.use(`/api/${route}`, mw)

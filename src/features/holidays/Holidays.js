@@ -41,7 +41,8 @@ export const Holidays = () => {
     if(!isLogged){
         return <MessageBox type="warning" message="Nie ste prihlásený"/>
     }
-    if(!perms.edit_holidays){
+    
+    if(!perms.includes("edit_holidays")){
         return <MessageBox type="error" message="Nemáte dostatočné oprávnenia zobraziť túto stránku" />
     }
    

@@ -2,16 +2,16 @@ import React from 'react'
 import {
   BrowserRouter as Router,
   Route,
-  Routes
+  Routes,
+  useNavigate
 } from 'react-router-dom'
-import {
-    appTheme
-} from './helpers/themes.js'
+
+import { appTheme } from './helpers/themes.js'
 // toastify
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider } from '@emotion/react';
-
+import { Button } from '@mui/material';
 import { AbsenceController } from './features/absences/AbsenceController.js'
 import { Mainbar } from './components/Mainbar.js'
 import { UserProfile } from './features/users/UserProfile.js';
@@ -22,6 +22,24 @@ import { Requests } from './features/absences/Requests';
 import { Holidays } from './features/holidays/Holidays.js';
 import { Budgets } from './features/holidays/Budgets.js';
 import history from './app/history.js'
+import { MessageBox } from './components/MessageBox.js';
+import { useGetAbsenceTypesQuery } from './features/api/apiSlice.js';
+
+const NoPathMatch = () => {
+    const navigate = useNavigate()
+    return (
+        <main style={{
+            display: "flex",
+            flexFlow: "column",
+            justifyContent: "center"
+        }}>
+            <MessageBox 
+                message="Cesta neexistuje"
+            />
+            <Button onClick={() => navigate("/")}>Späť na hlavnú stránku</Button>
+        </main>
+    )
+}
 
 function App() {
     return (          
@@ -38,6 +56,8 @@ function App() {
                         <Route path="/requests" element = {<Requests />} />
                         <Route path="/holidays" element = {<Holidays />} />
                         <Route path="/budgets" element = {<Budgets />} />
+                        <Route  path="*" element={<NoPathMatch />}
+                        />
                     </Routes>
                     <ToastContainer position="top-center"/>
                 </div>

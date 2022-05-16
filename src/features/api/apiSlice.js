@@ -18,6 +18,20 @@ export const apiSlice = createApi({
   
 
     endpoints: builder => ({
+        getAbsenceTypes: builder.query({
+            query: () => {
+                return {
+                    url: 'absence_types'
+                }
+            },
+            transformResponse: responseData => {
+                let data = {}
+                responseData.forEach(atype => {
+                    data[atype.type_id] = {key: atype.key, value: atype.name}
+                })
+                return data
+            },
+        }),
         // ABSENCES
         getAbsences: builder.query({
             query: ({year, month, userid, rq_only}) => {
@@ -175,6 +189,7 @@ export const apiSlice = createApi({
 })
 
 export const { 
+    useGetAbsenceTypesQuery,
     useGetAbsencesQuery,
     useGetAbsenceQuery,
     useUpdateAbsenceMutation,

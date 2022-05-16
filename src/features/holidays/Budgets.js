@@ -52,7 +52,7 @@ export const Budgets = () => {
     if(!isLogged){
         return <MessageBox type="warning" message="Nie ste prihlásený"/>
     }
-    if(!perms.edit_budgets){
+    if(!perms.includes("edit_budgets")){
         return <MessageBox type="error" message="Nemáte dostatočné oprávnenia zobraziť túto stránku" />
     }
 

@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 import history from '../../app/history'
 
 
-const emptyUser = { perms: {} }
+const emptyUser = { perms: [] }
 
 function getInitialState() {
     try{
@@ -78,4 +78,4 @@ export const selectLoggedUser = (state) => state.auth.user
 
 export const selectLoggedBoolean = (state) => Boolean(state.auth.token)
 
-export const selectUserPerms = (state) => state.auth.user?.perms ?? {}
+export const selectUserPerms = (state) => state.auth.user?.perms ?? []

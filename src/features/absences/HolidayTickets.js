@@ -16,7 +16,7 @@ export const HolidayTickets = ({absences, userId}) => {
             onClose={close}
         >
             <DialogTitle style={{marginRight: "2em"}}>
-                Lístky na vytlačenie
+                Dovolenkové lístky na vytlačenie
             </DialogTitle>
             <IconButton
                 onClick={close}
@@ -42,7 +42,7 @@ const Ticket = ({ticket}) => {
         <p> {format(ticket.from_date, "d.")}&nbsp;- {format(ticket.to_date, "d. M. yyyy")} </p>
         <div className="wrapper">
             <i>{!ticket.printed ? "Nevytlačený" : "Už vytlačený"}</i>
-            <Button variant="outlined" sx={{height: "2em"}}>Tlačiť</Button>
+            <Button variant="outlined" sx={{height: "2em"}}>{ticket.printed ? "Vytlačiť znovu" : "Vylačiť"}</Button>
         </div>
     </div>)
 }

@@ -4,16 +4,6 @@ import {sk} from 'date-fns/locale'
 
 const mesiace = ['Január', 'Február', 'Marec', 'Apríl','Máj', 'Jún', 'Júl', 'August','September','Október','November','December']
 
-export const absenceTypes = {
-    1: "Práceneschopnosť",
-    2: "Pracovná cesta",
-    3: "Dovolenka",
-    4: "Práca doma",
-    5: "Iná neprítomnosť",
-    6: "Materská dovolenka",
-    7: "Rodičovská dovolenka"
-}
-
 export const roles = [
     'Deaktivovaný',
     'Používateľ',

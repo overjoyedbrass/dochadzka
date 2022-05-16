@@ -64,7 +64,8 @@ export const EditDeadlines = () => {
     if(!isLogged){
         return <MessageBox type="warning" message="Nie ste prihlásený"/>
     }
-    if(!perms.edit_deadlines){
+    
+    if(!perms.includes("edit_deadlines")){
         return <MessageBox type="error" message="Nemáte dostatočné oprávnenia zobraziť túto stránku" />
     }
 

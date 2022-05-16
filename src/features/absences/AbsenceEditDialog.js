@@ -16,8 +16,8 @@ import {
 import { Close } from '@mui/icons-material'
 import { appTheme } from '../../helpers/themes.js'
 import { format, parseISO } from 'date-fns'
-import { absenceTypes, isFullDay as isAbsenceFullDay } from '../../helpers/helpers.js'
-import { useUpdateAbsenceMutation } from '../api/apiSlice'
+import { isFullDay as isAbsenceFullDay } from '../../helpers/helpers.js'
+import { useGetAbsenceTypesQuery, useUpdateAbsenceMutation } from '../api/apiSlice'
 import { toast } from 'react-toastify'
 import { Spinner } from '../../components/Spinner'
 
@@ -31,6 +31,7 @@ export const AbsenceEditDialog =  ({open, onClose, absence}) => {
     const [description, setDescription] = React.useState(absence.description)
     const [ updateAbsence, { isLoading }] = useUpdateAbsenceMutation()
 
+    const {data: absenceTypes={}} = useGetAbsenceTypesQuery()
 
     const popisText = type !== "Dovolenka" ? "Dôvod neprítomnosti" : "Miesto pobytu na dovolenke"
     async function submit(e){
@@ -64,7 +65,7 @@ export const AbsenceEditDialog =  ({open, onClose, absence}) => {
     const options = []
     for(const key in absenceTypes){
         options.push(
-            <MenuItem key={key} value={key}>{absenceTypes[key]}</MenuItem>
+            <MenuItem key={key} value={key}>{absenceTypes[key].value}</MenuItem>
         )
     }
 

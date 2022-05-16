@@ -24,15 +24,13 @@ import {
 } from '@mui/material'
 import { format, parseISO } from 'date-fns'
 import { AbsenceAuthor } from './AbsenceAuthor'
-import { absenceTypes, formatFromTo } from '../../helpers/helpers.js'
+import { formatFromTo } from '../../helpers/helpers.js'
 
 
 function useQuery() {
     const { search } = useLocation();
     return React.useMemo(() => new URLSearchParams(search), [search]);
 }
-
-
 
 export const Requests = () => {
     const query = useQuery()
@@ -47,18 +45,17 @@ export const Requests = () => {
     const {
         data=[],
         isLoading,
-        isSuccess,
-        isError,
-        error,
+        // isSuccess,
+        // isError,
+        // error,
         isFetching,
-        refetch
+        // refetch
     } = useGetAbsencesQuery({year: viewDate.getFullYear(), rq_only: true})
-
 
     if(!isLogged){
         return <MessageBox type="warning" message="Nie ste prihlásený"/>
     }
-    if(!perms.manage_requests){
+    if(!perms.includes("manage_requests")){
         return <MessageBox type="error" message="Nemáte dostatočné oprávnenia zobraziť túto stránku" />
     }
 
@@ -66,7 +63,6 @@ export const Requests = () => {
     if(filter < 2)
         absences = data.filter(ab => ab.confirmation === filter)
     else absences = data
-
     return (
         <div className="app-content">
             <h1>Žiadosti</h1>
@@ -79,46 +75,36 @@ export const Requests = () => {
                 </ButtonGroup>
             </div>
             { isLoading || isFetching ? <Spinner /> :
-            <RequestDisplayer absences={absences}/>}
+            <TableContainer component={Paper}>
+                <Table 
+                    stickyHeader aria-label="users table"
+                    sx={{
+                        "& .MuiTableRow-root:focus-within, & .MuiTableRow-root:hover": {
+                        backgroundColor: "primary.highlight",
+                    }}}
+                >
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Dátum</TableCell>
+                            <TableCell>Autor</TableCell>
+                            <TableCell>Typ</TableCell>
+                            <TableCell>Čas</TableCell>
+                            <TableCell>Popis</TableCell>
+                            <TableCell>Potvrdenie</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        { absences.length === 0 ? 
+                            <TableRow style={{alignItems: "center"}}>
+                            <TableCell colSpan={6}>Žiadne žiadosti</TableCell>
+                            </TableRow> : null}
+                        { absences.map(ab => <ShowRequestRow key={ab.id} absence={ab} />) }
+                    </TableBody>
+                </Table>
+            </TableContainer>}
         </div>
     )
 }
-
-const RequestDisplayer = ({absences}) => {
-
-    return (
-        <TableContainer component={Paper}>
-            <Table 
-                stickyHeader aria-label="users table"
-                sx={{
-                    "& .MuiTableRow-root:focus-within, & .MuiTableRow-root:hover": {
-                        backgroundColor: "primary.highlight",
-                }}}
-            >
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Dátum</TableCell>
-                        <TableCell>Autor</TableCell>
-                        <TableCell>Typ</TableCell>
-                        <TableCell>Čas</TableCell>
-                        <TableCell>Popis</TableCell>
-                        <TableCell>Potvrdenie</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    { absences.length === 0 ? 
-                        <TableRow style={{alignItems: "center"}}>
-                            <TableCell colSpan={6}>Žiadne žiadosti</TableCell>
-                        </TableRow> : null}
-                    {
-                        absences.map(ab => <ShowRequestRow key={ab.id} absence={ab} />)
-                    }
-                </TableBody>
-            </Table>
-        </TableContainer>
-    )
-}
-
 
 const ShowRequestRow = ({absence}) => {
     const [ confirmAbsence, { isLoading }] = useConfirmAbsenceMutation()
@@ -142,7 +128,7 @@ const ShowRequestRow = ({absence}) => {
         <TableRow>
             <TableCell>{format(parseISO(absence.date_time), "dd.MM.yyyy")}</TableCell>
             <TableCell><AbsenceAuthor userId={absence.user_id}/></TableCell>
-            <TableCell>{absenceTypes[absence.type]}</TableCell>
+            <TableCell>{absence.name}</TableCell>
             <TableCell>{formatFromTo(absence.from_time, absence.to_time)}</TableCell>
             <TableCell>{absence.description}</TableCell>
             <TableCell>

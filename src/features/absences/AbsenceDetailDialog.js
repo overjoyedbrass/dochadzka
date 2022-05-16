@@ -12,20 +12,18 @@ import {
 } from '@mui/material'
 
 import {  ConfirmDialog } from '../../components/ConfirmDialog'
-import { AbsenceEditDialog } from './AbsenceEditDialog.js'
-
 import { Close } from '@mui/icons-material'
 import { selectLoggedUser } from '../auth/authSlice'
-import { useDeleteAbsenceMutation } from '../api/apiSlice'
+import { useDeleteAbsenceMutation, useGetAbsenceTypesQuery } from '../api/apiSlice'
 import { toast } from 'react-toastify'
-import { absenceTypes } from '../../helpers/helpers'
 import { AbsenceAuthor } from './AbsenceAuthor'
 
 export const AbsenceDetailDialog = ({open, absence, onClose, openEdit}) => {
     const loggedUser = useSelector(selectLoggedUser)
-
     const [openConfirm, setOpenConfirm] = React.useState(false)
     const [deleteAbsence, {}] = useDeleteAbsenceMutation()
+
+    const {data: absenceTypes={}} = useGetAbsenceTypesQuery()
 
     async function submitDelete(){
         try{
@@ -60,7 +58,7 @@ export const AbsenceDetailDialog = ({open, absence, onClose, openEdit}) => {
             <DialogContent>
                 <p><AbsenceAuthor userId={absence.user_id} fullName={true}/></p>
                 <p>Nepritomnosť v čase: {formatFromTo(absence?.from_time, absence?.to_time)}</p>
-                <p>{absenceTypes[absence?.type]}</p>
+                <p>{ absenceTypes[absence?.type].value }</p>
                 <p>Popis: {absence?.description}</p>
                 { absence?.user_id === loggedUser?.id ?
                 <div

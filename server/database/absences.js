@@ -2,24 +2,41 @@ const query = require('./query.js')
 
 module.exports = {
     getAbsences: () => {
-        let SQL = "SELECT * FROM absence"
+        let SQL = 
+        `SELECT * FROM absence 
+        LEFT JOIN absence_types ON absence.type = absence_types.type_id`
         return query(SQL, [])
     },
     getAbsenceById: (id) => {
-        let SQL = "SELECT * FROM absence WHERE id = ?"
+        let SQL = 
+        `SELECT * FROM absence 
+        LEFT JOIN absence_types ON absence.type = absence_types.type_id
+        WHERE id = ?`
         return query(SQL, [id])
     },
     getAbsencesByYearMonth: (year, month) => {
-        let SQL = "SELECT * FROM absence WHERE EXTRACT(YEAR FROM date_time) = ? AND EXTRACT(MONTH FROM date_time) = ?"
+        let SQL = 
+        `SELECT * FROM absence 
+        LEFT JOIN absence_types ON absence.type = absence_types.type_id
+        WHERE EXTRACT(YEAR FROM date_time) = ? 
+        AND EXTRACT(MONTH FROM date_time) = ?`
         return query(SQL, [year, month])
     },
     getAbsencesByYearMonthUser: (year, month, user) => {
-        let SQL = "SELECT * FROM absence WHERE EXTRACT(YEAR FROM date_time) = ? AND EXTRACT(MONTH FROM date_time) = ? AND user_id = ?"
+        let SQL = 
+        `SELECT * FROM absence
+        LEFT JOIN absence_types ON absence.type = absence_types.type_id
+        WHERE EXTRACT(YEAR FROM date_time) = ? 
+        AND EXTRACT(MONTH FROM date_time) = ? AND user_id = ?`
         return query(SQL, [year, month, user])
     },
-    // pracovná cesta - 2 | práca doma - 4
     getRequestsByYear: (year) => {
-        let SQL = "SELECT * FROM absence WHERE EXTRACT(YEAR FROM date_time) = ? AND (type = 2 OR type = 4) ORDER BY date_time DESC"
+        let SQL = 
+        `SELECT * FROM absence
+        LEFT JOIN absence_types ON absence.type = absence_types.type_id
+        WHERE EXTRACT(YEAR FROM date_time) = ? 
+        AND (absence_types.key = "ABSENCE_TRAVEL" OR absence_types.key = "ABSENCE_WORKFROMHOME") 
+        ORDER BY date_time DESC`
         return query(SQL, [year])
     },
     insertAbsences(rows){
