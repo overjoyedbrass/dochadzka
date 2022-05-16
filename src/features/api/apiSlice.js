@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 // Define our single API slice object
 export const apiSlice = createApi({
     baseQuery: fetchBaseQuery({ 
-        baseUrl: 'http://192.168.1.16:8080/api/',
+        baseUrl: 'http://localhost:8080/api/',
         
         prepareHeaders: (headers, { getState }) => {
             // By default, if we have a token in the store, let's use that for authenticated requests
