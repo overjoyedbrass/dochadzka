@@ -7,10 +7,11 @@ import {
     Button
 } from '@mui/material'
 
-export const ConfirmDialog = ({open, question, noAction, yesAction, noText, yesText}) => {
+export const ConfirmDialog = ({open, question, noAction, yesAction, noText, yesText, close}) => {
     return (
         <Dialog
             open={open}
+            onClose={noAction}
         >
             <DialogTitle>
                 {question}

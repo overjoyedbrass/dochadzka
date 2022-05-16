@@ -1,8 +1,10 @@
-import React from 'react-redux'
+import React from 'react'
 import { AbsenceAuthor } from './AbsenceAuthor.js'
 
 import { formatFromTo, myDateFormat, absenceTypes } from '../../helpers/helpers'
-
+import { useDeleteAbsenceMutation } from '../api/apiSlice.js'
+import { ConfirmDialog } from '../../components/ConfirmDialog.js'
+import { toast } from 'react-toastify'
 import { 
     TableBody, TableCell, TableContainer, Table, TableRow, Paper, IconButton
 } from '@mui/material'
@@ -25,12 +27,19 @@ function HolidayRow({hd, rowSpan}){
         </TableRow>)
 }
 
-export const AbsencesList = ({absences, userId, showDetail}) => {    
-    function edit(e){
-        e.stopPropagation()
-    }
-    function deletee(e){
-        e.stopPropagation()
+export const AbsencesList = ({absences, userId, showDetail, openEdit}) => {
+    const [absenceToDelete, setAbsenceToDelete] = React.useState(null)
+    const [deleteAbsence, {}] = useDeleteAbsenceMutation()
+
+    async function submitDelete(){
+        try{
+            await deleteAbsence(absenceToDelete.id).unwrap()
+            toast("Neprítomnosť odstránená", {type:"success", autoClose: 1000})
+            setAbsenceToDelete(null)
+        }    
+        catch(err){
+            toast("Neprítomnosť sa nepodarilo odstrániť", {type: "error"})
+        }
     }
 
     const rows = [] 
@@ -66,8 +75,14 @@ export const AbsencesList = ({absences, userId, showDetail}) => {
                     <TableCell>{
                         true ? 
                         <>
-                        <IconButton color="primary" onClick={edit}><Edit /></IconButton>
-                        <IconButton color="error" onClick={deletee}><Delete /></IconButton>
+                        <IconButton onClick={(e) => {
+                            e.stopPropagation()
+                            openEdit(absence)
+                        }} color="primary"><Edit /></IconButton>
+                        <IconButton onClick={(e) => {
+                            e.stopPropagation()
+                            setAbsenceToDelete(absence)
+                        }} color="error" ><Delete /></IconButton>
                         </> : null
                     }</TableCell>
                 </TableRow>
@@ -92,6 +107,14 @@ export const AbsencesList = ({absences, userId, showDetail}) => {
                     </TableBody>
                 </Table>
             </TableContainer>
+            <ConfirmDialog
+                open={absenceToDelete ? true : false}
+                question="Chcete skutočne odstrániť neprítomnosť?"
+                noText="Zrušiť"
+                yesText="Odstrániť"
+                noAction={() => setAbsenceToDelete(null)}
+                yesAction={submitDelete}
+        />
         </div>
     )
 }

@@ -33,11 +33,11 @@ export const AbsenceController = () => {
 
     const{
         data: absences=[],
-        isLoading,
-        isSuccess,
+        // isLoading,
+        // isSuccess,
         isError,
         error,
-        isFetching
+        // isFetching
     } = useGetAbsencesQuery({year: viewDate.getFullYear(), month: viewDate.getMonth() + 1, userid: selectedUser})
 
     const {

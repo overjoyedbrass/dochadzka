@@ -7,6 +7,7 @@ import { appTheme } from '../../helpers/themes'
 import Draggable from 'react-draggable'
 import { CalendarDisplay } from './CalendarDisplay'
 import { AbsencesList } from './AbsencesList'
+import { AbsenceEditDialog } from './AbsenceEditDialog'
 import { ShowMoreAbsencesDialog } from './ShowMoreAbsencesDialog'
 import { toast } from 'react-toastify'
 import { 
@@ -31,9 +32,12 @@ export const AbsenceDisplayer = ({viewDate, absences, calendarDisplay}) => {
     const [open, setOpen] = React.useState(false)
     const [dates, setPickedDates] = React.useState([])
 
-    const [detail, setDetail] = React.useState(null)
+    //dialogues
+    const [absenceDetail, setAbsenceDetail] = React.useState(null)
     const [displayMore, setDisplayMore] = React.useState(null)
+    const [absenceEdit, setAbsenceEdit] = React.useState(null)
 
+    //control fucntionality
     const [adding, setIsAdding] = React.useState(true)
     const [hovering, setHovering] = React.useState(false)
 
@@ -124,7 +128,7 @@ export const AbsenceDisplayer = ({viewDate, absences, calendarDisplay}) => {
                     hover: handleHover,
                     dc: doubleClick,
                     setHovering: setHovering,
-                    detail: (ab) => setDetail(ab),
+                    detail: (ab) => setAbsenceDetail(ab),
                     showMore: (day) => setDisplayMore(day)
                 }}
                 absences={absences}
@@ -133,7 +137,8 @@ export const AbsenceDisplayer = ({viewDate, absences, calendarDisplay}) => {
             <AbsencesList 
                 absences={absences} 
                 viewDate={viewDate}
-                showDetail={(ab) => setDetail(ab)}
+                showDetail={(ab) => setAbsenceDetail(ab)}
+                openEdit={(absence) => setAbsenceEdit(absence)}
             />
         }
         <Dialog 
@@ -167,17 +172,25 @@ export const AbsenceDisplayer = ({viewDate, absences, calendarDisplay}) => {
         }
 
         <AbsenceDetailDialog 
-            onClose={() => setDetail(null)}
-            open={detail ? true : false}
-            absence={detail}
+            onClose={() => setAbsenceDetail(null)}
+            open={absenceDetail ? true : false}
+            absence={absenceDetail}
+            openEdit={(absence) => setAbsenceEdit(absence)}
         />
 
         <ShowMoreAbsencesDialog 
             onClose={() => setDisplayMore(null)}
             absences={absences[displayMore]}
             open={displayMore ? true : false}
-            onDetail={setDetail}
+            onDetail={setAbsenceDetail}
         />
+        
+        {!absenceEdit ? null : 
+        <AbsenceEditDialog 
+            open={absenceEdit}
+            onClose={() => setAbsenceEdit(null)}
+            absence={absenceEdit}
+        />}
         </>
     )
 }

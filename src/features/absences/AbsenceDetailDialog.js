@@ -21,17 +21,15 @@ import { toast } from 'react-toastify'
 import { absenceTypes } from '../../helpers/helpers'
 import { AbsenceAuthor } from './AbsenceAuthor'
 
-export const AbsenceDetailDialog = ({open, absence, onClose}) => {
+export const AbsenceDetailDialog = ({open, absence, onClose, openEdit}) => {
     const loggedUser = useSelector(selectLoggedUser)
-    
-    const [openConfirm, setOpenConfirm] = React.useState(false)
-    const [openEditDialog, setOpenEditDialog] = React.useState(false)
 
+    const [openConfirm, setOpenConfirm] = React.useState(false)
     const [deleteAbsence, {}] = useDeleteAbsenceMutation()
 
     async function submitDelete(){
         try{
-            await deleteAbsence(absence.id)
+            await deleteAbsence(absence.id).unwrap()
             toast("Neprítomnosť odstránená", {type:"success", autoClose: 1000})
         }    
         catch(err){
@@ -77,7 +75,7 @@ export const AbsenceDetailDialog = ({open, absence, onClose}) => {
                     </Button>
 
                     <Button
-                        onClick={() => setOpenEditDialog(true)}
+                        onClick={() => openEdit(absence)}
                         variant='contained'
                     >
                         Upraviť
@@ -97,11 +95,7 @@ export const AbsenceDetailDialog = ({open, absence, onClose}) => {
                 submitDelete()
             }}
         />
-        <AbsenceEditDialog 
-            open={openEditDialog}
-            onClose={() => setOpenEditDialog(false)}
-            absence={absence}
-        />
+        
         </>
     )
 }
