@@ -3,34 +3,33 @@ var router = express.Router();
 
 var deadlines = require("../database/deadlines.js")
 
-router.get('/', async (req, res) => {
-    const year = req.query.year
-    
-    if(!year){
-        res.status(400).end()
-        return
+router.get('/', async (req, res, next) => {
+    try {
+        const year = req.query.year
+        
+        if(!year){
+            throw Error("MissingArgument")
+        }
+        const data = await deadlines.getDeadlinesByYear(year)
+        res.send(data)
+    } catch(err){
+        return next(err)
     }
-    const data = await deadlines.getDeadlinesByYear(year)
-    res.send(data)
 });
 
-router.put('/', async (req, res) => {
-    const data = req.body
-    const year = req.query.year
+router.put('/', async (req, res, next) => {
+    try{
+        const data = req.body
+        const year = req.query.year
 
-    if(!data || data?.length === 0 || !year){
-        res.status(400)
+        if(!data || data?.length === 0 || !year){
+            throw Error("PatchDataMissing")
+        }
+        await deadlines.replace(year, data)        
         res.end()
+        
+    } catch (err) {
+        return next(err)
     }
-    try {
-        await deadlines.replace(year, data)
-    }
-    catch(err){
-        console.log(err)
-        res.status(400)
-        res.end()
-    }
-    
-    res.end()
 })
 module.exports = router;

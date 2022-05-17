@@ -2,92 +2,99 @@ const express = require('express');
 const router = express.Router();
 const absences = require('../database/absences.js');
 
-router.get('/', async (req, res) => {
-    const [month, year, userid, rq_only] = [req.query.month, req.query.year, req.query.userid, req.query.rq_only]
+router.get('/', async (req, res, next) => {
+    try {
+        const [month, year, userid, rq_only] = [req.query.month, req.query.year, req.query.userid, req.query.rq_only]
 
-    if(!year){
-        res.status(400)
-        res.end()
-        return
-    }
+        if(!year){
+            throw next(Error("MissingArgument"))
+        }
 
-    if(rq_only){
+        if(rq_only){
+            let data;
+            data = await absences.getRequestsByYear(year)
+            res.send(data)
+            return
+        }
+
+        if(!month){
+            throw next(Error("MissingArgument"))
+        }
+
         let data;
-        data = await absences.getRequestsByYear(year)
+        if(!userid){
+            data = await absences.getAbsencesByYearMonth(year, month)
+        }
+        else {
+            data = await absences.getAbsencesByYearMonthUser(year, month, userid)
+        }
         res.send(data)
-        return
+    } catch (err) {
+        return next(err)
     }
-
-    if(!month){
-        res.status(400).end()
-        return
-    }
-    let data;
-    if(!userid){
-        data = await absences.getAbsencesByYearMonth(year, month)
-    }
-    else {
-        data = await absences.getAbsencesByYearMonthUser(year, month, userid)
-    }
-    res.send(data)
 });
 
-router.get('/:absenceId', async (req, res) => {
-    const absenceId = req.params.absenceId
-    if(!absenceId){
-        res.status(400)
-        res.end()
-        return
-    }
-    
-    const arrayWithOneRow = await absences.getAbsenceById(absenceId)
-    const data = arrayWithOneRow[0]
-
-    res.send(data)
-})
-
-router.post('/',  async(req, res) => {
-    const data = req.body
-
+router.get('/:absenceId', async (req, res, next) => {
     try {
+        const absenceId = req.params.absenceId
+        if(!absenceId){
+            res.status(400)
+            res.end()
+            return
+        }
+        
+        const arrayWithOneRow = await absences.getAbsenceById(absenceId)
+        const data = arrayWithOneRow[0]
+
+        res.send(data)
+    } catch (err) {
+        return next(err)
+    }
+})
+
+router.post('/',  async(req, res, next) => {
+    try {
+        const data = req.body    
         await absences.insertAbsences(data)
+        res.end()
+    } catch (err) {
+        return next(err)
     }
-    catch(err){
-        console.log(err)
-        res.status(400)
-    }
-    res.end()
 })
 
-router.patch("/:id", async(req, res) => {
-    const id = req.params.id;
+router.patch("/:id", async(req, res, next) => {
+    try {
+        const id = req.params.id;
+        if(!id){
+            throw Error("MissingArgument")
+        }
 
-    if(!id){
-        res.status(400)
+        const data = req.body
+        data.id = id
+        await absences.update(data)
         res.end()
+    } catch (err) {
+        return next(err)
     }
-    const data = req.body
-    // just in case
-    data.id = id
-    await absences.update(data)
-
-    res.end()
 })
 
-router.delete("/:id", async(req, res) => {
-    const id = req.params.id;
-    if(!id){
-        res.status(400)
-        res.end()
-    }
-    try{
+router.delete("/:id", async(req, res, next) => {
+    try {
+        const id = req.params.id;
+        if(!id){
+            res.status(400)
+            res.end()
+        }
+        
         await absences.delete(id)
-    }
-    catch(err){
-        console.log(err)
-    }
-    res.end()
-})
 
+
+        console.log(err)
+
+        res.end()
+    } catch (err) {
+        return next(err)
+    }
+})
 
 module.exports = router;

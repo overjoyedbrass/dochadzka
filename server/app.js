@@ -23,20 +23,20 @@ app.use(cors())
 app.use(express.static("public"))
 
 //jwt middleware
-app.use(
-    jwt.expressjwt({
-        secret: process.env.SECRET_TOKEN, 
-        algorithms: ['HS256']
-    }).unless({ 
-        path: [
-            '/api/login',
-            '/api/logout', 
-            '/api/users', 
-            '/api/absences', 
-            '/api/holidays',
-            '/api/absence_types'
-        ]
-}))
+// app.use(
+//     jwt.expressjwt({
+//         secret: process.env.SECRET_TOKEN, 
+//         algorithms: ['HS256']
+//     }).unless({ 
+//         path: [
+//             '/api/login',
+//             '/api/logout', 
+//             '/api/users', 
+//             '/api/absences', 
+//             '/api/holidays',
+//             '/api/absence_types'
+//         ]
+// }))
 
 // DUMMY LOGOUT QUERY USEFULL FOR
 // LOGOUTING IN APP USING RTK QUERY + TAG INVALIDATORS
@@ -50,13 +50,31 @@ routes.forEach(route => {
     app.use(`/api/${route}`, mw)
 })
 
-// custom error responses after catching an error
-app.use(function (err, req, res, next) {
-    if (err.name === "UnauthorizedError") {
-        res.status(401).send({message: "JWT Token expired", token_expired: err.code === "invalid_token"});
-    } else {
-      next(err);
+// Global error handler
+app.use((err, req, res, next) => {
+    console.log("ERR", err)
+    if (res.headersSent) {
+        return next(err)
     }
+    if(!err){
+        return next();
+    }
+    if (err.name === "UnauthorizedError") {
+        res.status(401).send({
+            message: "JWT Token expired", 
+            token_expired: err.code === "invalid_token"
+        });
+    }
+    if (err.code === "ER_DUP_ENTRY"){
+        res.status(409).send({
+            message: err.sqlMessage
+        })
+    }
+    // console.log(err)
+
+
+    res.status(500);
+    res.send('500: Internal server error');
 });
 
 

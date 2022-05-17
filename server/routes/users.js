@@ -27,65 +27,67 @@ function checkPassword(plainText, hash){
 }
 
 
-router.get('/', async (req, res) => {
-    const data = await users.getUsers()
-    res.send(data)
+router.get('/', async (req, res, next) => {
+    try {
+        const data = await users.getUsers()
+        res.send(data)
+    } catch (err) {
+        return next(err)
+    }
 })
 
-router.get('/:userId', async (req, res) => {
-    const userId = req.params.userId
-    if(!userId){
-        res.status(400)
-        res.end()
-    }
-    const data = await users.getUserById(userId)
-    res.send(data)
-})
-
-
-router.patch("/:userId", async (req, res) => {
-    const userId = req.params.userId
-
-    if(!userId){
-        res.status(400)
-        res.end()
-    }
-    const data = req.body;
-    data.id = userId
-
-
-    if(data.password){
-        const user = (await users.getUserById(userId, true))[0]
-        const compareResult = await checkPassword(data.password, user.password)
-        if(!compareResult){
-            res.status(400)
-            res.end()
-            return
+router.get('/:userId', async (req, res, next) => {
+    try {
+        const userId = req.params.userId
+        if(!userId){
+            throw Error("MissingArgument")
         }
+        const data = await users.getUserById(userId)
+        res.send(data)        
+    } catch (err) {
+        return next(err)
     }
-
-    data.newPassword = data.newPassword ? await hashPassword(data.newPassword) : null
-
-    await users.updateUser(data)
-    
-    res.end()
 })
 
-router.post("/", async (req, res) => {
-    const data = req.body;
 
-    // kontrola oprávnení
+router.patch("/:userId", async (req, res, next) => {
+    try {
+        const userId = req.params.userId
+        if(!userId){
+            throw Error("MissingArgument")
+        }
+        const data = req.body;
+        data.id = userId
 
-    if(!data.password){
-        res.status(400)
+        if(data.password){
+            const user = (await users.getUserById(userId, true))[0]
+            const compareResult = await checkPassword(data.password, user.password)
+            if(!compareResult){
+                throw Error("BadCredentials")
+            }
+        }
+        data.newPassword = data.newPassword ? await hashPassword(data.newPassword) : null
+        await users.updateUser(data)        
         res.end()
-        return
+    } catch(err) {
+        return next(err)
     }
-    data.password = await hashPassword(data.password)
-    // insert user into database
-    await users.insertUser(data);
+})
 
-    res.end()
+router.post("/", async (req, res, next) => {
+    try {
+        const data = req.body;
+
+        if(!data || !data.password){
+            throw Error("BodyMissing")
+        }
+        data.password = await hashPassword(data.password)
+        await users.insertUser(data);
+        res.end()
+
+    } catch (err) {
+        return next(err)
+    }
 })
 
 
