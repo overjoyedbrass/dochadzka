@@ -1,9 +1,9 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLoginMutation, useLogoutMutation } from '../../app/services/auth'
-
+import { useGetResetTokenMutation } from '../api/apiSlice.js'
 import { selectCurrentAuth, selectLoggedUser } from './authSlice'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import { 
     Button,
@@ -55,6 +55,7 @@ export const Login = () => {
             submit()
         }
     }
+
     if(currentToken){
         return (
             <div className="user-panel">
@@ -63,6 +64,7 @@ export const Login = () => {
             </div>
         )
     }
+
     let content = (
         <form onSubmit={submit}>
         <div className="labelWithInput">
@@ -99,18 +101,80 @@ export const Login = () => {
 
     return (
         <>
+            <div 
+                className="wrapper" 
+                style={{
+                    flexFlow: "column", 
+                    width: "fit-content",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    height: "100%"
+            }}>
             <Button 
                 size="small"
-                style={{margin: "1em 1em 0 0"}} 
                 variant="contained"
                 onClick={() => setOpen(true)}
             >
                 Prihlásiť sa
             </Button>
+            <ResetDialog />
+            </div>
             <LoginDialog content={content} open={open} onClose={() => setOpen(false)} />
         </>
     )
 }
+
+const ResetDialog = () => {
+    const [open, setOpen] = React.useState(false)
+    const [email, setEmail] = React.useState("")
+    
+    const [ sendResetRequest, { isLoading }] = useGetResetTokenMutation()
+
+
+    const close = () => setOpen(false)
+    async function submit(e){
+        e.preventDefault()
+        try {
+            await sendResetRequest(email).unwrap()
+            setOpen(false)
+            toast("Požiadavka úspešne odoslená. Riaďte sa pokynmi v e-maili.", {type: "success"})
+        } catch (err){
+            console.log(err)
+            toast("Nepodarilo a odoslať požiadavku", {type: "error"})
+        }
+    }
+
+    return (<>
+        <Button style={{fontSize: ".75em "}} onClick={() => setOpen(true)}>
+            Zabudnuté heslo?
+        </Button>
+        <Dialog open={open} onClose={close}>
+            <DialogTitle style={{marginRight: "1em"}}>Zabudnuté heslo</DialogTitle>
+            <IconButton 
+                onClick={close}
+                sx={{position: "absolute", top: "4px", right: "4px"}}>
+                    <Close />
+            </IconButton>
+            <DialogContent> 
+                <form onSubmit={submit}>
+                    <div className="labelWithInput" style={{marginBottom: "1em"}}>
+                    <label htmlFor='email'>Email: &nbsp;</label>
+                    <TextField 
+                        id="email"
+                        type="email"
+                        placeholder='emailová adresa'
+                        value={email}
+                        size="small"
+                        onChange={(e) => setEmail(e.target.value)}
+                        required={true}
+                    /><br /></div>
+                    <Button style={{float: "right"}} type="submit" variant="contained">Odoslať</Button>
+                </form>
+            </DialogContent>
+        </Dialog>
+    </>)
+}
+
 
 const LoginDialog = ({open, content, onClose}) => {
     return (

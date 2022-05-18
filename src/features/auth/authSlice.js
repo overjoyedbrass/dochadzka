@@ -46,7 +46,7 @@ const authSlice = createSlice({
         )
         builder.addMatcher(
             apiSlice.endpoints.logout.matchFulfilled,
-            (state, { payload }) => {
+            (state, { }) => {
                 localStorage.token = null
                 state.user = emptyUser
                 state.token = ""
@@ -57,7 +57,8 @@ const authSlice = createSlice({
             (state, { payload }) => {
                 if(payload?.data?.code === "unauthorized") return;
                 if(payload && payload.status === 401){
-                    toast("Prihlásenie vypršalo", {type: "error", onClose: () => window.location.replace("/")})
+                    console.log("ERR CODE", payload.data?.code)
+                    toast("Platnosť tokenu vypršala", {type: "error", onClose: () => window.location.replace("/")})
                     localStorage.token = null
                     state.user = emptyUser
                     state.token = null

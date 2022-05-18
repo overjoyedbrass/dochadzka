@@ -185,6 +185,22 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ["Budgets", "UNAUTHORIZED"]
         }),
+
+        getResetToken: builder.mutation({
+            query: (email) => ({
+                url: "users/password",
+                method: "PUT",
+                body: { email: email }
+            })
+        }),
+
+        resetPassword: builder.mutation({
+            query: ({password, token, id}) => ({
+                url: "resetpass",
+                method: "PATCH",
+                body: { newpass: password, token: token, id: id },
+            })
+        })
     })
 })
 
@@ -207,6 +223,9 @@ export const {
     useDeleteHolidayMutation,
 
     useGetHolidaysBudgetQuery,
-    useInsertHolidaysBudgetMutation
+    useInsertHolidaysBudgetMutation,
+
+    useGetResetTokenMutation,
+    useResetPasswordMutation,
 
 } = apiSlice

@@ -23,7 +23,7 @@ app.use(cors())
 // express static - automatically renders react app on "/"
 app.use(express.static("public"))
 
-//jwt middleware
+// jwt middleware
 app.use(
     expressjwt.expressjwt({
         secret: process.env.SECRET_TOKEN, 
@@ -37,7 +37,9 @@ app.use(
             '/api/absences', 
             '/api/holidays',
             '/api/absence_types',
-            '/api/deadlines'
+            '/api/deadlines',
+            '/api/users/password',
+            '/api/resetpass',
         ]
 }))
 
@@ -73,7 +75,7 @@ app.get('/api/logout', (req, res) => {
     res.end()
 })
 
-const routes = ['login', 'users', 'absences', 'deadlines', 'holidays', 'holidays_budget', 'absence_types']
+const routes = ['login', 'users', 'absences', 'deadlines', 'holidays', 'holidays_budget', 'absence_types', 'resetpass']
 routes.forEach(route => {
     const mw = require(`./routes/${route}`)
     app.use(`/api/${route}`, mw)

@@ -6,6 +6,7 @@ const { getUserByUsername, updateLastLogin } = require('../database/users.js')
 const { getPerms } = require('../database/perms.js')
 const Errors = require("../Errors.js")
 
+
 router.post('/', async (req, res, next) => {
     try {
         const req_username = req.body.username

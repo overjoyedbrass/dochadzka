@@ -4,12 +4,14 @@ const handler = (err, _req, res, next) => {
     if (["UnauthorizedError", "JsonWebTokenError", "TokenExpiredError"].includes(err.name)) {
         return res.status(401).send({
             message: err.message,
-            code: err.code
+            code: err.code,
+            name: err.name
         });
     }
     if (err.code === "ER_DUP_ENTRY"){
         return res.status(409).send({
-            message: err.sqlMessage
+            message: err.sqlMessage,
+            name: err.name
         })
     }
     if (err.code === "argument_missing" || err.code === "field_missing"){

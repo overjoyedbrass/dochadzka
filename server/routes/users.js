@@ -3,6 +3,7 @@ const router = express.Router();
 const users = require('../database/users')
 const bcrypt = require('bcrypt')
 const Errors = require("../Errors.js")
+const jwt = require('jsonwebtoken')
 
 function hashPassword(plainText){
     return new Promise((resolve, reject) => {
@@ -76,8 +77,8 @@ router.patch("/:userId", async (req, res, next) => {
                 throw new Errors.BadCredentialsError("Password no match")
             }
         }
-        data.newPassword = data.newPassword ? await hashPassword(data.newPassword) : null
-        await users.updateUser(data)        
+        data.password = data.newPassword ? await hashPassword(data.newPassword) : null
+        await users.updateUser(userId, data)        
         res.end()
     } catch(err) {
         return next(err)
@@ -103,5 +104,33 @@ router.post("/", async (req, res, next) => {
     }
 })
 
+
+router.put("/password", async(req, res, next) => {
+    try {
+        const data = req.body
+        if(!data){
+            throw new Errors.BodyRequiredError("missing field 'email'")
+        }
+        const email = data.email
+        const user = (await users.getUserByEmail(email))[0]
+
+        if(!user || !user.id){
+            throw new Errors.IdMatchNoEntry("User not found")
+        }
+
+        const SECRET_TOKEN = require('crypto').randomBytes(16).toString('hex')         
+        const resetToken = jwt.sign({ id: user.id }, SECRET_TOKEN, { expiresIn: process.env.TOKEN_EXPIRATION })
+        await users.updateUser(user.id, { token: SECRET_TOKEN })
+
+
+        // ODOSLANIE EMAILU
+        // S VYGENEROVANYM TOKENOM
+
+        res.end()
+
+    } catch (err) {
+        return next(err)
+    }
+})
 
 module.exports = router;

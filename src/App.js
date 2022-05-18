@@ -24,6 +24,7 @@ import { Budgets } from './features/holidays/Budgets.js';
 import history from './app/history.js'
 import { MessageBox } from './components/MessageBox.js';
 import { useGetAbsenceTypesQuery } from './features/api/apiSlice.js';
+import { PasswordReset } from './features/auth/PasswordReset.js';
 
 const NoPathMatch = () => {
     const navigate = useNavigate()
@@ -56,6 +57,7 @@ function App() {
                         <Route path="/requests" element = {<Requests />} />
                         <Route path="/holidays" element = {<Holidays />} />
                         <Route path="/budgets" element = {<Budgets />} />
+                        <Route path="/resetpass" element = {<PasswordReset />} />
                         <Route  path="*" element={<NoPathMatch />}
                         />
                     </Routes>
