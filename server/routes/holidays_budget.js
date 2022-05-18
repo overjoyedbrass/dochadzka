@@ -1,12 +1,13 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const holidays_budget = require('../database/holidays_budget.js')
+const Errors = require("../Errors.js")
 
 router.get('/', async (req, res, next) => {
     try {
         const year = req.query.year
         if(!year){
-            throw Error("MissingArgument")
+            throw Errors.MissingArgumentError("argument year missing")
         }
         const data = await holidays_budget.getHolidaysBudgetByYear(year)
         res.send(data)
@@ -18,10 +19,17 @@ router.get('/', async (req, res, next) => {
 
 router.put('/', async (req, res, next) => {
     try {
+        if(!req.auth?.perms?.includes('edit_budgets')){
+            throw new Errors.UnauthorizedActionError("Insufficient permissions")
+        }
+
         const data = req.body
         const year = req.query.year
-        if(!year || !data){
-            throw Error("MissingArgument")
+        if(!year){
+            throw Errors.MissingArgumentError("argument year missing")
+        }
+        if(!data || data === {}){
+            throw Errors.BodyRequiredError("No data provided")
         }
         const rows = []
         for (const [user, number] of Object.entries(data)) {

@@ -31,6 +31,11 @@ module.exports = {
         return query(SQL, [data.username, data.newPassword, data.name, data.surname, data.email, data.status, data.id])
     },
 
+    updateLastLogin: (id) => {
+        const SQL = "UPDATE users SET last_login = NOW() WHERE id = ?"
+        return query(SQL, [id])
+    },
+
     insertUser: (data) => {
         const SQL =
             `INSERT INTO users(personal_id, username, password, name, surname, email, status)

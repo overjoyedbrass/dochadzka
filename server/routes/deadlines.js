@@ -1,16 +1,20 @@
-var express = require('express');
-var router = express.Router();
-
-var deadlines = require("../database/deadlines.js")
+const express = require('express');
+const router = express.Router();
+const deadlines = require("../database/deadlines.js")
+const Errors = require("../Errors.js")
 
 router.get('/', async (req, res, next) => {
     try {
         const year = req.query.year
+        const month = req.query.month
         
         if(!year){
-            throw Error("MissingArgument")
+            throw new Errors.MissingArgumentError("argument year missing")
         }
-        const data = await deadlines.getDeadlinesByYear(year)
+        const data = month ? 
+            await deadlines.getDeadlinesByYear(year)
+          : await deadlines.getDeadlineByYearMonth(year, month);
+
         res.send(data)
     } catch(err){
         return next(err)
@@ -19,15 +23,22 @@ router.get('/', async (req, res, next) => {
 
 router.put('/', async (req, res, next) => {
     try{
+        if(!req.auth?.perms?.includes('edit_deadlines')){
+            throw new Errors.UnauthorizedActionError("Insufficient permissions")
+        }
+                
         const data = req.body
-        const year = req.query.year
+        if(!data || data === {}){
+            throw new Errors.BodyRequiredError("No data provided")
+        }
 
-        if(!data || data?.length === 0 || !year){
-            throw Error("PatchDataMissing")
+        const year = req.query.year
+        if(!year){
+            throw new Errors.MissingArgumentError("argument year missing")
         }
         await deadlines.replace(year, data)        
         res.end()
-        
+
     } catch (err) {
         return next(err)
     }

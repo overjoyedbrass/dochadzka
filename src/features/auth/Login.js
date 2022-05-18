@@ -37,7 +37,8 @@ export const Login = () => {
     const handleChange = ({target: { name, value }}) =>
         setFormState((prev) => ({ ...prev, [name]: value }))
     
-    async function submit(){
+    async function submit(e){
+        e.preventDefault()
         try {
             const token = await login(formState).unwrap()
             localStorage.token = JSON.stringify(token)
@@ -63,7 +64,7 @@ export const Login = () => {
         )
     }
     let content = (
-        <>
+        <form onSubmit={submit}>
         <div className="labelWithInput">
             <label htmlFor="username">Prihlasovacie meno: &nbsp;</label>
             <TextField 
@@ -72,6 +73,7 @@ export const Login = () => {
                 value={formState.username}
                 size="small"
                 onChange={handleChange}
+                required={true}
             />
         </div>
         <div className="labelWithInput">
@@ -84,14 +86,15 @@ export const Login = () => {
                 size="small"
                 onChange={handleChange}
                 onKeyDown={handleEnter}
+                required={true}
             />
         </div>
         { isLoading ? <Spinner /> : null}
         <div className="labelWithInput" style={{marginTop: "2em"}}>
             <Button onClick={() => setOpen(false)} variant="outlined">Zavrieť</Button>
-            <Button onClick={submit} variant="contained">Prihlásiť</Button>
+            <Button type="submit" variant="contained">Prihlásiť</Button>
         </div>
-        </>
+        </form>
     )
 
     return (

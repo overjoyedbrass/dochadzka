@@ -55,12 +55,13 @@ const authSlice = createSlice({
         builder.addMatcher(
             anyQueryRejected,
             (state, { payload }) => {
-                if(payload && payload.status === 401 && payload.data?.token_expired){
-                        toast("Prihlásenie vypršalo", {type: "error", onClose: () => window.location.replace("/")})
-                        localStorage.token = null
-                        state.user = emptyUser
-                        state.token = null
-                        history.push("/")
+                if(payload?.data?.code === "unauthorized") return;
+                if(payload && payload.status === 401){
+                    toast("Prihlásenie vypršalo", {type: "error", onClose: () => window.location.replace("/")})
+                    localStorage.token = null
+                    state.user = emptyUser
+                    state.token = null
+                    history.push("/")
                 }
             }
         )

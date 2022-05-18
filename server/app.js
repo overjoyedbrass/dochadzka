@@ -6,7 +6,9 @@ const app = express();
 const port = process.env.PORT;
 
 const bodyParser = require('body-parser');
-const jwt = require("express-jwt");
+const expressjwt = require("express-jwt");
+const jwt = require('jsonwebtoken')
+const Errors = require("./Errors.js")
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -15,7 +17,6 @@ app.use(bodyParser.json())
 // app use cors
 app.use(cors())
 
-
 // generate secret token
 //require('crypto').randomBytes(64).toString('hex') 
 
@@ -23,20 +24,48 @@ app.use(cors())
 app.use(express.static("public"))
 
 //jwt middleware
-// app.use(
-//     jwt.expressjwt({
-//         secret: process.env.SECRET_TOKEN, 
-//         algorithms: ['HS256']
-//     }).unless({ 
-//         path: [
-//             '/api/login',
-//             '/api/logout', 
-//             '/api/users', 
-//             '/api/absences', 
-//             '/api/holidays',
-//             '/api/absence_types'
-//         ]
-// }))
+app.use(
+    expressjwt.expressjwt({
+        secret: process.env.SECRET_TOKEN, 
+        algorithms: ['HS256']
+    }).unless({ 
+        path: [
+            '/',
+            '/api/login',
+            '/api/logout', 
+            '/api/users', 
+            '/api/absences', 
+            '/api/holidays',
+            '/api/absence_types',
+            '/api/deadlines'
+        ]
+}))
+
+// parse JWT token on exluced paths and paste it to req.auth property
+// if expired, tell client he has expired token
+// on paths like get users we dont require token, but if it is included
+// we check if it is valid, and if not we tell it about client
+// on other hand, GET users has no need to be protected BUT
+// POST users must be protected, i didnt find option to EXCLUDE only GET with express-jwt
+// this is temporary workaround
+app.use((req, res, next) => {
+    var token = req.headers.authorization
+    if(!token) return next()
+    if(req.auth) return next()
+    try {
+        token = token.split(" ")[1]
+        jwt.verify(token, process.env.SECRET_TOKEN, function(err, decoded) {
+            if(err){
+                throw err
+            }
+            req.auth = decoded
+            return next()
+        });
+    }
+    catch (err) {
+        return next(err)
+    }
+})
 
 // DUMMY LOGOUT QUERY USEFULL FOR
 // LOGOUTING IN APP USING RTK QUERY + TAG INVALIDATORS
@@ -51,33 +80,7 @@ routes.forEach(route => {
 })
 
 // Global error handler
-app.use((err, req, res, next) => {
-    console.log("ERR", err)
-    if (res.headersSent) {
-        return next(err)
-    }
-    if(!err){
-        return next();
-    }
-    if (err.name === "UnauthorizedError") {
-        res.status(401).send({
-            message: "JWT Token expired", 
-            token_expired: err.code === "invalid_token"
-        });
-    }
-    if (err.code === "ER_DUP_ENTRY"){
-        res.status(409).send({
-            message: err.sqlMessage
-        })
-    }
-    // console.log(err)
-
-
-    res.status(500);
-    res.send('500: Internal server error');
-});
-
-
+app.use(Errors.handler)
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)

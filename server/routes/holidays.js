@@ -1,12 +1,13 @@
-var express = require('express');
-var router = express.Router();
-var holidays = require('../database/holidays.js')
+const express = require('express');
+const router = express.Router();
+const holidays = require('../database/holidays.js')
+const Errors = require("../Errors.js")
 
 router.get('/', async (req, res, next) => {
     try {
         const year = req.query.year
         if(!year){
-            throw Error("MissingArgument")
+            throw Errors.MissingArgumentError("argument year missing")
         }
         const data = await holidays.getHolidaysByYear(year)
         res.send(data)
@@ -17,7 +18,15 @@ router.get('/', async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
     try {
+        if(!req.auth?.perms?.includes('edit_holidays')){
+            throw new Errors.UnauthorizedActionError("Insufficient permissions")
+        }
+
         const data = req.body
+        if(!data || data === {}){
+            throw new Errors.BodyRequiredError("One or more fields missing")
+        }
+
         await holidays.insert(data)
         res.end()
 
@@ -28,11 +37,20 @@ router.post("/", async (req, res, next) => {
 
 router.patch('/:id', async (req, res, next) => {
     try {
+        if(!req.auth?.perms?.includes('edit_holidays')){
+            throw new Errors.UnauthorizedActionError("Insufficient permissions")
+        }
+
         const id = req.params.id
         if(!id){
-            throw Error("MissingArgument")
+            throw Errors.MissingArgumentError("argument id missing")
         }
+
         const data = req.body
+        if(!data || data === {}){
+            throw new Errors.BodyRequiredError("One or more fields missing")
+        }
+
         await holidays.update(id, data)
         res.end()
 
@@ -43,9 +61,13 @@ router.patch('/:id', async (req, res, next) => {
 
 router.delete("/:id", async (req, res, next) => {
     try {
+        if(!req.auth || !req.auth?.perms?.includes('edit_holidays')){
+            throw new Errors.UnauthorizedActionError("Insufficient permissions")
+        }
+        
         const id = req.params.id
         if(!id){
-            throw Error("MissingArgument")
+            throw Errors.MissingArgumentError("argument id missing")
         }
         await holidays.delete(id)
         res.end()
