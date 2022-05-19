@@ -32,7 +32,9 @@ export const apiSlice = createApi({
                 return data
             },
         }),
+        ///////////////////////////////////
         // ABSENCES
+        ///////////////////////////////////
         getAbsences: builder.query({
             query: ({year, month, userid, rq_only}) => {
                 const params = { year, month, userid, rq_only }
@@ -57,7 +59,7 @@ export const apiSlice = createApi({
                 method: "POST",
                 body: absences
             }),
-            invalidatesTags: ["Absences"]
+            invalidatesTags: ["Absences", "Budget"]
         }),
         updateAbsence: builder.mutation({
             query: ({id, ...patch}) => ({
@@ -65,7 +67,7 @@ export const apiSlice = createApi({
                 method: 'PATCH',
                 body: patch
             }),
-            invalidatesTags: ["Absences"]
+            invalidatesTags: ["Absences", "Budget"]
         }),
 
         confirmAbsence: builder.mutation({
@@ -95,10 +97,11 @@ export const apiSlice = createApi({
                 url: `absences/${id}`,
                 method: 'DELETE'
             }),
-            invalidatesTags: ["Absences"]
+            invalidatesTags: ["Absences", "Budget"]
         }),
-
+        ///////////////////////////////////
         // DEADLINES
+        ///////////////////////////////////
         getDeadlines: builder.query({
             query: (year) => {
                 const params = { year }
@@ -119,8 +122,9 @@ export const apiSlice = createApi({
             invalidatesTags: ["Deadlines"]
         }),
 
+        ///////////////////////////////////
         // HOLIDAYS
-
+        ///////////////////////////////////
         getHolidays: builder.query({
             query: (year) => {
                 const params = { year }
@@ -140,6 +144,7 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ["Holidays"]
         }),
+        
         updateHoliday: builder.mutation({
             query: ({id, ...patch}) => ({
                 url: `holidays/${id}`,
@@ -157,8 +162,9 @@ export const apiSlice = createApi({
             invalidatesTags: ["Holidays"]
         }),
 
+        ///////////////////////////////////
         // budgets
-
+        /////////////////////////////////// 
         getHolidaysBudget: builder.query({
             query: (year) => {
                 const params = { year }
@@ -170,7 +176,7 @@ export const apiSlice = createApi({
             transformResponse: responseData => {
                 let data = {}
                 responseData.forEach(b => {
-                    data[b.user_id] = Math.round(b.num)
+                    data[b.user_id] = { num: Math.round(b.num), used: Math.round(b.used) }
                 })
                 return data
             },
@@ -183,9 +189,21 @@ export const apiSlice = createApi({
                 method: "PUT",
                 body: data
             }),
-            invalidatesTags: ["Budgets", "UNAUTHORIZED"]
+            invalidatesTags: ["Budgets", "Budget"]
         }),
 
+        getUserBudget: builder.query({
+            query: (userId) => ({
+                url: `holidays_budget/${userId}`,
+                method: "GET"
+            }),
+            providesTags: ["Budget"]
+        }),
+
+
+        ///////////////////////////////////
+        // PASSWORD RESET
+        ///////////////////////////////////
         getResetToken: builder.mutation({
             query: (email) => ({
                 url: "users/password",
@@ -224,6 +242,8 @@ export const {
 
     useGetHolidaysBudgetQuery,
     useInsertHolidaysBudgetMutation,
+    useGetUserBudgetQuery,
+    
 
     useGetResetTokenMutation,
     useResetPasswordMutation,

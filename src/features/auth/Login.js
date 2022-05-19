@@ -38,7 +38,7 @@ export const Login = () => {
         setFormState((prev) => ({ ...prev, [name]: value }))
     
     async function submit(e){
-        e.preventDefault()
+        e?.preventDefault()
         try {
             const token = await login(formState).unwrap()
             localStorage.token = JSON.stringify(token)

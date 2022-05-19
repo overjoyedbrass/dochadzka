@@ -23,16 +23,21 @@ import {
 } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit';
 import { roles } from '../../helpers/helpers.js'
+import { useGetHolidaysBudgetQuery } from '../api/apiSlice'
 
 export const UserManagment = () => {
     const allusers = useSelector(selectAllUsers)
-    const loggedUser = useSelector(selectLoggedUser)
     const [open, setOpen] = React.useState(false)
     const [filter, setFilter] = React.useState(2)
     const navigate = useNavigate()
 
     const perms = useSelector(selectUserPerms)
     const isLogged = useSelector(selectLoggedBoolean)
+
+    const sekretarka = perms.includes("edit_budgets")
+    const {
+        data: budgets={}
+    } = useGetHolidaysBudgetQuery((new Date()).getFullYear())
 
     if(!isLogged){
         return <MessageBox type="warning" message="Nie ste prihlásený"/>
@@ -83,7 +88,7 @@ export const UserManagment = () => {
                             <TableCell>Zamestnanec</TableCell>
                             <TableCell>Osobné číslo</TableCell>
                             <TableCell>Rola</TableCell>
-                            <TableCell>Dovolenka</TableCell>
+                            { sekretarka ? <TableCell>Dovolenka</TableCell> : null }
                             <TableCell>Upraviť</TableCell>
                         </TableRow>
                     </TableHead>
@@ -94,7 +99,7 @@ export const UserManagment = () => {
                                 <TableCell> {user.surname} {user.name}</TableCell>
                                 <TableCell>{user.personal_id}</TableCell>
                                 <TableCell> { roles[user.status] } </TableCell>
-                                <TableCell>45/45</TableCell>
+                                { sekretarka ? <TableCell>{budgets[user.id]?.used ?? 0}/{budgets[user.id]?.num ?? 0}</TableCell> : null}
                                 <TableCell>
                                     <IconButton><Link to={"/users/"+user.id} style={{textDecoration: "none", color: "blue"}}>
                                         <EditIcon />

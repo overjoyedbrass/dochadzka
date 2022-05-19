@@ -78,6 +78,6 @@ export const selectCurrentAuth = (state) => state.auth.token
 
 export const selectLoggedUser = (state) => state.auth.user
 
-export const selectLoggedBoolean = (state) => Boolean(state.auth.token)
+export const selectLoggedBoolean = (state) => Boolean(state?.auth?.token)
 
 export const selectUserPerms = (state) => state.auth.user?.perms ?? []

@@ -14,7 +14,13 @@ import {
 import { toast } from 'react-toastify'
 
 
-
+function initialFormState(data){
+    const form = {}
+    for(const user in data){
+        form[user] = data[user].num
+    }
+    return form
+}
 
 
 export const Budgets = () => {
@@ -28,13 +34,13 @@ export const Budgets = () => {
         isError,
     } = useGetHolidaysBudgetQuery(viewDate.getFullYear())
 
-    const [formState, setFormState] = React.useState(budgets)
-    const handleChange = ({target: { name, value }}) => 
+    const [formState, setFormState] = React.useState(initialFormState(budgets))
+    const handleChange = ({target: { name, value }}) =>
         setFormState((prev) => ({ ...prev, [parseInt(name)]: parseInt(value) }))
 
     React.useEffect(() => {
         if(!isError && budgets != {}){
-            setFormState(budgets)
+            setFormState(initialFormState(budgets))
         }
     }, [budgets])
 
@@ -93,6 +99,7 @@ export const Budgets = () => {
                 <TableHead>
                     <TableRow>
                         <TableCell style={{fontSize: "1em"}}>Zamestnanec</TableCell>
+                        <TableCell style={{fontSize: "1em"}}>Využité</TableCell>
                         <TableCell style={{fontSize: "1em"}}>Aktuálna hodnota</TableCell>
                         <TableCell style={{fontSize: "1em"}}>Nová hodnota</TableCell>
                     </TableRow>
@@ -101,7 +108,8 @@ export const Budgets = () => {
                     {users.map(u => (
                         <TableRow key={u.id}>
                             <TableCell style={{fontSize: "1em"}}>{u.surname} {u.name}</TableCell>
-                            <TableCell style={{fontSize: "1em"}}>{budgets[u.id] ? budgets[u.id] : "Neurčené"}</TableCell>
+                            <TableCell>{budgets[u.id]?.used ?? 0}</TableCell>
+                            <TableCell style={{fontSize: "1em"}}>{budgets[u.id]?.num ? budgets[u.id]?.num : "Neurčené"}</TableCell>
                             <TableCell style={{fontSize: "1em"}}>
                                 <TextField
                                     name={u.id.toString()}

@@ -88,9 +88,13 @@ export const AbsenceDetailDialog = ({open, absence, onClose, openEdit}) => {
             question="Chcete skutočne odstrániť neprítomnosť?"
             noText="Zrušiť"
             yesText="Odstrániť"
-            noAction={() => setOpenConfirm(false)}
+            noAction={() => {
+                setOpenConfirm(false)
+            }}
             yesAction={() => {
                 submitDelete()
+                setOpenConfirm(false)
+                onClose()
             }}
         />
         

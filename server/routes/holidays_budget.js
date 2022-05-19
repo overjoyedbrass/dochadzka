@@ -6,12 +6,31 @@ const Errors = require("../Errors.js")
 router.get('/', async (req, res, next) => {
     try {
         const year = req.query.year
+
         if(!year){
-            throw Errors.MissingArgumentError("argument year missing")
+            throw new Errors.MissingArgumentError("argument year missing")
         }
         const data = await holidays_budget.getHolidaysBudgetByYear(year)
         res.send(data)
     } catch (err){
+        return next(err)
+    }
+});
+
+router.get('/:userId', async (req, res, next) => {
+    try {
+        const userId = req.params.userId
+        if(!userId){
+            throw new Errors.MissingArgumentError("UserID is missing")
+        }
+
+        const data = (await holidays_budget.getUserCurrentBudget(userId))[0]
+        if(!data || data === {}){
+            throw new Errors.IdMatchNoEntry("ID match no user")
+        }
+        res.send(data)
+
+    } catch (err) {
         return next(err)
     }
 });
@@ -26,10 +45,10 @@ router.put('/', async (req, res, next) => {
         const data = req.body
         const year = req.query.year
         if(!year){
-            throw Errors.MissingArgumentError("argument year missing")
+            throw new Errors.MissingArgumentError("argument year missing")
         }
         if(!data || data === {}){
-            throw Errors.BodyRequiredError("No data provided")
+            throw new Errors.BodyRequiredError("No data provided")
         }
         const rows = []
         for (const [user, number] of Object.entries(data)) {
@@ -41,5 +60,6 @@ router.put('/', async (req, res, next) => {
         return next(err)
     }
 })
+
 
 module.exports = router;

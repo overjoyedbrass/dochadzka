@@ -1,10 +1,14 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { NavLink } from 'react-router-dom'
-import { selectUserPerms } from '../features/auth/authSlice.js'
+import { selectUserPerms, selectLoggedBoolean } from '../features/auth/authSlice.js'
+import { ShowBudget } from '../features/holidays/ShowBudget.js'
+
 export const Navbar = () => {
+    const isLogged = useSelector(selectLoggedBoolean)    
     const perms = useSelector(selectUserPerms)
     const hasPerm = (key) => perms.includes(key)
+
     return (
         <nav>
             <div className="navLinks">
@@ -42,6 +46,7 @@ export const Navbar = () => {
                     className={({ isActive }) => "nav-link" + (isActive ? " activated" : "")}
                 > Žiadosti </NavLink> : null }
             </div>
+            { isLogged ? <ShowBudget /> : null }
         </nav>
     )
 }

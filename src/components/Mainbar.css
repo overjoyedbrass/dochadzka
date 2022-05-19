@@ -17,15 +17,16 @@ nav {
     display: flex;
     width: 100%;
     background: gray;
-    justify-content: center;
+    justify-content: space-between;
     height: 2em;
     background: black;
     font-size: 1.10rem;
+    overflow-x: auto;
 }
 
 .navLinks {
     max-width: var(--max-width);
-    width: 100%;
+    width: fit-content;
     display: flex;
     vertical-align: center;
 }
