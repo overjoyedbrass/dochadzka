@@ -2,8 +2,8 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLoginMutation, useLogoutMutation } from '../../app/services/auth'
 import { useGetResetTokenMutation } from '../api/apiSlice.js'
-import { selectCurrentAuth, selectLoggedUser } from './authSlice'
-import { useSelector } from 'react-redux'
+import { selectCurrentAuth, selectLoggedUser, selectUserPerms, setImpersonate } from './authSlice'
+import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import { 
     Button,
@@ -19,6 +19,7 @@ import {
  import { Spinner } from '../../components/Spinner'
 
 import './Login.css'
+import { useSelect } from '@mui/base'
 
 export const Login = () => {
     const navigate = useNavigate()
@@ -128,7 +129,7 @@ const ResetDialog = () => {
     const [open, setOpen] = React.useState(false)
     const [email, setEmail] = React.useState("")
     
-    const [ sendResetRequest, { isLoading }] = useGetResetTokenMutation()
+    const [ sendResetRequest, {  }] = useGetResetTokenMutation()
 
 
     const close = () => setOpen(false)
@@ -205,6 +206,12 @@ const LoginDialog = ({open, content, onClose}) => {
 const DropMenu = ({navigate}) => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
+
+    const user = useSelector(selectLoggedUser)
+    const perms = useSelector(selectUserPerms)
+    const dispatch = useDispatch()
+    const canImpersonate = perms.includes("impersonate")
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -251,7 +258,15 @@ const DropMenu = ({navigate}) => {
             }}>
                 Váš profil
             </MenuItem>
-
+            {
+                canImpersonate ?
+                <MenuItem onClick={() => {
+                    dispatch(setImpersonate(user.id))
+                    handleClose()
+                }}>
+                    Impersonate
+                </MenuItem> : null
+            }
             <MenuItem onClick={doLogout}>
                     Odhlásiť sa
             </MenuItem>

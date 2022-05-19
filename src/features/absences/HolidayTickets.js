@@ -7,11 +7,16 @@ import { useGetTicketsQuery, usePrintTicketMutation } from '../api/apiSlice'
 import { toast } from 'react-toastify'
 import { Spinner } from '../../components/Spinner'
 import { parseISO } from 'date-fns'
-
+import { selectImpersonatedUser } from '../auth/authSlice'
+import { useSelector } from 'react-redux'
+import { AbsenceAuthor } from './AbsenceAuthor'
 export const HolidayTickets = ({absences, userId, viewDate}) => {
     const [open, setOpen] = React.useState(false)
     const close = () => setOpen(false)
-    const tickets = getTickets(absences, userId)
+
+    const impersonated = useSelector(selectImpersonatedUser)
+    const tickets = getTickets(absences, impersonated ? impersonated : userId)
+
 
     const { data: printedTickets={} } = useGetTicketsQuery({month: viewDate.getMonth()+1, year: viewDate.getFullYear(), user_id: userId})
 
@@ -32,6 +37,8 @@ export const HolidayTickets = ({absences, userId, viewDate}) => {
                 <Close />
             </IconButton>
             <DialogContent>
+                {impersonated ? <>Lístky pre <AbsenceAuthor fullName={true} userId={impersonated}/></> :
+                "Vaše lístky" }
                 {tickets.length ? null :
                 <p>Žiadne lístky na vytlačenie</p>
                 }

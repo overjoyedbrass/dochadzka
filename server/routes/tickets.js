@@ -9,7 +9,6 @@ router.get('/', async (req, res, next) => {
         const year = req.query.year
         const month = req.query.month
 
-        console.log(user_id, year, month)
         if(!user_id || !year || !month) {
             throw new Errors.MissingArgumentError("Missing 1 of arguments (user, year, month)")
         }

@@ -5,10 +5,10 @@ import { FormControl, Select, MenuItem } from '@mui/material'
 
 export const UserSelect = ({ selected, onChange, onlyActive }) => {
     const allUsers = useSelector(onlyActive ? selectAllActiveUsers : selectAllUsers)
+    if (!allUsers.length) {
+        return null
+    }
     return (
-        <FormControl
-            sx={{display: "inline-block"}}
-        >
             <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
@@ -35,6 +35,5 @@ export const UserSelect = ({ selected, onChange, onlyActive }) => {
                 )
             }
             </Select>
-        </FormControl>
     )
 }

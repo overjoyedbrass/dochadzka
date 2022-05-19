@@ -8,7 +8,7 @@ import { appTheme } from  "../../helpers/themes.js"
 
 import { datesAreSame } from '../../helpers/helpers.js'
 import { useGetAbsenceTypesQuery, useInsertAbsencesMutation } from '../api/apiSlice.js'
-import { selectLoggedUser } from '../auth/authSlice'
+import { selectImpersonatedUser, selectLoggedUser } from '../auth/authSlice'
 import { toast } from 'react-toastify'
 import { Spinner } from '../../components/Spinner'
 
@@ -24,6 +24,8 @@ export const AbsenceFormular = ({onClose, dates, setPickedDates}) => {
 
     const [ addAbsences, { isAddingAbsence }] = useInsertAbsencesMutation()
     const {data: absenceTypes={}} = useGetAbsenceTypesQuery()
+
+    const impersonated = useSelector(selectImpersonatedUser)
 
     const user = useSelector(selectLoggedUser)
 
@@ -51,7 +53,7 @@ export const AbsenceFormular = ({onClose, dates, setPickedDates}) => {
         const absences = []
         dates.forEach(d => {
             absences.push({
-                user_id: user.id,
+                user_id: impersonated ? impersonated : user.id,
                 date_time: format(d, "yyyy-MM-dd"),
                 from_time: isFullDay ? "08:00" : fromTime,
                 to_time: isFullDay ? "16:00" : toTime,

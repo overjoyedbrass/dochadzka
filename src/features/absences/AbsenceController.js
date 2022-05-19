@@ -88,7 +88,7 @@ export const AbsenceController = () => {
 
             <div>
             { perms.includes("export") ? 
-                <Button variant="outlined" style={{"margin-right": "1em"}} onClick={getExport}>Export</Button>
+                <Button variant="outlined" style={{marginRight: "1em"}} onClick={getExport}>Export</Button>
             : null}
             { loggedUser?.id ? 
                 <HolidayTickets absences={absences} holidays={holidays} userId={loggedUser?.id} viewDate={viewDate}/> : null }

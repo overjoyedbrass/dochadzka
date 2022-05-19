@@ -2,7 +2,7 @@ import React from 'react'
 import { Login } from '../features/auth/Login.js'
 import { Navbar } from  './Navbar.js'
 import './Mainbar.css'
-
+import { ImpersonateUser } from '../features/users/ImpersonateUser.js'
 export const Mainbar = () => {
     return (
         <header>
@@ -14,7 +14,7 @@ export const Mainbar = () => {
                 <Login />
             </div>
             <Navbar />
-            
+            <ImpersonateUser />
         </header>
     )
 }

@@ -14,11 +14,12 @@ function getInitialState() {
         const data = jwt_decode(token)
         return {
             token: token,
-            user: data ? data : emptyUser
+            user: data ? data : emptyUser,
+            impersonate: 0
         }
     }
     catch(err){
-        return {token: null, user: null}
+        return {token: null, user: emptyUser, impersonate: 0}
     }
 }
 
@@ -34,7 +35,11 @@ function anyQueryRejected(){
 const authSlice = createSlice({
     name: 'auth',
     initialState: getInitialState(),
-    reducers: {},
+    reducers: {
+        setImpersonate: (state, { payload }) => {
+            state.impersonate = payload
+        }
+    },
     extraReducers: (builder) => {
         builder.addMatcher(
             apiSlice.endpoints.login.matchFulfilled,
@@ -42,6 +47,7 @@ const authSlice = createSlice({
                 const data = jwt_decode(payload.token)
                 state.user = data
                 state.token = payload.token
+                state.impersonate = 0
             }
         )
         builder.addMatcher(
@@ -50,6 +56,7 @@ const authSlice = createSlice({
                 localStorage.token = null
                 state.user = emptyUser
                 state.token = ""
+                state.impersonate = 0
             }
         )
         builder.addMatcher(
@@ -62,17 +69,18 @@ const authSlice = createSlice({
                     localStorage.token = null
                     state.user = emptyUser
                     state.token = null
+                    state.impersonate = 0
                     history.push("/")
                 }
             }
         )
     },
 })
-
-
-export const { setCredentials } = authSlice.actions
+export const { setImpersonate } = authSlice.actions
 
 export default authSlice.reducer
+
+export const selectImpersonatedUser = (state) => state.auth.impersonate
 
 export const selectCurrentAuth = (state) => state.auth.token
 
