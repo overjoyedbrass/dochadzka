@@ -218,7 +218,7 @@ export const apiSlice = createApi({
                 method: "PATCH",
                 body: { newpass: password, token: token, id: id },
             })
-        })
+        }),
     })
 })
 

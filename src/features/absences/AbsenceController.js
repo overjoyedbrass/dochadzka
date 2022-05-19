@@ -6,8 +6,6 @@ import {
 } from '@mui/material'
 
 import { useGetAbsencesQuery, useGetHolidaysQuery } from '../api/apiSlice'
-import { Spinner } from '../../components/Spinner.js'
-
 
 import { AbsenceDisplayer } from './AbsenceDisplayer'
 
@@ -15,7 +13,7 @@ import { DateController } from '../../components/DateController'
 
 import './Calendar.css'
 import { useSelector } from 'react-redux'
-import { selectLoggedUser } from '../auth/authSlice' 
+import { selectCurrentAuth, selectLoggedUser } from '../auth/authSlice' 
 import { UserSelect } from '../users/UserSelect'
 import { parseISO } from 'date-fns' 
 import { HolidayTickets } from './HolidayTickets'
@@ -24,13 +22,26 @@ import {
     CalendarToday as CalendarIcon,
     ViewList as ListIcon
 } from '@mui/icons-material';
+import { downloadExport } from '../../helpers/helpers'
+import { toast } from 'react-toastify'
 
 export const AbsenceController = () => {
     const loggedUser = useSelector(selectLoggedUser)
     const [selectedUser, setSelectedUser] = useState(loggedUser?.id)
     const [viewDate, setViewDate] = useState(new Date())
     const [calendarDisplay, showCalendarDisplay] = useState(true)
+    const perms = loggedUser.perms
+    const token = useSelector(selectCurrentAuth)
 
+
+    async function getExport(e){
+        e.preventDefault()
+        try {
+            await downloadExport(token, viewDate.getMonth(), viewDate.getFullYear())
+        } catch (err) {
+            toast("Nepodarilo sa stiahnuť export", { type: "error" })
+        }
+    }
     const{
         data: absences=[],
         // isLoading,
@@ -74,9 +85,14 @@ export const AbsenceController = () => {
                     onChange={(date) => setViewDate(date)} 
                 />
             </div>
-            { loggedUser?.id ? 
-            <HolidayTickets absences={absences} holidays={holidays} userId={loggedUser?.id}/> : null }
 
+            <div>
+            { perms.includes("export") ? 
+                <Button variant="outlined" style={{"margin-right": "1em"}} onClick={getExport}>Export</Button>
+            : null}
+            { loggedUser?.id ? 
+                <HolidayTickets absences={absences} holidays={holidays} userId={loggedUser?.id}/> : null }
+            </div>
             <div className="wrapper">
                 {loggedUser && selectedUser !== loggedUser.id ? 
                     <span>

@@ -12,6 +12,20 @@ export const roles = [
     'Vedúci katedry',
 ]
 
+
+export const downloadExport = async (token, month, year) => {
+    const response = await fetch(`http://localhost:8080/export?month=${month}&year=${year}`, {
+        headers: {
+            authorization: `Bearer ${token}`
+        }
+    })
+    const data = await response.blob()
+    var a = document.createElement("a");
+    a.href = window.URL.createObjectURL(data);
+    a.download = "export"
+    a.click()
+}
+
 // return distance between dates by work dates
 function datesDistance(date1, date2){
     var start = date1

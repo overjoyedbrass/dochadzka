@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const expressjwt = require("express-jwt");
 const jwt = require('jsonwebtoken')
 const Errors = require("./Errors.js")
+const fs = require("fs")
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -75,6 +76,24 @@ app.get('/api/logout', (req, res) => {
     res.end()
 })
 
+// EXPORT
+app.get("/export", (req, res, next) => {
+    try {
+        if(!req.auth?.perms?.includes("export")){
+            throw new Errors.UnauthorizedActionError("Unsufficient permissions")
+        }
+        res.download("files/test.csv", (err) => {
+            if(err) {
+                return next(err)
+            }
+            res.end()
+        })
+    } catch (err) {
+        return next(err)
+    }
+})
+
+
 const routes = ['login', 'users', 'absences', 'deadlines', 'holidays', 'holidays_budget', 'absence_types', 'resetpass']
 routes.forEach(route => {
     const mw = require(`./routes/${route}`)
@@ -85,5 +104,5 @@ routes.forEach(route => {
 app.use(Errors.handler)
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+    console.log(`App listening on port ${port}`)
 })
