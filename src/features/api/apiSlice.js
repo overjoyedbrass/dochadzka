@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { format, parseISO } from 'date-fns'
 
 // Define our single API slice object
 export const apiSlice = createApi({
@@ -14,7 +15,7 @@ export const apiSlice = createApi({
             return headers
         },
     }),
-    tagTypes: ['Absence', "Holidays", "Deadlines", "Users", "UNAUTHORIZED"],
+    tagTypes: ['Absence', "Holidays", "Deadlines", "Users", "UNAUTHORIZED", "Tickets", "Budget", "Budgets"],
   
 
     endpoints: builder => ({
@@ -219,6 +220,33 @@ export const apiSlice = createApi({
                 body: { newpass: password, token: token, id: id },
             })
         }),
+        
+        ///////////////////////////////////
+        // tickets
+        ///////////////////////////////////
+        getTickets: builder.query({
+            query: ({month, year, user_id}) => ({
+                params: {month, year, user_id},
+                url: `tickets`,
+                method: 'GET',
+            }),
+            transformResponse: responseData => {
+                let data = {}
+                responseData.forEach(t => {
+                    data[`${t.user_id}.${format(parseISO(t.from_date), "yyyy-MM-dd")}`] = { ...t }
+                })
+                return data
+            },
+            providesTags: ["Tickets"]
+        }),
+        printTicket: builder.mutation({
+            query: (ticket) => ({
+                url: 'tickets',
+                method: "PUT",
+                body: ticket
+            }),
+            invalidatesTags: ["Tickets"]
+        })
     })
 })
 
@@ -247,5 +275,8 @@ export const {
 
     useGetResetTokenMutation,
     useResetPasswordMutation,
+
+    useGetTicketsQuery,
+    usePrintTicketMutation
 
 } = apiSlice

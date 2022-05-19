@@ -3,11 +3,18 @@ import { format } from 'date-fns'
 import { Button, Dialog, DialogContent, IconButton, DialogTitle } from '@mui/material'
 import { Close } from '@mui/icons-material'
 import { getTickets } from '../../helpers/helpers'
+import { useGetTicketsQuery, usePrintTicketMutation } from '../api/apiSlice'
+import { toast } from 'react-toastify'
+import { Spinner } from '../../components/Spinner'
+import { parseISO } from 'date-fns'
 
-export const HolidayTickets = ({absences, userId}) => {
+export const HolidayTickets = ({absences, userId, viewDate}) => {
     const [open, setOpen] = React.useState(false)
     const close = () => setOpen(false)
     const tickets = getTickets(absences, userId)
+
+    const { data: printedTickets={} } = useGetTicketsQuery({month: viewDate.getMonth()+1, year: viewDate.getFullYear(), user_id: userId})
+
     return (<>
         <Button onClick={() => setOpen(true)} variant="outlined">Dovolenkové lístky</Button>
 
@@ -28,7 +35,14 @@ export const HolidayTickets = ({absences, userId}) => {
                 {tickets.length ? null :
                 <p>Žiadne lístky na vytlačenie</p>
                 }
-                {tickets.map((t, i) => <Ticket key={i} ticket={t}/>)}
+                {tickets.map((t, i) => 
+                    <Ticket 
+                        key={i} 
+                        ticket={t} 
+                        lastPrinted={
+                            printedTickets[`${userId}.${format(t.from_date, "yyyy-MM-dd")}`]
+                        }
+                />)}
             </DialogContent>
         </Dialog>
     </>
@@ -37,12 +51,34 @@ export const HolidayTickets = ({absences, userId}) => {
 
 
 
-const Ticket = ({ticket}) => {
+const Ticket = ({ ticket, lastPrinted}) => {
+    const [ printTicket, { isLoading }] = usePrintTicketMutation()
+    async function print(e){
+        e.preventDefault()
+        try {
+            const copy = {...ticket}
+            copy.from_date = format(ticket.from_date, "yyyy-MM-dd")
+            copy.to_date = format(ticket.to_date, "yyyy-MM-dd")
+            await printTicket(copy).unwrap()
+            toast("Lístok vytlačený", { type: "success" })
+        } catch (err) {
+            toast("Lístok sa nepodarilo vytlačiť", { type: "error" })
+        }
+    }
+
     return (<div className="ticket">
         <p> {format(ticket.from_date, "d.")}&nbsp;- {format(ticket.to_date, "d. M. yyyy")} </p>
         <div className="wrapper">
-            <i>{!ticket.printed ? "Nevytlačený" : "Už vytlačený"}</i>
-            <Button variant="outlined" sx={{height: "2em"}}>{ticket.printed ? "Vytlačiť znovu" : "Vylačiť"}</Button>
+            <i>{lastPrinted ? `Vytlačený ${format(parseISO(lastPrinted.last_printed), "d.M.")}` : "Nevytlačený"}</i>
+            { isLoading ? <Spinner /> :
+            <Button 
+                variant="outlined" 
+                sx={{height: "2em"
+                }}
+                onClick={print}
+            >
+                {lastPrinted ? "Vytlačiť znovu" : "Vylačiť"}
+            </Button> }
         </div>
     </div>)
 }

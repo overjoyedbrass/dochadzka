@@ -94,7 +94,18 @@ app.get("/export", (req, res, next) => {
 })
 
 
-const routes = ['login', 'users', 'absences', 'deadlines', 'holidays', 'holidays_budget', 'absence_types', 'resetpass']
+const routes = [
+    'login', 
+    'users', 
+    'absences', 
+    'deadlines', 
+    'holidays', 
+    'holidays_budget', 
+    'absence_types', 
+    'resetpass', 
+    'tickets'
+]
+
 routes.forEach(route => {
     const mw = require(`./routes/${route}`)
     app.use(`/api/${route}`, mw)

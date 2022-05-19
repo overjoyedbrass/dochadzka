@@ -54,7 +54,7 @@ export function getTickets(absences, userId){
         }
         const dist = datesDistance(end, cur)
         if(dist > 1){
-            tickets.push({from_date: start, to_date: end})
+            tickets.push({from_date: start, to_date: end, user_id: userId})
             start = cur
             end = cur
             continue
@@ -62,7 +62,7 @@ export function getTickets(absences, userId){
         end = cur
     }
     if(start && end)
-        tickets.push({from_date: start, to_date: end})
+        tickets.push({from_date: start, to_date: end, user_id: userId})
     return tickets
 }
 

@@ -91,7 +91,7 @@ export const AbsenceController = () => {
                 <Button variant="outlined" style={{"margin-right": "1em"}} onClick={getExport}>Export</Button>
             : null}
             { loggedUser?.id ? 
-                <HolidayTickets absences={absences} holidays={holidays} userId={loggedUser?.id}/> : null }
+                <HolidayTickets absences={absences} holidays={holidays} userId={loggedUser?.id} viewDate={viewDate}/> : null }
             </div>
             <div className="wrapper">
                 {loggedUser && selectedUser !== loggedUser.id ? 
