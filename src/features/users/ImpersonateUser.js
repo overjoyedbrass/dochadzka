@@ -10,7 +10,6 @@ export const ImpersonateUser = () => {
     const users = useSelector( selectAllActiveUsers )
     const dispatch = useDispatch()
 
-    console.log("IU", impersonatedUser)
     if(!impersonatedUser){
         return null
     }

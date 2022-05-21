@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { selectLoggedUser, selectUserPerms } from '../auth/authSlice'
+import { selectLoggedBoolean, selectLoggedUser, selectUserPerms } from '../auth/authSlice'
 import { AbsenceFormular } from './AbsenceFormular'
 import { AbsenceDetailDialog } from './AbsenceDetailDialog'
 import { appTheme } from '../../helpers/themes'
@@ -41,9 +41,8 @@ export const AbsenceDisplayer = ({viewDate, absences, calendarDisplay}) => {
     const [adding, setIsAdding] = React.useState(true)
     const [hovering, setHovering] = React.useState(false)
 
-    const loggedUser = useSelector(selectLoggedUser)
     const perms = useSelector(selectUserPerms)
-    const isLogged = loggedUser ? true:false
+    const isLogged = useSelector(selectLoggedBoolean)
 
     function addRemoveDay(clickedDate, add_day, reset=false){
         if(clickedDate < new Date() && !perms.bypass_time){
@@ -187,8 +186,11 @@ export const AbsenceDisplayer = ({viewDate, absences, calendarDisplay}) => {
         
         {!absenceEdit ? null : 
         <AbsenceEditDialog 
-            open={absenceEdit}
-            onClose={() => setAbsenceEdit(null)}
+            open={absenceEdit ? true : false}
+            onClose={() => {
+                setAbsenceEdit(null)
+                setAbsenceDetail(null)
+            }}
             absence={absenceEdit}
         />}
         </>

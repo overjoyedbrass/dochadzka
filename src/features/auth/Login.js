@@ -50,13 +50,6 @@ export const Login = () => {
             toast("Prihlásenie neúspešné. Nesprávne meno alebo heslo", {type: "error",  position: toast.POSITION.TOP})
         }
     }
-
-    function handleEnter(event){
-        if(event.keyCode === 13){
-            submit()
-        }
-    }
-
     if(currentToken){
         return (
             <div className="user-panel">
@@ -88,7 +81,6 @@ export const Login = () => {
                 type="password"
                 size="small"
                 onChange={handleChange}
-                onKeyDown={handleEnter}
                 required={true}
             />
         </div>
@@ -133,6 +125,7 @@ const ResetDialog = () => {
 
 
     const close = () => setOpen(false)
+
     async function submit(e){
         e.preventDefault()
         try {

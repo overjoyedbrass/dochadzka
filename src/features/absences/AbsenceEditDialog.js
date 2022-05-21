@@ -52,6 +52,7 @@ export const AbsenceEditDialog =  ({open, onClose, absence}) => {
                 month: date.getMonth(),
                 ...patch
             }).unwrap()
+            onClose()
             toast("Neprítomnosť úspešne upravená", {type: "success"})
         }
         catch(err){

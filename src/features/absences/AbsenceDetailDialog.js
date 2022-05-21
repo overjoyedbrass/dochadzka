@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { format } from 'date-fns'
-import { formatFromTo } from '../../helpers/helpers.js'
+import { formatFromTo, isAbsenceEditable } from '../../helpers/helpers.js'
 
 import {
     Dialog,
@@ -19,7 +19,8 @@ import { toast } from 'react-toastify'
 import { AbsenceAuthor } from './AbsenceAuthor'
 
 export const AbsenceDetailDialog = ({open, absence, onClose, openEdit}) => {
-    const loggedUser = useSelector(selectLoggedUser)
+    const user = useSelector(selectLoggedUser)
+    
     const [openConfirm, setOpenConfirm] = React.useState(false)
     const [deleteAbsence, {}] = useDeleteAbsenceMutation()
 
@@ -60,7 +61,7 @@ export const AbsenceDetailDialog = ({open, absence, onClose, openEdit}) => {
                 <p>Nepritomnosť v čase: {formatFromTo(absence?.from_time, absence?.to_time)}</p>
                 <p>{ absenceTypes[absence?.type].value }</p>
                 <p>Popis: {absence?.description}</p>
-                { absence?.user_id === loggedUser?.id ?
+                { isAbsenceEditable(absence, user) ?
                 <div
                     style={{display:"flex", width:"100%", justifyContent: "space-between"}}
                 >

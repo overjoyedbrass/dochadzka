@@ -12,6 +12,17 @@ export const roles = [
     'Vedúci katedry',
 ]
 
+export const isAbsenceEditable = (absence, user) => {
+    if(!absence) return false
+    if(absence.user_id != user.id && !user.perms.includes("impersonate")){
+        return false
+    }
+    const date = parseISO(absence.date_time)
+    if(date < new Date() && !user.perms.includes("bypass_time")){
+        return false
+    }
+    return true
+}
 
 export const downloadExport = async (token, month, year) => {
     const response = await fetch(`http://localhost:8080/export?month=${month}&year=${year}`, {

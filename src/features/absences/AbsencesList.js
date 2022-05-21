@@ -1,7 +1,7 @@
 import React from 'react'
 import { AbsenceAuthor } from './AbsenceAuthor.js'
 
-import { formatFromTo, myDateFormat } from '../../helpers/helpers'
+import { formatFromTo, myDateFormat, isAbsenceEditable } from '../../helpers/helpers'
 import { useDeleteAbsenceMutation, useGetAbsenceTypesQuery } from '../api/apiSlice.js'
 import { ConfirmDialog } from '../../components/ConfirmDialog.js'
 import { toast } from 'react-toastify'
@@ -10,6 +10,8 @@ import {
 } from '@mui/material'
 import { Edit, Delete} from '@mui/icons-material'
 import './AbsenceList.css'
+import { useSelector } from 'react-redux'
+import { selectLoggedUser } from '../auth/authSlice.js'
 
 function HolidayRow({hd, rowSpan}){
     return (<TableRow
@@ -32,6 +34,8 @@ export const AbsencesList = ({absences, userId, showDetail, openEdit}) => {
     const [deleteAbsence, {}] = useDeleteAbsenceMutation()
     const {data: absenceTypes={}} = useGetAbsenceTypesQuery()
 
+    const user = useSelector(selectLoggedUser)
+    
     async function submitDelete(){
         try{
             await deleteAbsence(absenceToDelete.id).unwrap()
@@ -74,7 +78,7 @@ export const AbsencesList = ({absences, userId, showDetail, openEdit}) => {
                     <TableCell>{ absenceTypes[absence.type]?.value }</TableCell>
                     <TableCell>{ formatFromTo(absence.from_time, absence.to_time) }</TableCell>
                     <TableCell>{
-                        true ? 
+                        isAbsenceEditable(absence, user) ? 
                         <>
                         <IconButton onClick={(e) => {
                             e.stopPropagation()
