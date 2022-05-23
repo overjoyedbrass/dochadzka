@@ -12,7 +12,9 @@ export const ShowBudget = () => {
     const { data={} } = useGetUserBudgetQuery(user_id)
     return (
         <div className="budget-info" style={{color: "white"}}>
-            {data.num - data.used ?? 0}/{Math.round(data.num) ?? 0} &nbsp; <FlightIcon />
+            {"num" in data ? 
+            <>{data.num - data.used ?? 0}/{Math.round(data.num) ?? 0} &nbsp; <FlightIcon /></> :
+            <>Neurčené &nbsp;<FlightIcon /></> }
         </div>
     )
 }

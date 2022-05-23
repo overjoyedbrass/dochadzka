@@ -8,6 +8,12 @@ const holidays_budget = require('../database/holidays_budget.js');
 // returns empty string if everything OK
 // else returns message what is wrong
 function checkAbsence(user, absence, deadline, author_budget){
+    if(!deadline && ["ABSENCE_ILL", "ABSENCE_HOLIDAY"].includes(absence.key) && !user.perms.includes("bypass_time")){
+        return "Pre tento mesiac nebol určený termín zadávania"
+    }
+    if(!author_budget && absence.key === "ABSENCE_HOLIDAY" && !user.perms.includes("bypass_time")){
+        return "Používateľ nemá určený maximalny počet dovoleniek"
+    }
     if(user.id != absence.user_id && !user.perms.includes("impersonate")){
         return "You can't add absences for someone else"
     }
@@ -28,6 +34,23 @@ function checkAbsence(user, absence, deadline, author_budget){
 
 // return string, empty means everything ok
 function checkAbsencePatch(user, patch, absence, deadline, author_budget){
+    if(!deadline && ["ABSENCE_ILL", "ABSENCE_HOLIDAY"].includes(absence.key) && !user.perms.includes("bypass_time")){
+        return "Pre tento mesiac nebol určený termín zadávania"
+    }
+    if(!author_budget && absence.key === "ABSENCE_HOLIDAY" && !user.perms.includes("bypass_time")){
+        return "Používateľ nemá určený maximalny počet dovoleniek"
+    }
+
+    if('confirmation' in patch){
+        if(!user.perms.includes("manage_requests")) {
+            return "You dont have permission to manage requests"
+        }
+        var size = Object.keys(patch).length;
+        // 2 položky - ID a nova hodnota pre confirmation
+        if(size === 2){
+            return ""
+        }
+    }
     if(user.id != absence.user_id && !user.perms.includes("impersonate")){
         return "You can't edit others absence"
     }
@@ -53,6 +76,10 @@ function checkAbsencePatch(user, patch, absence, deadline, author_budget){
 
 // return string, empty means everything ok
 function checkAbsenceDelete(user, absence, deadline){
+    if(!deadline && ["ABSENCE_ILL", "ABSENCE_HOLIDAY"].includes(absence.key) && !user.perms.includes("bypass_time")){
+        return "Pre tento mesiac nebol určený termín zadávania"
+    }
+
     if(user.id != absence.user_id && !user.perms.includes("impersonate")){
         return "You can't delete others absence"
     }
@@ -69,6 +96,7 @@ function checkAbsenceDelete(user, absence, deadline){
 router.get('/', async (req, res, next) => {
     try {
         const [month, year, userid, rq_only] = [req.query.month, req.query.year, req.query.userid, req.query.rq_only]
+        const user = req.auth
 
         if(!year){
             throw new Errors.MissingArgumentError("YEAR is missing")
@@ -91,7 +119,19 @@ router.get('/', async (req, res, next) => {
         else {
             data = await absences.getAbsencesByYearMonthUser(year, month, userid)
         }
+
+        if(user?.perms?.includes("impersonate")){
+            res.send(data)
+        }
+        data = data.filter(ab => {
+            if(ab.public === 0) return false
+            if(ab.public === 1 && user) return true
+            if(ab.public === 2) return true
+            return true
+        })
         res.send(data)
+
+
     } catch (err) {
         return next(err)
     }
@@ -129,7 +169,7 @@ router.post('/',  async(req, res, next) => {
         for(let i = 0; i < data.length; i++){
             const absence = data[i]
             const absence_date = parseISO(absence.date_time)
-            const deadline = (await deadlines.getDeadlineByYearMonth(absence_date.getFullYear(), absence_date.getMonth()))[0].day
+            const deadline = (await deadlines.getDeadlineByYearMonth(absence_date.getFullYear(), absence_date.getMonth()))[0]?.day
             const budget = (await holidays_budget.getUserCurrentBudget(absence.user_id))[0]
             const result_message = checkAbsence(req.auth, absence, deadline, budget)
             if(result_message){
@@ -164,9 +204,8 @@ router.patch("/:id", async(req, res, next) => {
         if(!absence){
             throw new Errors.IdMatchNoEntry("Absence not found")
         }
-
         const absence_date = absence.date_time
-        const deadline = (await deadlines.getDeadlineByYearMonth(absence_date.getFullYear(), absence_date.getMonth()))[0].day
+        const deadline = (await deadlines.getDeadlineByYearMonth(absence_date.getFullYear(), absence_date.getMonth()))[0]?.day
         const budget = (await holidays_budget.getUserCurrentBudget(absence.user_id))[0]
         const result_message = checkAbsencePatch(req.auth, patch, absence, deadline, budget)
 
@@ -196,8 +235,10 @@ router.delete("/:id", async(req, res, next) => {
         if(!absence){
             throw new Errors.IdMatchNoEntry("Absence not found")
         }
+
         const absence_date = absence.date_time
-        const deadline = (await deadlines.getDeadlineByYearMonth(absence_date.getFullYear(), absence_date.getMonth()))[0].day
+        const deadline = (await deadlines.getDeadlineByYearMonth(absence_date.getFullYear(), absence_date.getMonth()))[0]?.day
+
         const result_message = checkAbsenceDelete(req.auth, absence, deadline)
 
         if(result_message){

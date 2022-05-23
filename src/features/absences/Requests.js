@@ -109,6 +109,8 @@ export const Requests = () => {
 const ShowRequestRow = ({absence}) => {
     const [ confirmAbsence, { isLoading }] = useConfirmAbsenceMutation()
 
+    const isConfirmed = absence.confirmation
+
     async function submitConfirmation(id, newConfirmationValue){
         try{
             await confirmAbsence({
@@ -133,12 +135,12 @@ const ShowRequestRow = ({absence}) => {
             <TableCell>{absence.description}</TableCell>
             <TableCell>
                 <Button
-                    onClick={() => submitConfirmation(absence.id, absence.confirmation ? 0 : 1)}
+                    onClick={() => submitConfirmation(absence.id, isConfirmed ? 0 : 1)}
                     disabled={isLoading}
-                    variant={absence.confirmation ? "contained" : "outlined"}
+                    variant={isConfirmed ? "contained" : "outlined"}
                     color="success"
                 >
-                    {absence.confirmation ? "Potvrdené" : "Potvrdiť"}
+                    { isConfirmed ? "Potvrdené" : "Potvrdiť"}
                 </Button>
             </TableCell>
         </TableRow>

@@ -75,7 +75,7 @@ export const apiSlice = createApi({
             query: ({id, ...patch}) => ({
                 url: `absences/${id}`,
                 method: 'PATCH',
-                body: patch
+                body: {id: patch.id, confirmation: patch.confirmation}
             }),
             async onQueryStarted(params, { dispatch, queryFulfilled }) {
                 const patchResult = dispatch(

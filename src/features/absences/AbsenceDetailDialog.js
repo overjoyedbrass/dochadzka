@@ -39,7 +39,8 @@ export const AbsenceDetailDialog = ({open, absence, onClose, openEdit}) => {
     if(!open){
         return null
     }
-
+    const toConfirm = ["ABSENCE_WORKFROMHOME", "ABSENCE_TRAVEL"].includes(absence.key)
+    const confirmed = absence.confirmation ? "potvrdené" : "nepotvrdené"
     return (
         <>
         <Dialog
@@ -48,7 +49,7 @@ export const AbsenceDetailDialog = ({open, absence, onClose, openEdit}) => {
             maxWidth="xs"
         >
             <DialogTitle style={{marginRight: "2em"}}>
-                {absence ? "Neprítomnosť: " + format(new Date(absence.date_time), "dd.MM.yy") : ""}
+                {absence ? "Neprítomnosť " + format(new Date(absence.date_time), "dd.MM.yy") : ""}
             </DialogTitle>
             <IconButton
                 onClick={onClose}
@@ -59,7 +60,7 @@ export const AbsenceDetailDialog = ({open, absence, onClose, openEdit}) => {
             <DialogContent>
                 <p><AbsenceAuthor userId={absence.user_id} fullName={true}/></p>
                 <p>Nepritomnosť v čase: {formatFromTo(absence?.from_time, absence?.to_time)}</p>
-                <p>{ absenceTypes[absence?.type].value }</p>
+                <p>{ absenceTypes[absence?.type].value } {toConfirm ? "("+ confirmed +")" : ""}</p>
                 <p>Popis: {absence?.description}</p>
                 { isAbsenceEditable(absence, user) ?
                 <div
