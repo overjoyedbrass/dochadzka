@@ -122,6 +122,7 @@ router.get('/', async (req, res, next) => {
 
         if(user?.perms?.includes("impersonate")){
             res.send(data)
+            return
         }
         data = data.filter(ab => {
             if(ab.public === 0) return false
