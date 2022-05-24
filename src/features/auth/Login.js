@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useLoginMutation, useLogoutMutation } from '../../app/services/auth'
+import { useLoginMutation, useLogoutMutation } from './authSlice'
 import { useGetResetTokenMutation } from '../api/apiSlice.js'
 import { selectCurrentAuth, selectLoggedUser, selectUserPerms, setImpersonate } from './authSlice'
 import { useDispatch, useSelector } from 'react-redux'

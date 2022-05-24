@@ -6,14 +6,13 @@ import {
   useNavigate
 } from 'react-router-dom'
 
-import { appTheme } from './helpers/themes.js'
-// toastify
-import { ToastContainer } from 'react-toastify'
+import { appTheme } from './helpers/themes.js';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider } from '@emotion/react';
 import { Button } from '@mui/material';
-import { AbsenceController } from './features/absences/AbsenceController.js'
-import { Mainbar } from './components/Mainbar.js'
+import { AbsenceController } from './features/absences/AbsenceController.js';
+import { Mainbar } from './components/Mainbar.js';
 import { UserProfile } from './features/users/UserProfile.js';
 import { UserManagment } from './features/users/UserManagment.js';
 import { UserEdit } from './features/users/UserEdit.js';
@@ -21,9 +20,8 @@ import { EditDeadlines } from './features/deadlines/EditDeadlines.js';
 import { Requests } from './features/absences/Requests';
 import { Holidays } from './features/holidays/Holidays.js';
 import { Budgets } from './features/holidays/Budgets.js';
-import history from './app/history.js'
+import history from './app/history.js';
 import { MessageBox } from './components/MessageBox.js';
-import { useGetAbsenceTypesQuery } from './features/api/apiSlice.js';
 import { PasswordReset } from './features/auth/PasswordReset.js';
 
 const NoPathMatch = () => {
@@ -58,7 +56,7 @@ function App() {
                         <Route path="/holidays" element = {<Holidays />} />
                         <Route path="/budgets" element = {<Budgets />} />
                         <Route path="/resetpass" element = {<PasswordReset />} />
-                        <Route  path="*" element={<NoPathMatch />}
+                        <Route path="*" element={<NoPathMatch />}
                         />
                     </Routes>
                     <ToastContainer position="top-center"/>

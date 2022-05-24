@@ -17,7 +17,6 @@ export const UserProfile = () => {
     const user = useSelector(selectLoggedUser) ?? {}
     const isLogged = useSelector(selectLoggedBoolean)
 
-
     const [formState, setFormState] = React.useState({
         username: user.username,
         email: user.email,

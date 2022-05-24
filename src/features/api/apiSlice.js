@@ -1,10 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { format, parseISO } from 'date-fns'
-
+import { BASE_URL } from '../../config'
 // Define our single API slice object
 export const apiSlice = createApi({
     baseQuery: fetchBaseQuery({ 
-        baseUrl: 'http://localhost:8080/api/',
+        baseUrl: BASE_URL,
         
         prepareHeaders: (headers, { getState }) => {
             // By default, if we have a token in the store, let's use that for authenticated requests
@@ -27,8 +27,8 @@ export const apiSlice = createApi({
             },
             transformResponse: responseData => {
                 let data = {}
-                responseData.forEach(atype => {
-                    data[atype.type_id] = {key: atype.key, value: atype.name}
+                responseData.forEach(ab_type => {
+                    data[ab_type.type_id] = {key: ab_type.key, value: ab_type.name}
                 })
                 return data
             },

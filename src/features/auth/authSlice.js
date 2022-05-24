@@ -6,6 +6,25 @@ import { toast } from 'react-toastify'
 import history from '../../app/history'
 
 
+export const extendedApiSlice = apiSlice.injectEndpoints({
+    endpoints: builder => ({
+        login: builder.mutation({
+            query: (credentials) => ({
+                url: 'login',
+                method: 'POST',
+                body: credentials,
+            }),
+            invalidatesTags: ["UNAUTHORIZED"]
+        }),
+        logout: builder.mutation({
+            query: () => ({
+                url: 'logout'
+            }),
+            invalidatesTags: ["UNAUTHORIZED"]
+        })
+    })
+})
+
 const emptyUser = { perms: [] }
 
 function getInitialState() {
@@ -89,3 +108,8 @@ export const selectLoggedUser = (state) => state.auth.user
 export const selectLoggedBoolean = (state) => Boolean(state?.auth?.token)
 
 export const selectUserPerms = (state) => state.auth.user?.perms ?? []
+
+export const { 
+    useLoginMutation,
+    useLogoutMutation,
+} = extendedApiSlice
