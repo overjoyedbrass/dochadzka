@@ -2,7 +2,7 @@ import { Dialog, DialogTitle, DialogContent, FormControl, TextField, Button, Ico
 import { Close } from '@mui/icons-material'
 import React from 'react'
 import { clamp, lastDayOfMonth } from '../../helpers/helpers.js'
-import { useInsertHolidayMutation } from '../api/apiSlice.js'
+import { useInsertHolidayMutation } from '../api/holidaySlice.js'
 import { toast } from 'react-toastify'
 import format from 'date-fns/esm/format'
 import { Spinner } from '../../components/Spinner'

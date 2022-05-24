@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { selectUserPerms, selectLoggedBoolean } from '../auth/authSlice.js'
 import { MessageBox } from '../../components/MessageBox'
 
-import { useGetHolidaysBudgetQuery, useInsertHolidaysBudgetMutation } from '../api/apiSlice.js'
+import { useGetHolidaysBudgetQuery, useInsertHolidaysBudgetMutation } from '../api/budgetSlice.js'
 import { selectAllActiveUsers } from '../users/usersSlice'
 import { DateController } from '../../components/DateController'
 import { Spinner } from '../../components/Spinner'

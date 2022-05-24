@@ -1,6 +1,6 @@
 import React from 'react'
 import { DateController } from '../../components/DateController'
-import { useGetHolidaysQuery, useUpdateHolidayMutation, useDeleteHolidayMutation } from '../api/apiSlice';
+import { useGetHolidaysQuery, useUpdateHolidayMutation, useDeleteHolidayMutation } from '../api/holidaySlice';
 import { Spinner } from '../../components/Spinner'
 import { selectUserPerms, selectLoggedBoolean } from '../auth/authSlice.js'
 import { useSelector } from 'react-redux'

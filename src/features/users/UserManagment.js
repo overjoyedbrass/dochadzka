@@ -2,12 +2,12 @@ import React from 'react'
 
 import { useSelector } from 'react-redux'
 import { selectAllUsers } from './usersSlice'
-import { selectLoggedUser } from '../auth/authSlice'
 import { CreateUserDialog } from './CreateUserDialog'
 import { useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { selectUserPerms, selectLoggedBoolean } from '../auth/authSlice.js'
 import { MessageBox } from '../../components/MessageBox'
+import { useGetHolidaysBudgetQuery } from '../api/budgetSlice'
 
 import {
     Table,
@@ -23,7 +23,6 @@ import {
 } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit';
 import { roles } from '../../helpers/helpers.js'
-import { useGetHolidaysBudgetQuery } from '../api/apiSlice'
 
 export const UserManagment = () => {
     const allusers = useSelector(selectAllUsers)

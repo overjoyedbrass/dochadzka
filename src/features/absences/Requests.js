@@ -7,7 +7,7 @@ import { DateController } from '../../components/DateController'
 import {
     useGetAbsencesQuery,
     useConfirmAbsenceMutation
-} from '../api/apiSlice'
+} from '../api/absenceSlice'
 import { Spinner } from '../../components/Spinner.js'
 import { useLocation } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -22,6 +22,7 @@ import {
     Button,
     ButtonGroup
 } from '@mui/material'
+
 import { format, parseISO } from 'date-fns'
 import { AbsenceAuthor } from './AbsenceAuthor'
 import { formatFromTo } from '../../helpers/helpers.js'

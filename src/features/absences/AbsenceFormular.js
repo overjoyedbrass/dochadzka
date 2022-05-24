@@ -7,7 +7,7 @@ import { format, parseISO, add } from 'date-fns'
 import { appTheme } from  "../../helpers/themes.js"
 
 import { datesAreSame } from '../../helpers/helpers.js'
-import { useGetAbsenceTypesQuery, useInsertAbsencesMutation } from '../api/apiSlice.js'
+import { useGetAbsenceTypesQuery, useInsertAbsencesMutation } from '../api/absenceSlice.js'
 import { selectImpersonatedUser, selectLoggedUser } from '../auth/authSlice'
 import { toast } from 'react-toastify'
 import { Spinner } from '../../components/Spinner'

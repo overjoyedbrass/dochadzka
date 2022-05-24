@@ -14,7 +14,7 @@ import {
 import {  ConfirmDialog } from '../../components/ConfirmDialog'
 import { Close } from '@mui/icons-material'
 import { selectLoggedUser } from '../auth/authSlice'
-import { useDeleteAbsenceMutation, useGetAbsenceTypesQuery } from '../api/apiSlice'
+import { useDeleteAbsenceMutation, useGetAbsenceTypesQuery } from '../api/absenceSlice'
 import { toast } from 'react-toastify'
 import { AbsenceAuthor } from './AbsenceAuthor'
 

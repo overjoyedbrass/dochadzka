@@ -15,7 +15,7 @@ import {
     TableContainer,
 } from '@mui/material'
 import { DateController } from '../../components/DateController'
-import { useGetDeadlinesQuery, useInsertDeadlinesMutation } from '../api/apiSlice'
+import { useGetDeadlinesQuery, useInsertDeadlinesMutation } from '../api/deadlineSlice'
 import { Spinner } from '../../components/Spinner'
 import { toast } from 'react-toastify'
 

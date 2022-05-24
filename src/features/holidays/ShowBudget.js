@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Flight as FlightIcon } from '@mui/icons-material'
 import { selectLoggedUser } from '../auth/authSlice'
-import { useGetUserBudgetQuery } from '../api/apiSlice'
+import { useGetUserBudgetQuery } from '../api/budgetSlice'
 import { useSelector } from 'react-redux'
 
 

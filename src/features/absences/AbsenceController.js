@@ -5,7 +5,8 @@ import {
     ButtonGroup
 } from '@mui/material'
 
-import { useGetAbsencesQuery, useGetHolidaysQuery } from '../api/apiSlice'
+import { useGetAbsencesQuery } from '../api/absenceSlice'
+import { useGetHolidaysQuery } from '../api/holidaySlice'
 
 import { AbsenceDisplayer } from './AbsenceDisplayer'
 

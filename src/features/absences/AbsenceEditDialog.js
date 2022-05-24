@@ -17,7 +17,7 @@ import { Close } from '@mui/icons-material'
 import { appTheme } from '../../helpers/themes.js'
 import { format, parseISO } from 'date-fns'
 import { isFullDay as isAbsenceFullDay } from '../../helpers/helpers.js'
-import { useGetAbsenceTypesQuery, useUpdateAbsenceMutation } from '../api/apiSlice'
+import { useGetAbsenceTypesQuery, useUpdateAbsenceMutation } from '../api/absenceSlice'
 import { toast } from 'react-toastify'
 import { Spinner } from '../../components/Spinner'
 

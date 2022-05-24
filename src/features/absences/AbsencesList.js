@@ -2,7 +2,7 @@ import React from 'react'
 import { AbsenceAuthor } from './AbsenceAuthor.js'
 
 import { formatFromTo, myDateFormat, isAbsenceEditable } from '../../helpers/helpers'
-import { useDeleteAbsenceMutation, useGetAbsenceTypesQuery } from '../api/apiSlice.js'
+import { useDeleteAbsenceMutation, useGetAbsenceTypesQuery } from '../api/absenceSlice.js'
 import { ConfirmDialog } from '../../components/ConfirmDialog.js'
 import { toast } from 'react-toastify'
 import { 
