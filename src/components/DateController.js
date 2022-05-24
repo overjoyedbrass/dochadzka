@@ -12,7 +12,7 @@ export const DateController = ({viewDate, onChange, type="month", button=true}) 
     const addMonth = () => onChange(add(viewDate, {months: 1}))
 
     const type_int = type === "month"
-    const today = new Date()
+    // const today = new Date()
         
     return (
         <div className="date-controller">

@@ -9,7 +9,7 @@ import { selectAllActiveUsers } from '../users/usersSlice'
 import { DateController } from '../../components/DateController'
 import { Spinner } from '../../components/Spinner'
 import {
-    Table,  TableBody, TableHead, TableRow, TableCell, Button, IconButton, TextField, TableContainer, Paper
+    Table,  TableBody, TableHead, TableRow, TableCell, Button, TextField, TableContainer, Paper
 } from '@mui/material'
 import { toast } from 'react-toastify'
 
@@ -39,10 +39,10 @@ export const Budgets = () => {
         setFormState((prev) => ({ ...prev, [parseInt(name)]: parseInt(value) }))
 
     React.useEffect(() => {
-        if(!isError && budgets != {}){
+        if(!isError && budgets !== {}){
             setFormState(initialFormState(budgets))
         }
-    }, [budgets])
+    }, [budgets, isError])
 
     var changed = false
     for(let u of users){

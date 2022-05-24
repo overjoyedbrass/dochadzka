@@ -31,7 +31,7 @@ function HolidayRow({hd, rowSpan}){
 
 export const AbsencesList = ({absences, userId, showDetail, openEdit}) => {
     const [absenceToDelete, setAbsenceToDelete] = React.useState(null)
-    const [deleteAbsence, {}] = useDeleteAbsenceMutation()
+    const [deleteAbsence] = useDeleteAbsenceMutation()
     const {data: absenceTypes={}} = useGetAbsenceTypesQuery()
 
     const user = useSelector(selectLoggedUser)

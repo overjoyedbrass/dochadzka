@@ -28,12 +28,12 @@ import { toast } from 'react-toastify'
 
 export const AbsenceController = () => {
     const loggedUser = useSelector(selectLoggedUser)
-    const [selectedUser, setSelectedUser] = useState(loggedUser?.id)
-    const [viewDate, setViewDate] = useState(new Date())
-    const [calendarDisplay, showCalendarDisplay] = useState(true)
     const perms = loggedUser.perms
     const token = useSelector(selectCurrentAuth)
 
+    const [selectedUser, setSelectedUser] = useState(loggedUser?.id)
+    const [viewDate, setViewDate] = useState(new Date())
+    const [calendarDisplay, showCalendarDisplay] = useState(true)
 
     async function getExport(e){
         e.preventDefault()
@@ -43,14 +43,19 @@ export const AbsenceController = () => {
             toast("Nepodarilo sa stiahnuť export", { type: "error" })
         }
     }
+    
     const{
         data: absences=[],
-        // isLoading,
-        // isSuccess,
         isError,
         error,
+        // isLoading,
+        // isSuccess,
         // isFetching
-    } = useGetAbsencesQuery({year: viewDate.getFullYear(), month: viewDate.getMonth() + 1, userid: selectedUser})
+    } = useGetAbsencesQuery({
+        year: viewDate.getFullYear(), 
+        month: viewDate.getMonth() + 1, 
+        userid: selectedUser
+    })
 
     const {
         data: holidays=[],

@@ -37,9 +37,9 @@ export const EditDeadlines = () => {
         data: deadlines = [],
         isFetching,
         isLoading,
-        isSuccess,
-        isError,
-        error
+        // isSuccess,
+        // isError,
+        // error
     } = useGetDeadlinesQuery(viewDate.getFullYear())
 
     const ddlines = getInitialDeadlines()
@@ -48,7 +48,7 @@ export const EditDeadlines = () => {
         ddlines[deadline['month']] = deadline['day']
     }
     const [formState, setFormState] = React.useState(ddlines)
-    const [insertDeadlines, { isLoadingInsert }] = useInsertDeadlinesMutation()
+    const [insertDeadlines] = useInsertDeadlinesMutation()
     const handleChange = ({target: { name, value }}) =>
         setFormState((prev) => ({ ...prev, [parseInt(name)]: value ? parseInt(value) : ""}))
 
@@ -56,7 +56,7 @@ export const EditDeadlines = () => {
         if(deadlines.length){
             setFormState(ddlines)
         }
-    }, [deadlines])
+    }, [deadlines, ddlines])
 
     const perms = useSelector(selectUserPerms)
     const isLogged = useSelector(selectLoggedBoolean)

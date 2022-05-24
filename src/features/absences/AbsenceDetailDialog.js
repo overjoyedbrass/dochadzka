@@ -22,7 +22,7 @@ export const AbsenceDetailDialog = ({open, absence, onClose, openEdit}) => {
     const user = useSelector(selectLoggedUser)
     
     const [openConfirm, setOpenConfirm] = React.useState(false)
-    const [deleteAbsence, {}] = useDeleteAbsenceMutation()
+    const [deleteAbsence] = useDeleteAbsenceMutation()
 
     const {data: absenceTypes={}} = useGetAbsenceTypesQuery()
 

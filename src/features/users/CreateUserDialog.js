@@ -48,7 +48,7 @@ export const CreateUserDialog = ({open, onClose}) => {
         }
 
         try {
-            const result = await createUser({
+            await createUser({
                 ...formState
             }).unwrap()
             toast("Používateľ úspešne vytvorený.", {type: "success", id: 33, position: toast.POSITION.TOP})

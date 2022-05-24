@@ -29,10 +29,10 @@ export const Holidays = () => {
 
     const {
         data: holidays = [],
-        isSuccess,
         isFetching,
         isLoading,
-        isError,
+        // isSuccess,
+        // isError,
     } = useGetHolidaysQuery(viewDate.getFullYear())
 
     const perms = useSelector(selectUserPerms)

@@ -19,7 +19,6 @@ import {
  import { Spinner } from '../../components/Spinner'
 
 import './Login.css'
-import { useSelect } from '@mui/base'
 
 export const Login = () => {
     const navigate = useNavigate()
@@ -121,7 +120,7 @@ const ResetDialog = () => {
     const [open, setOpen] = React.useState(false)
     const [email, setEmail] = React.useState("")
     
-    const [ sendResetRequest, {  }] = useGetResetTokenMutation()
+    const [ sendResetRequest ] = useGetResetTokenMutation()
 
 
     const close = () => setOpen(false)
@@ -212,7 +211,7 @@ const DropMenu = ({navigate}) => {
         setAnchorEl(null);
     };
 
-    const [logout, { isLoggingOut }] = useLogoutMutation()
+    const [logout] = useLogoutMutation()
 
     async function doLogout(){
         try {

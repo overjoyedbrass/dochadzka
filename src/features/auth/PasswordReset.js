@@ -20,7 +20,7 @@ export const PasswordReset = () => {
     })
 
     const navigate = useNavigate()
-    const [ changePassword, { isLoading }] = useResetPasswordMutation()
+    const [ changePassword ] = useResetPasswordMutation()
 
 
     let jwt_data;
