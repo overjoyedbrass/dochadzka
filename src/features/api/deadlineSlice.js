@@ -24,6 +24,7 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
     })
 })
 
+
 export const {
     useGetDeadlinesQuery,
     useInsertDeadlinesMutation

@@ -1,16 +1,8 @@
 import { format, add } from 'date-fns'
 import { parseISO } from 'date-fns/esm'
 import {sk} from 'date-fns/locale'
-
+import { BASE_URL } from '../config'
 const mesiace = ['Január', 'Február', 'Marec', 'Apríl','Máj', 'Jún', 'Júl', 'August','September','Október','November','December']
-
-export const roles = [
-    'Deaktivovaný',
-    'Používateľ',
-    'Administrátor',
-    'Sekretárka',
-    'Vedúci katedry',
-]
 
 export const isAbsenceEditable = (absence, user) => {
     if(!absence) return false
@@ -25,7 +17,7 @@ export const isAbsenceEditable = (absence, user) => {
 }
 
 export const downloadExport = async (token, month, year) => {
-    const response = await fetch(`http://localhost:8080/export?month=${month}&year=${year}`, {
+    const response = await fetch(`${BASE_URL}0/export?month=${month}&year=${year}`, {
         headers: {
             authorization: `Bearer ${token}`
         }

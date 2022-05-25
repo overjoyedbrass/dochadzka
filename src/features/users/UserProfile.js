@@ -10,7 +10,7 @@ import { useUpdateUserMutation } from './usersSlice'
 import { Spinner } from '../../components/Spinner'
 import { toast } from 'react-toastify'
 import { MessageBox } from '../../components/MessageBox'
-import { roles } from '../../helpers/helpers'
+import { roles } from '../../config.js'
 
 export const UserProfile = () => {
     const user = useSelector(selectLoggedUser) ?? {}

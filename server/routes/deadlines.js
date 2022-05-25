@@ -11,10 +11,11 @@ router.get('/', async (req, res, next) => {
         if(!year){
             throw new Errors.MissingArgumentError("argument year missing")
         }
-        const data = month ? 
-            await deadlines.getDeadlinesByYear(year)
-          : await deadlines.getDeadlineByYearMonth(year, month);
 
+        const data = month ? 
+            await deadlines.getDeadlineByYearMonth(year, month)
+          : await deadlines.getDeadlinesByYear(year)
+          
         res.send(data)
     } catch(err){
         return next(err)

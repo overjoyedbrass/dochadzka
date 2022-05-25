@@ -22,7 +22,7 @@ import {
     ButtonGroup
 } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit';
-import { roles } from '../../helpers/helpers.js'
+import { roles } from '../../config.js'
 
 export const UserManagment = () => {
     const allusers = useSelector(selectAllUsers)

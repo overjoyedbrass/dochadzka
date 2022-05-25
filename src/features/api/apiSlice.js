@@ -1,10 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { BASE_URL } from '../../config'
 // Define our single API slice object
+
 export const apiSlice = createApi({
     baseQuery: fetchBaseQuery({ 
-        baseUrl: BASE_URL,
-        
+        baseUrl: BASE_URL,        
         prepareHeaders: (headers, { getState }) => {
             // By default, if we have a token in the store, let's use that for authenticated requests
             const token = getState().auth.token
@@ -15,8 +15,6 @@ export const apiSlice = createApi({
         },
     }),
     tagTypes: ['Absence', "Holidays", "Deadlines", "Users", "UNAUTHORIZED", "Tickets", "Budget", "Budgets"],
-  
-
     endpoints: builder => ({
         getResetToken: builder.mutation({
             query: (email) => ({

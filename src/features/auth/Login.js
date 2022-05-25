@@ -41,7 +41,6 @@ export const Login = () => {
         e?.preventDefault()
         try {
             const token = await login(formState).unwrap()
-            localStorage.token = JSON.stringify(token)
             toast("Prihlásenie úspešné", {type: "success", id: 33, position: toast.POSITION.TOP})
             setFormState({username: "", password: ""})
             setOpen(false)

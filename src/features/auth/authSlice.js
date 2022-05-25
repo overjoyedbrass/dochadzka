@@ -66,6 +66,7 @@ const authSlice = createSlice({
                 const data = jwt_decode(payload.token)
                 state.user = data
                 state.token = payload.token
+                localStorage.token = JSON.stringify(payload)
                 state.impersonate = 0
             }
         )
