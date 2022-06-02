@@ -45,7 +45,7 @@ export const AbsenceDisplayer = ({viewDate, absences, calendarDisplay}) => {
     const isLogged = useSelector(selectLoggedBoolean)
 
     function addRemoveDay(clickedDate, add_day, reset=false){
-        if(clickedDate < new Date() && !perms.bypass_time){
+        if(clickedDate < new Date() && !perms.includes("bypass_time")){
             toast("Nemôžete zadávať do minulosti", {type: "warning", toastId: 50})
             return
         }
