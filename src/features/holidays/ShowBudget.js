@@ -13,7 +13,7 @@ export const ShowBudget = () => {
     return (
         <div className="budget-info" style={{color: "white"}}>
             {"num" in data ? 
-            <>{data.num - data.used ?? 0}/{Math.round(data.num) ?? 0} &nbsp; <FlightIcon /></> :
+            <>Zostatok dovolenky {data.num - data.used ?? 0}/{Math.round(data.num) ?? 0} &nbsp; <FlightIcon /></> :
             <>Neurčené &nbsp;<FlightIcon /></> }
         </div>
     )

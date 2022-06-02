@@ -6,7 +6,6 @@ import { CreateUserDialog } from './CreateUserDialog'
 import { useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { selectUserPerms, selectLoggedBoolean } from '../auth/authSlice.js'
-import { MessageBox } from '../../components/MessageBox'
 import { useGetHolidaysBudgetQuery } from '../api/budgetSlice'
 
 import {
@@ -31,19 +30,11 @@ export const UserManagment = () => {
     const navigate = useNavigate()
 
     const perms = useSelector(selectUserPerms)
-    const isLogged = useSelector(selectLoggedBoolean)
 
     const sekretarka = perms.includes("edit_budgets")
     const {
         data: budgets={}
     } = useGetHolidaysBudgetQuery((new Date()).getFullYear())
-
-    if(!isLogged){
-        return <MessageBox type="warning" message="Nie ste prihlásený"/>
-    }
-    if(!perms.includes("user_managment")){
-        return <MessageBox type="error" message="Nemáte dostatočné oprávnenia zobraziť túto stránku" />
-    }
 
     let users
     if(filter === 0){

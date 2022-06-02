@@ -58,17 +58,6 @@ export const EditDeadlines = () => {
         }
     }, [deadlines, ddlines])
 
-    const perms = useSelector(selectUserPerms)
-    const isLogged = useSelector(selectLoggedBoolean)
-
-    if(!isLogged){
-        return <MessageBox type="warning" message="Nie ste prihlásený"/>
-    }
-    
-    if(!perms.includes("edit_deadlines")){
-        return <MessageBox type="error" message="Nemáte dostatočné oprávnenia zobraziť túto stránku" />
-    }
-
 
     async function submit(e){
         e.preventDefault()

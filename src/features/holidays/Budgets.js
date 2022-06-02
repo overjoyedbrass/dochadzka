@@ -39,10 +39,10 @@ export const Budgets = () => {
         setFormState((prev) => ({ ...prev, [parseInt(name)]: parseInt(value) }))
 
     React.useEffect(() => {
-        if(!isError && budgets !== {}){
+        if(budgets !== {}){
             setFormState(initialFormState(budgets))
         }
-    }, [budgets, isError])
+    }, [budgets])
 
     var changed = false
     for(let u of users){

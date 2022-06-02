@@ -5,16 +5,15 @@ import {
 } from '@mui/material'
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { selectLoggedBoolean, selectLoggedUser } from '../auth/authSlice'
+import { selectLoggedUser } from '../auth/authSlice'
 import { useUpdateUserMutation } from './usersSlice'
 import { Spinner } from '../../components/Spinner'
 import { toast } from 'react-toastify'
-import { MessageBox } from '../../components/MessageBox'
 import { roles } from '../../config.js'
 
 export const UserProfile = () => {
     const user = useSelector(selectLoggedUser) ?? {}
-    const isLogged = useSelector(selectLoggedBoolean)
+    
 
     const [formState, setFormState] = React.useState({
         username: user.username,
@@ -25,9 +24,7 @@ export const UserProfile = () => {
     })
     const [updateUser, { isLoading }] = useUpdateUserMutation()
 
-    if(!isLogged){
-        return <MessageBox type="warning" message="Nie ste prihlásený"/>
-    }
+    
 
     const handleChange = ({target: { name, value }}) =>
         setFormState((prev) => ({ ...prev, [name]: value }))
