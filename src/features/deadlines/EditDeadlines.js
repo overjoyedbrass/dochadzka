@@ -56,7 +56,7 @@ export const EditDeadlines = () => {
         if(deadlines.length){
             setFormState(ddlines)
         }
-    }, [deadlines, ddlines])
+    }, [deadlines])
 
 
     async function submit(e){

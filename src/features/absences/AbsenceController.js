@@ -25,6 +25,7 @@ import {
 } from '@mui/icons-material';
 import { downloadExport } from '../../helpers/helpers'
 import { toast } from 'react-toastify'
+import { DisplayDeadline } from '../deadlines/DisplayDeadline'
 
 export const AbsenceController = () => {
     const loggedUser = useSelector(selectLoggedUser)
@@ -84,6 +85,7 @@ export const AbsenceController = () => {
 
     return (
     <>
+        <DisplayDeadline date={viewDate} />
         <div className="controllerBar">
             <div className="wrapper">
                 <DateController 
