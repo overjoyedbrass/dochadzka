@@ -40,7 +40,7 @@ export const Login = () => {
     async function submit(e){
         e?.preventDefault()
         try {
-            const token = await login(formState).unwrap()
+            await login(formState).unwrap()
             toast("Prihlásenie úspešné", {type: "success", id: 33, position: toast.POSITION.TOP})
             setFormState({username: "", password: ""})
             setOpen(false)

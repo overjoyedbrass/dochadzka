@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { selectLoggedBoolean, selectLoggedUser, selectUserPerms } from '../auth/authSlice'
+import { selectLoggedBoolean, selectUserPerms } from '../auth/authSlice'
 import { AbsenceFormular } from './AbsenceFormular'
 import { AbsenceDetailDialog } from './AbsenceDetailDialog'
 import { appTheme } from '../../helpers/themes'

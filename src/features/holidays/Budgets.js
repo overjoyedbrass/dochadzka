@@ -31,7 +31,7 @@ export const Budgets = () => {
         data: budgets={},
         isFetching,
         isLoading,
-        isError,
+        //isError,
     } = useGetHolidaysBudgetQuery(viewDate.getFullYear())
 
     const [formState, setFormState] = React.useState(initialFormState(budgets))
