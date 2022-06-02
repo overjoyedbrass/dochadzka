@@ -7,12 +7,12 @@ module.exports = {
         LEFT JOIN absence_types ON absence.type = absence_types.type_id`
         return query(SQL, [])
     },
-    getAbsenceById: (id) => {
+    getAbsenceById: (id, connection=null) => {
         let SQL = 
         `SELECT * FROM absence 
         LEFT JOIN absence_types ON absence.type = absence_types.type_id
         WHERE id = ?`
-        return query(SQL, [id])
+        return query(SQL, [id], connection)
     },
     getAbsencesByYearMonth: (year, month) => {
         let SQL = 
@@ -39,7 +39,7 @@ module.exports = {
         ORDER BY date_time DESC`
         return query(SQL, [year])
     },
-    insertAbsences(rows){
+    insertAbsences(rows, connection=null){
         const arguments = []
         rows.forEach(r => {
             arguments.push(r.user_id)
@@ -53,9 +53,9 @@ module.exports = {
         })
         const empty_values = Array(rows.length).fill("(?, ?, ?, ?, ?, ?, ?, ?)").join(", ")
         let SQL = `INSERT INTO absence (user_id, date_time, from_time, to_time, description, type, public, confirmation) VALUES ${empty_values}`
-        return query(SQL, arguments)
+        return query(SQL, arguments, connection=connection)
     },
-    update(data){
+    update(data, connection=null){
         const SQL = 
            `UPDATE absence
             SET from_time = COALESCE(?, from_time),
@@ -73,10 +73,10 @@ module.exports = {
             data.type,
             data.confirmation,
             data.id
-        ])
+        ], connection)
     },
-    delete(id){
+    delete(id, connection){
         const SQL = "DELETE FROM absence WHERE id = ?"
-        return query(SQL, [id])
+        return query(SQL, [id], connection)
     }
 }

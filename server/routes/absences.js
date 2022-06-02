@@ -5,6 +5,7 @@ const Errors = require("../Errors.js")
 const { parseISO } = require("date-fns");
 const deadlines = require('../database/deadlines.js');
 const holidays_budget = require('../database/holidays_budget.js');
+const pool = require("../database/connection")
 // returns empty string if everything OK
 // else returns message what is wrong
 function checkAbsence(user, absence, deadline, author_budget){
@@ -166,20 +167,32 @@ router.post('/',  async(req, res, next) => {
         if(!req.auth?.perms){
             throw new Errors.UnauthorizedActionError("Insufficient permissions")
         }
-        // START TRANSACTION
-        for(let i = 0; i < data.length; i++){
-            const absence = data[i]
-            const absence_date = parseISO(absence.date_time)
-            const deadline = (await deadlines.getDeadlineByYearMonth(absence_date.getFullYear(), absence_date.getMonth()))[0]?.day
-            const budget = (await holidays_budget.getUserCurrentBudget(absence.user_id))[0]
-            const result_message = checkAbsence(req.auth, absence, deadline, budget)
-            if(result_message){
-                throw new Errors.UnauthorizedActionError(result_message)
+
+
+        pool.getConnection(async (err, connection) => {
+            connection.beginTransaction()
+            if(err){
+                connection.rollback()
+                connection.release()
+                return nexterr;
             }
-        }
-        await absences.insertAbsences(data)
-        // END TRANSACITON
-        res.end()
+            for(let i = 0; i < data.length; i++){
+                const absence = data[i]
+                const absence_date = parseISO(absence.date_time);
+                const deadline = (await deadlines.getDeadlineByYearMonth(absence_date.getFullYear(), absence_date.getMonth()))[0]?.day
+                const budget = (await holidays_budget.getUserCurrentBudget(absence.user_id, connection))[0]
+                const result_message = checkAbsence(req.auth, absence, deadline, budget)
+
+                if(result_message){
+                    return next(new Errors.UnauthorizedActionError(result_message))
+                }
+            }
+
+            await absences.insertAbsences(data, connection)
+            connection.commit()
+            connection.release()
+            res.end()
+        })
     } catch (err) {
         return next(err)
     }
@@ -200,22 +213,33 @@ router.patch("/:id", async(req, res, next) => {
             throw new Errors.BodyRequiredError("No patch provided")
         }
         patch.id = id
-        // START TRANSACTION
-        const absence = (await absences.getAbsenceById(id))[0]
-        if(!absence){
-            throw new Errors.IdMatchNoEntry("Absence not found")
-        }
-        const absence_date = absence.date_time
-        const deadline = (await deadlines.getDeadlineByYearMonth(absence_date.getFullYear(), absence_date.getMonth()))[0]?.day
-        const budget = (await holidays_budget.getUserCurrentBudget(absence.user_id))[0]
-        const result_message = checkAbsencePatch(req.auth, patch, absence, deadline, budget)
 
-        if(result_message){
-            throw new Errors.UnauthorizedActionError(result_message)
-        }
-        await absences.update(patch)
-        // END TRANSACTION
-        res.end()
+
+        pool.getConnection(async (err, connection) => {
+            connection.beginTransaction()
+            if(err){
+                connection.rollback()
+                connection.release()
+                return nexterr;
+            }
+            const absence = (await absences.getAbsenceById(id, connection))[0]
+            if(!absence){
+                return next(new Errors.IdMatchNoEntry("Absence not found"))
+            }
+            const absence_date = absence.date_time
+            const deadline = (await deadlines.getDeadlineByYearMonth(absence_date.getFullYear(), absence_date.getMonth(), connection))[0]?.day
+            const budget = (await holidays_budget.getUserCurrentBudget(absence.user_id, connection))[0]
+            const result_message = checkAbsencePatch(req.auth, patch, absence, deadline, budget)
+
+            if(result_message){
+                return next(new Errors.UnauthorizedActionError(result_message))
+            }
+            await absences.update(patch, connection)
+
+            connection.commit()
+            connection.release()
+            res.end()
+        })
     } catch (err) {
         return next(err)
     }
@@ -231,24 +255,32 @@ router.delete("/:id", async(req, res, next) => {
         if(!req.auth?.perms){
             throw new Errors.UnauthorizedActionError("Insufficient permissions")
         }
-        //start transaction
-        const absence = (await absences.getAbsenceById(id))[0]
-        if(!absence){
-            throw new Errors.IdMatchNoEntry("Absence not found")
-        }
 
-        const absence_date = absence.date_time
-        const deadline = (await deadlines.getDeadlineByYearMonth(absence_date.getFullYear(), absence_date.getMonth()))[0]?.day
+        pool.getConnection(async (err, connection) => {
+            connection.beginTransaction()
+            if(err){
+                connection.rollback()
+                connection.release()
+                return nexterr;
+            }
+            const absence = (await absences.getAbsenceById(id, connection))[0]
+            if(!absence){
+                throw new Errors.IdMatchNoEntry("Absence not found")
+            }
 
-        const result_message = checkAbsenceDelete(req.auth, absence, deadline)
+            const absence_date = absence.date_time
+            const deadline = (await deadlines.getDeadlineByYearMonth(absence_date.getFullYear(), absence_date.getMonth(), connection))[0]?.day
 
-        if(result_message){
-            throw new Errors.UnauthorizedActionError(result_message)
-        }
-        await absences.delete(id)
-        //stop transaction
+            const result_message = checkAbsenceDelete(req.auth, absence, deadline)
 
-        res.end()
+            if(result_message){
+                throw new Errors.UnauthorizedActionError(result_message)
+            }
+            await absences.delete(id, connection)
+            connection.commit()
+            connection.release()
+            res.end()
+        })
 
     } catch (err) {
         return next(err)

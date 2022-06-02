@@ -18,7 +18,7 @@ module.exports = {
 
 
 
-    getUserCurrentBudget: function(user_id){
+    getUserCurrentBudget: function(user_id, connection=null){
         const SQL =
         `SELECT budget.user_id, budget.num, used.used
         FROM holidays_budget as budget
@@ -27,7 +27,7 @@ module.exports = {
         ON budget.user_id = used.user_id
         WHERE year = EXTRACT(YEAR FROM NOW())
         AND budget.user_id = ?`
-        return query(SQL, [user_id, user_id])
+        return query(SQL, [user_id, user_id], connection=connection)
     },
 
 
