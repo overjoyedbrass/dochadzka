@@ -33,7 +33,7 @@ function App() {
                         <Route exact path="/" element={<AbsenceController/>}/>
                         <Route path="/profile" element = {<LoginRequired permission="" Component={UserProfile}/>}/>
                         <Route path="/users" element = {<LoginRequired permission="user_managment" Component={UserManagment}/>}/>
-                        <Route path="/users/:id" element = {<LoginRequired permission="user_manamgnet" Component={UserEdit}/>}/>
+                        <Route path="/users/:id" element = {<LoginRequired permission="user_managment" Component={UserEdit}/>}/>
                         <Route path="/deadlines" element = {<LoginRequired permission="edit_deadlines" Component={EditDeadlines}/>}/>/>
                         <Route path="/requests" element = {<LoginRequired permission="manage_requests" Component={Requests}/>}/>
                         <Route path="/holidays" element = {<LoginRequired permission="edit_holidays" Component={Holidays}/>}/>

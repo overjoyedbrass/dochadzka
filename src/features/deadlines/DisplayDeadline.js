@@ -7,15 +7,15 @@ export const DisplayDeadline = ({date}) => {
     const month = date.getMonth();
     const year = date.getFullYear();
     const {
-        data: deadlines={}
+        data: deadlines=[]
     } = useGetDeadlinesQuery(year)
 
     const loggedUser = useSelector(selectLoggedBoolean)
     if(!loggedUser){
         return null
     }
-
-    const day = deadlines.find(d => d.month === month)?.day
+    
+    const day = deadlines?.find(d => d.month === month)?.day
     
     return (<div className="impersonate-bar" style={{
             background: appTheme.palette.primary.main,

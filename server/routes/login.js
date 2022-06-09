@@ -17,12 +17,16 @@ router.post('/', async (req, res, next) => {
         }
 
         let data = await getUserByUsername(req_username)
+
         // length == number of rows from database
         if(data.length === 0){
             throw new Errors.UnauthorizedError("Username or password no match")
         }
         data = data[0]
+        
         let perms = (await getPerms(data.status)).map(row => row["perm"])
+
+        console.log("perms", perms)
 
         bcrypt.compare(req_password, data.password, function (err, result) {
             if(err){

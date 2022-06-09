@@ -8,7 +8,6 @@ export const Navbar = () => {
     const isLogged = useSelector(selectLoggedBoolean)    
     const perms = useSelector(selectUserPerms)
     const hasPerm = (key) => perms.includes(key)
-
     return (
         <nav>
             <div className="navLinks">
