@@ -6,7 +6,7 @@ const mesiace = ['Január', 'Február', 'Marec', 'Apríl','Máj', 'Jún', 'Júl'
 
 export const isAbsenceEditable = (absence, user) => {
     if(!absence) return false
-    if(absence.user_id != user.id && !user.perms.includes("impersonate")){
+    if(absence.user_id !== user.id && !user.perms.includes("impersonate")){
         return false
     }
     const date = parseISO(absence.date_time)

@@ -6,10 +6,10 @@ module.exports = {
         const SQL = "SELECT * FROM deadlines WHERE year = ?"
         return query(SQL, arguments)
     },
-    getDeadlineByYearMonth: (year, month) => {
+    getDeadlineByYearMonth: (year, month, connection=null) => {
         const arguments = [year, month]
         const SQL = "SELECT day FROM deadlines WHERE year = ? AND month = ?;"
-        return query(SQL, arguments)
+        return query(SQL, arguments, connection)
     },
     replace: (year, data) => {
         const MONTHS_COUNT  = 12

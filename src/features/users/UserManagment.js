@@ -5,7 +5,7 @@ import { selectAllUsers } from './usersSlice'
 import { CreateUserDialog } from './CreateUserDialog'
 import { useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
-import { selectUserPerms, selectLoggedBoolean } from '../auth/authSlice.js'
+import { selectUserPerms } from '../auth/authSlice.js'
 import { useGetHolidaysBudgetQuery } from '../api/budgetSlice'
 
 import {

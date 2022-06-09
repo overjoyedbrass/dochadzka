@@ -1,8 +1,5 @@
 import React from 'react'
 
-import { useSelector } from 'react-redux'
-import { selectUserPerms, selectLoggedBoolean } from '../auth/authSlice.js'
-
 import {
     Table,
     TableRow,
@@ -18,8 +15,6 @@ import { DateController } from '../../components/DateController'
 import { useGetDeadlinesQuery, useInsertDeadlinesMutation } from '../api/deadlineSlice'
 import { Spinner } from '../../components/Spinner'
 import { toast } from 'react-toastify'
-
-import { MessageBox } from '../../components/MessageBox'
 
 const mesiace = ['Január', 'Február', 'Marec', 'Apríl', 'Máj', 'Jún', 'Júl', 'August', 'September', 'Október', 'November', 'December']
 
