@@ -1,5 +1,7 @@
 # Katedrová dochádzková webová aplikácia
 
+[web](https://www.st.fmph.uniba.sk/~rigan7/bp/)
+
 Na spustenie je potrebné mať nainštalovaný [node.js](https://github.com/nodejs/node)
 
 Priamo v priečinku repozitára sa spustí príkaz ```npm install``` pre nainštalovanie aplikácie. <br>
