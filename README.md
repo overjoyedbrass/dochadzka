@@ -1,6 +1,6 @@
 # Katedrová dochádzková webová aplikácia
 
-[web](https://www.st.fmph.uniba.sk/~rigan7/bp/)
+[Web stránka predmetu](https://www.st.fmph.uniba.sk/~rigan7/bp/)
 
 Na spustenie je potrebné mať nainštalovaný [node.js](https://github.com/nodejs/node)
 
